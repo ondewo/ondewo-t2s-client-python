@@ -2,3 +2,4 @@
 .isort.cfg
 **/__pycache__/**
 .mypy_cache
+examples/configs/secure_grpc.json
