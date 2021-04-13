@@ -7,8 +7,8 @@ with open("requirements.txt") as f:
     requires = f.read().splitlines()
 
 setuptools.setup(
-    name="ondewo-t2s-client-python",
-    version="1.4.0",
+    name="ondewo-t2s-client",
+    version="1.4.1",
     author="Ondewo GbmH",
     author_email="info@ondewo.com",
     description="provides endpoints and messages for gRPC communication with the ONDEWO T2S server",
