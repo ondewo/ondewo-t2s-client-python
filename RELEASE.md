@@ -4,6 +4,13 @@
 ## ONDEWO-T2S Python Client 1.4.0
 
 ### New Features
+ * push to pypi
+
+*****************
+
+## ONDEWO-T2S Python Client 1.4.0
+
+### New Features
  * First public version
 
 ### Improvements
