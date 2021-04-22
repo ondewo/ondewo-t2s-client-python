@@ -16,14 +16,17 @@
 
 import argparse
 import io
+import json
+from typing import Any
 
 import IPython.display as ipd
-from google.protobuf.empty_pb2 import Empty
-import grpc
 import soundfile as sf
 
-from ondewo.t2s import text_to_speech_pb2, text_to_speech_pb2_grpc, grpc_utils
-
+from ondewo.t2s import text_to_speech_pb2
+from ondewo.t2s.client.client import Client
+from ondewo.t2s.client.client_config import ClientConfig
+from ondewo.t2s.client.services.text_to_speech import Text2Speech
+from ondewo.t2s.text_to_speech_pb2 import ListT2sPipelinesRequest, Text2SpeechConfig
 
 # DESCRIPTION:
 # In this example we do the following:
@@ -35,12 +38,14 @@ from ondewo.t2s import text_to_speech_pb2, text_to_speech_pb2_grpc, grpc_utils
 # 6. Revert the update of the specified pipeline
 
 
-def synthesis_request(stub, **req_kwargs):
+def synthesis_request(t2s_service: Text2Speech, **req_kwargs: Any):
     request = text_to_speech_pb2.SynthesizeRequest(**req_kwargs)
-    response = stub.Synthesize(request=request)
+    response = t2s_service.synthesize(request=request)
 
-    print(f'Length of the generated audio is {response.audio_length} sec.',
-        f'Generation time is {response.generation_time} sec.')
+    print(
+        f"Length of the generated audio is {response.audio_length} sec.",
+        f"Generation time is {response.generation_time} sec.",
+    )
 
     bio = io.BytesIO(response.audio)
     audio = sf.read(bio)
@@ -48,31 +53,36 @@ def synthesis_request(stub, **req_kwargs):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='API example.')
+    parser = argparse.ArgumentParser(description="API example.")
     parser.add_argument("--config", type=str)
-    parser.add_argument("--secure", default=False, action='store_true')
+    parser.add_argument("--secure", default=False, action="store_true")
     args = parser.parse_args()
 
-    # 1. Create a stub which is used to connect to the server
-    stub = grpc_utils.create_stub(args.config, args.secure)
+    with open(args.config) as f:
+        config: ClientConfig = json.load(f)
 
-    # 2. List all avaialable pipelines and filter on english language ones
+    client: Client = Client(config=config, use_secure_channel=args.secure)
+    t2s_service: Text2Speech = client.services.text_to_speech
+
+    # 2. List all available pipelines and filter on english language ones
     # List all t2s pipelines present on the server
-    pipelines = stub.ListT2sPipelines(request=Empty()).pipelines
+    t2s_service.list_t2s_pipelines(request=ListT2sPipelinesRequest()).pipelines
 
     # List pipelines based on conditions
-    german_pipelines = stub.ListT2sPipelines(request=text_to_speech_pb2.ListT2sPipelinesRequest(
-        languages=['de'])).pipelines
-    german_pipeline = german_pipelines[0]
+    german_pipelines = t2s_service.list_t2s_pipelines(
+        request=ListT2sPipelinesRequest(languages=["de"])
+    ).pipelines
+    german_pipeline: Text2SpeechConfig = german_pipelines[0]
 
     # 3. Send a synthesis request to the specified pipeline
     # Make synthesize request to the server to get audio for given text
-    audio = synthesis_request(stub, text="Hallo, wie geht es dir?", t2s_pipeline_id=german_pipeline.id)
+    audio = synthesis_request(t2s_service, text="Hallo, wie geht es dir?", t2s_pipeline_id=german_pipeline.id)
     ipd.Audio(audio[0], rate=audio[1])
 
     # Adding length scale parameter to make speech faster or slower
-    audio = synthesis_request(stub, text='Hallo, wie geht es dir?', t2s_pipeline_id=german_pipeline.id,
-                                                length_scale=0.5)
+    audio = synthesis_request(
+        t2s_service, text="Hallo, wie geht es dir?", t2s_pipeline_id=german_pipeline.id, length_scale=0.5
+    )
     ipd.Audio(audio[0], rate=audio[1])
 
     # 4. Update a specified pipeline
@@ -80,18 +90,18 @@ def main():
     german_pipeline.inference.composite_inference.text2mel.glow_tts.length_scale = 2
 
     # Update pipeline
-    stub.UpdateT2sPipeline(request=german_pipeline)
+    t2s_service.update_t2s_pipeline(request=german_pipeline)
 
     # 5. Send a synthesis request to the updated pipeline
     # See if generated audio change according to updated config
-    audio = synthesis_request(stub, text='Hallo, wie geht es dir?', t2s_pipeline_id=german_pipeline.id)
+    audio = synthesis_request(t2s_service, text="Hallo, wie geht es dir?", t2s_pipeline_id=german_pipeline.id)
     ipd.Audio(audio[0], rate=audio[1])
 
     # 6. Revert the update of the specified pipeline
     # Change parameter back to previous (length_scale = 1.0)
     german_pipeline.inference.composite_inference.text2mel.glow_tts.length_scale = 1.0
-    stub.UpdateT2sPipeline(request=german_pipeline)
+    t2s_service.update_t2s_pipeline(request=german_pipeline)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
