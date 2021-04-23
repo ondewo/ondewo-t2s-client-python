@@ -7,7 +7,7 @@ from ondewo.t2s.client.services_container import ServicesContainer
 
 class Client(BaseClient):
     """
-    The core python client for interacting with ONDEWO S2T services.
+    The core python client for interacting with ONDEWO T2S services.
     """
 
     def _initialize_services(self, config: BaseClientConfig, use_secure_channel: bool) -> None:

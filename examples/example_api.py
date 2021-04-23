@@ -16,7 +16,6 @@
 
 import argparse
 import io
-import json
 from typing import Any
 
 import IPython.display as ipd
@@ -59,7 +58,7 @@ def main():
     args = parser.parse_args()
 
     with open(args.config) as f:
-        config: ClientConfig = json.load(f)
+        config: ClientConfig = ClientConfig.from_json(f.read())
 
     client: Client = Client(config=config, use_secure_channel=args.secure)
     t2s_service: Text2Speech = client.services.text_to_speech

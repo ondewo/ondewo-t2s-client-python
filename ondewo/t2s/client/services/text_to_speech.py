@@ -14,9 +14,9 @@ from ondewo.t2s.text_to_speech_pb2_grpc import Text2SpeechStub
 
 class Text2Speech(BaseServicesInterface):
     """
-    Exposes the s2t endpoints of ONDEWO s2t in a user-friendly way.
+    Exposes the t2s endpoints of ONDEWO t2s in a user-friendly way.
 
-    See speech_to_text.proto.
+    See text_to_speech.proto.
     """
 
     @property
