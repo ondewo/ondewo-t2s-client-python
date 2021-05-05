@@ -1,7 +1,7 @@
 # Release History
 *****************
 
-## ONDEWO-T2S Python Client 1.4.0
+## ONDEWO-T2S Python Client 1.4.1
 
 ### New Features
  * push to pypi
