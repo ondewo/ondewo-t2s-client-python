@@ -1,6 +1,12 @@
 # Release History
 *****************
 
+## ONDEWO-T2S Python Client 1.5.0
+
+### New Features
+ * Abstracted GRPC from the client to be easier to use
+
+*****************
 ## ONDEWO-T2S Python Client 1.4.1
 
 ### New Features
