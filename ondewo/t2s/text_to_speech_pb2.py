@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1fondewo/t2s/text-to-speech.proto\x12\nondewo.t2s\x1a\x1bgoogle/protobuf/empty.proto\"\xb3\x02\n\x11SynthesizeRequest\x12\x17\n\x0ft2s_pipeline_id\x18\x01 \x01(\t\x12\x0c\n\x04text\x18\x02 \x01(\t\x12\x14\n\x0clength_scale\x18\x03 \x01(\x02\x12\x13\n\x0bnoise_scale\x18\x04 \x01(\x02\x12\x13\n\x0bsample_rate\x18\x05 \x01(\x05\x12.\n\x03pcm\x18\x06 \x01(\x0e\x32!.ondewo.t2s.SynthesizeRequest.Pcm\x12-\n\x0c\x61udio_format\x18\x07 \x01(\x0e\x32\x17.ondewo.t2s.AudioFormat\"X\n\x03Pcm\x12\n\n\x06PCM_16\x10\x00\x12\n\n\x06PCM_24\x10\x01\x12\n\n\x06PCM_32\x10\x02\x12\n\n\x06PCM_S8\x10\x03\x12\n\n\x06PCM_U8\x10\x04\x12\t\n\x05\x46LOAT\x10\x05\x12\n\n\x06\x44OUBLE\x10\x06\"\xbd\x01\n\x12SynthesizeResponse\x12\r\n\x05\x61udio\x18\x01 \x01(\x0c\x12\x17\n\x0fgeneration_time\x18\x02 \x01(\x02\x12\x14\n\x0c\x61udio_length\x18\x03 \x01(\x02\x12\x17\n\x0ft2s_pipeline_id\x18\x04 \x01(\t\x12-\n\x0c\x61udio_format\x18\x05 \x01(\x0e\x32\x17.ondewo.t2s.AudioFormat\x12\x0c\n\x04text\x18\x06 \x01(\t\x12\x13\n\x0bsample_rate\x18\x07 \x01(\x05\"\x84\x01\n\x17ListT2sPipelinesRequest\x12\x11\n\tlanguages\x18\x01 \x03(\t\x12\x15\n\rspeaker_sexes\x18\x02 \x03(\t\x12\x17\n\x0fpipeline_owners\x18\x03 \x03(\t\x12\x15\n\rspeaker_names\x18\x04 \x03(\t\x12\x0f\n\x07\x64omains\x18\x05 \x03(\t\"L\n\x18ListT2sPipelinesResponse\x12\x30\n\tpipelines\x18\x01 \x03(\x0b\x32\x1d.ondewo.t2s.Text2SpeechConfig\"\x1b\n\rT2sPipelineId\x12\n\n\x02id\x18\x01 \x01(\t\"\xed\x01\n\x11Text2SpeechConfig\x12\n\n\x02id\x18\x01 \x01(\t\x12,\n\x0b\x64\x65scription\x18\x02 \x01(\x0b\x32\x17.ondewo.t2s.Description\x12\x0e\n\x06\x61\x63tive\x18\x03 \x01(\x08\x12(\n\tinference\x18\x04 \x01(\x0b\x32\x15.ondewo.t2s.Inference\x12\x30\n\rnormalization\x18\x05 \x01(\x0b\x32\x19.ondewo.t2s.Normalization\x12\x32\n\x0epostprocessing\x18\x06 \x01(\x0b\x32\x1a.ondewo.t2s.Postprocessing\"\x84\x01\n\x0b\x44\x65scription\x12\x10\n\x08language\x18\x01 \x01(\t\x12\x13\n\x0bspeaker_sex\x18\x02 \x01(\t\x12\x16\n\x0epipeline_owner\x18\x03 \x01(\t\x12\x10\n\x08\x63omments\x18\x04 \x01(\t\x12\x14\n\x0cspeaker_name\x18\x05 \x01(\t\x12\x0e\n\x06\x64omain\x18\x06 \x01(\t\"|\n\tInference\x12\x0c\n\x04type\x18\x01 \x01(\t\x12;\n\x13\x63omposite_inference\x18\x02 \x01(\x0b\x32\x1e.ondewo.t2s.CompositeInference\x12$\n\x07\x63\x61\x63hing\x18\x03 \x01(\x0b\x32\x13.ondewo.t2s.Caching\"f\n\x12\x43ompositeInference\x12&\n\x08text2mel\x18\x01 \x01(\x0b\x32\x14.ondewo.t2s.Text2Mel\x12(\n\tmel2audio\x18\x02 \x01(\x0b\x32\x15.ondewo.t2s.Mel2Audio\"s\n\x08Text2Mel\x12\x0c\n\x04type\x18\x01 \x01(\t\x12%\n\x08glow_tts\x18\x03 \x01(\x0b\x32\x13.ondewo.t2s.GlowTTS\x12\x32\n\x0fglow_tts_triton\x18\x04 \x01(\x0b\x32\x19.ondewo.t2s.GlowTTSTriton\"\x94\x01\n\x07GlowTTS\x12\x12\n\nbatch_size\x18\x01 \x01(\x03\x12\x0f\n\x07use_gpu\x18\x02 \x01(\x08\x12\x14\n\x0clength_scale\x18\x03 \x01(\x02\x12\x13\n\x0bnoise_scale\x18\x04 \x01(\x02\x12\x0c\n\x04path\x18\x05 \x01(\t\x12\x10\n\x08\x63leaners\x18\x06 \x03(\t\x12\x19\n\x11param_config_path\x18\x07 \x01(\t\"\xc3\x01\n\rGlowTTSTriton\x12\x12\n\nbatch_size\x18\x01 \x01(\x03\x12\x14\n\x0clength_scale\x18\x02 \x01(\x02\x12\x13\n\x0bnoise_scale\x18\x03 \x01(\x02\x12\x10\n\x08\x63leaners\x18\x04 \x03(\t\x12\x17\n\x0fmax_text_length\x18\x05 \x01(\x03\x12\x19\n\x11param_config_path\x18\x06 \x01(\t\x12\x12\n\ntriton_url\x18\x07 \x01(\t\x12\x19\n\x11triton_model_name\x18\x08 \x01(\t\"\xaa\x01\n\tMel2Audio\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x34\n\x10mb_melgan_triton\x18\x02 \x01(\x0b\x32\x1a.ondewo.t2s.MbMelganTriton\x12%\n\x08hifi_gan\x18\x03 \x01(\x0b\x32\x13.ondewo.t2s.HiFiGan\x12\x32\n\x0fhifi_gan_triton\x18\x04 \x01(\x0b\x32\x19.ondewo.t2s.HiFiGanTriton\"W\n\x07HiFiGan\x12\x0f\n\x07use_gpu\x18\x01 \x01(\x08\x12\x12\n\nbatch_size\x18\x02 \x01(\x03\x12\x13\n\x0b\x63onfig_path\x18\x03 \x01(\t\x12\x12\n\nmodel_path\x18\x04 \x01(\t\"S\n\rHiFiGanTriton\x12\x13\n\x0b\x63onfig_path\x18\x01 \x01(\t\x12\x19\n\x11triton_model_name\x18\x02 \x01(\t\x12\x12\n\ntriton_url\x18\x03 \x01(\t\"h\n\x0eMbMelganTriton\x12\x13\n\x0b\x63onfig_path\x18\x01 \x01(\t\x12\x12\n\nstats_path\x18\x02 \x01(\t\x12\x19\n\x11triton_model_name\x18\x03 \x01(\t\x12\x12\n\ntriton_url\x18\x04 \x01(\t\"\x8f\x01\n\x07\x43\x61\x63hing\x12\x0e\n\x06\x61\x63tive\x18\x01 \x01(\x08\x12\x1d\n\x15memory_cache_max_size\x18\x02 \x01(\x03\x12\x15\n\rsampling_rate\x18\x03 \x01(\x03\x12\x12\n\nload_cache\x18\x04 \x01(\x08\x12\x12\n\nsave_cache\x18\x05 \x01(\x08\x12\x16\n\x0e\x63\x61\x63he_save_dir\x18\x06 \x01(\t\"3\n\rNormalization\x12\x10\n\x08language\x18\x01 \x01(\t\x12\x10\n\x08pipeline\x18\x02 \x03(\t\"\xb0\x01\n\x0ePostprocessing\x12\x14\n\x0csilence_secs\x18\x01 \x01(\x02\x12\x10\n\x08pipeline\x18\x02 \x03(\t\x12$\n\x07logmmse\x18\x03 \x01(\x0b\x32\x13.ondewo.t2s.Logmnse\x12\"\n\x06wiener\x18\x04 \x01(\x0b\x32\x12.ondewo.t2s.Wiener\x12,\n\x0b\x61podization\x18\x05 \x01(\x0b\x32\x17.ondewo.t2s.Apodization\"N\n\x07Logmnse\x12\x15\n\rinitial_noise\x18\x01 \x01(\x03\x12\x13\n\x0bwindow_size\x18\x02 \x01(\x03\x12\x17\n\x0fnoise_threshold\x18\x03 \x01(\x02\"a\n\x06Wiener\x12\x11\n\tframe_len\x18\x01 \x01(\x03\x12\x11\n\tlpc_order\x18\x02 \x01(\x03\x12\x12\n\niterations\x18\x03 \x01(\x03\x12\r\n\x05\x61lpha\x18\x04 \x01(\x02\x12\x0e\n\x06thresh\x18\x05 \x01(\x02\"\'\n\x0b\x41podization\x12\x18\n\x10\x61podization_secs\x18\x01 \x01(\x02*M\n\x0b\x41udioFormat\x12\x07\n\x03wav\x10\x00\x12\x08\n\x04\x66lac\x10\x01\x12\x07\n\x03\x63\x61\x66\x10\x02\x12\x07\n\x03mp3\x10\x03\x12\x07\n\x03\x61\x61\x63\x10\x04\x12\x07\n\x03ogg\x10\x05\x12\x07\n\x03wma\x10\x06\x32\xf4\x03\n\x0bText2Speech\x12M\n\nSynthesize\x12\x1d.ondewo.t2s.SynthesizeRequest\x1a\x1e.ondewo.t2s.SynthesizeResponse\"\x00\x12L\n\x0eGetT2sPipeline\x12\x19.ondewo.t2s.T2sPipelineId\x1a\x1d.ondewo.t2s.Text2SpeechConfig\"\x00\x12O\n\x11\x43reateT2sPipeline\x12\x1d.ondewo.t2s.Text2SpeechConfig\x1a\x19.ondewo.t2s.T2sPipelineId\"\x00\x12H\n\x11\x44\x65leteT2sPipeline\x12\x19.ondewo.t2s.T2sPipelineId\x1a\x16.google.protobuf.Empty\"\x00\x12L\n\x11UpdateT2sPipeline\x12\x1d.ondewo.t2s.Text2SpeechConfig\x1a\x16.google.protobuf.Empty\"\x00\x12_\n\x10ListT2sPipelines\x12#.ondewo.t2s.ListT2sPipelinesRequest\x1a$.ondewo.t2s.ListT2sPipelinesResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x1fondewo/t2s/text-to-speech.proto\x12\nondewo.t2s\x1a\x1bgoogle/protobuf/empty.proto\"\xb3\x02\n\x11SynthesizeRequest\x12\x17\n\x0ft2s_pipeline_id\x18\x01 \x01(\t\x12\x0c\n\x04text\x18\x02 \x01(\t\x12\x14\n\x0clength_scale\x18\x03 \x01(\x02\x12\x13\n\x0bnoise_scale\x18\x04 \x01(\x02\x12\x13\n\x0bsample_rate\x18\x05 \x01(\x05\x12.\n\x03pcm\x18\x06 \x01(\x0e\x32!.ondewo.t2s.SynthesizeRequest.Pcm\x12-\n\x0c\x61udio_format\x18\x07 \x01(\x0e\x32\x17.ondewo.t2s.AudioFormat\"X\n\x03Pcm\x12\n\n\x06PCM_16\x10\x00\x12\n\n\x06PCM_24\x10\x01\x12\n\n\x06PCM_32\x10\x02\x12\n\n\x06PCM_S8\x10\x03\x12\n\n\x06PCM_U8\x10\x04\x12\t\n\x05\x46LOAT\x10\x05\x12\n\n\x06\x44OUBLE\x10\x06\"\xbd\x01\n\x12SynthesizeResponse\x12\r\n\x05\x61udio\x18\x01 \x01(\x0c\x12\x17\n\x0fgeneration_time\x18\x02 \x01(\x02\x12\x14\n\x0c\x61udio_length\x18\x03 \x01(\x02\x12\x17\n\x0ft2s_pipeline_id\x18\x04 \x01(\t\x12-\n\x0c\x61udio_format\x18\x05 \x01(\x0e\x32\x17.ondewo.t2s.AudioFormat\x12\x0c\n\x04text\x18\x06 \x01(\t\x12\x13\n\x0bsample_rate\x18\x07 \x01(\x05\"\x84\x01\n\x17ListT2sPipelinesRequest\x12\x11\n\tlanguages\x18\x01 \x03(\t\x12\x15\n\rspeaker_sexes\x18\x02 \x03(\t\x12\x17\n\x0fpipeline_owners\x18\x03 \x03(\t\x12\x15\n\rspeaker_names\x18\x04 \x03(\t\x12\x0f\n\x07\x64omains\x18\x05 \x03(\t\"L\n\x18ListT2sPipelinesResponse\x12\x30\n\tpipelines\x18\x01 \x03(\x0b\x32\x1d.ondewo.t2s.Text2SpeechConfig\"q\n\x17ListT2sLanguagesRequest\x12\x15\n\rspeaker_sexes\x18\x01 \x03(\t\x12\x17\n\x0fpipeline_owners\x18\x02 \x03(\t\x12\x15\n\rspeaker_names\x18\x03 \x03(\t\x12\x0f\n\x07\x64omains\x18\x04 \x03(\t\"-\n\x18ListT2sLanguagesResponse\x12\x11\n\tlanguages\x18\x01 \x03(\t\"q\n\x15ListT2sDomainsRequest\x12\x15\n\rspeaker_sexes\x18\x01 \x03(\t\x12\x17\n\x0fpipeline_owners\x18\x02 \x03(\t\x12\x15\n\rspeaker_names\x18\x03 \x03(\t\x12\x11\n\tlanguages\x18\x04 \x03(\t\")\n\x16ListT2sDomainsResponse\x12\x0f\n\x07\x64omains\x18\x01 \x03(\t\"\x1b\n\rT2sPipelineId\x12\n\n\x02id\x18\x01 \x01(\t\"\xed\x01\n\x11Text2SpeechConfig\x12\n\n\x02id\x18\x01 \x01(\t\x12,\n\x0b\x64\x65scription\x18\x02 \x01(\x0b\x32\x17.ondewo.t2s.Description\x12\x0e\n\x06\x61\x63tive\x18\x03 \x01(\x08\x12(\n\tinference\x18\x04 \x01(\x0b\x32\x15.ondewo.t2s.Inference\x12\x30\n\rnormalization\x18\x05 \x01(\x0b\x32\x19.ondewo.t2s.Normalization\x12\x32\n\x0epostprocessing\x18\x06 \x01(\x0b\x32\x1a.ondewo.t2s.Postprocessing\"\x84\x01\n\x0b\x44\x65scription\x12\x10\n\x08language\x18\x01 \x01(\t\x12\x13\n\x0bspeaker_sex\x18\x02 \x01(\t\x12\x16\n\x0epipeline_owner\x18\x03 \x01(\t\x12\x10\n\x08\x63omments\x18\x04 \x01(\t\x12\x14\n\x0cspeaker_name\x18\x05 \x01(\t\x12\x0e\n\x06\x64omain\x18\x06 \x01(\t\"|\n\tInference\x12\x0c\n\x04type\x18\x01 \x01(\t\x12;\n\x13\x63omposite_inference\x18\x02 \x01(\x0b\x32\x1e.ondewo.t2s.CompositeInference\x12$\n\x07\x63\x61\x63hing\x18\x03 \x01(\x0b\x32\x13.ondewo.t2s.Caching\"f\n\x12\x43ompositeInference\x12&\n\x08text2mel\x18\x01 \x01(\x0b\x32\x14.ondewo.t2s.Text2Mel\x12(\n\tmel2audio\x18\x02 \x01(\x0b\x32\x15.ondewo.t2s.Mel2Audio\"s\n\x08Text2Mel\x12\x0c\n\x04type\x18\x01 \x01(\t\x12%\n\x08glow_tts\x18\x03 \x01(\x0b\x32\x13.ondewo.t2s.GlowTTS\x12\x32\n\x0fglow_tts_triton\x18\x04 \x01(\x0b\x32\x19.ondewo.t2s.GlowTTSTriton\"\x94\x01\n\x07GlowTTS\x12\x12\n\nbatch_size\x18\x01 \x01(\x03\x12\x0f\n\x07use_gpu\x18\x02 \x01(\x08\x12\x14\n\x0clength_scale\x18\x03 \x01(\x02\x12\x13\n\x0bnoise_scale\x18\x04 \x01(\x02\x12\x0c\n\x04path\x18\x05 \x01(\t\x12\x10\n\x08\x63leaners\x18\x06 \x03(\t\x12\x19\n\x11param_config_path\x18\x07 \x01(\t\"\xc3\x01\n\rGlowTTSTriton\x12\x12\n\nbatch_size\x18\x01 \x01(\x03\x12\x14\n\x0clength_scale\x18\x02 \x01(\x02\x12\x13\n\x0bnoise_scale\x18\x03 \x01(\x02\x12\x10\n\x08\x63leaners\x18\x04 \x03(\t\x12\x17\n\x0fmax_text_length\x18\x05 \x01(\x03\x12\x19\n\x11param_config_path\x18\x06 \x01(\t\x12\x12\n\ntriton_url\x18\x07 \x01(\t\x12\x19\n\x11triton_model_name\x18\x08 \x01(\t\"\xaa\x01\n\tMel2Audio\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x34\n\x10mb_melgan_triton\x18\x02 \x01(\x0b\x32\x1a.ondewo.t2s.MbMelganTriton\x12%\n\x08hifi_gan\x18\x03 \x01(\x0b\x32\x13.ondewo.t2s.HiFiGan\x12\x32\n\x0fhifi_gan_triton\x18\x04 \x01(\x0b\x32\x19.ondewo.t2s.HiFiGanTriton\"W\n\x07HiFiGan\x12\x0f\n\x07use_gpu\x18\x01 \x01(\x08\x12\x12\n\nbatch_size\x18\x02 \x01(\x03\x12\x13\n\x0b\x63onfig_path\x18\x03 \x01(\t\x12\x12\n\nmodel_path\x18\x04 \x01(\t\"S\n\rHiFiGanTriton\x12\x13\n\x0b\x63onfig_path\x18\x01 \x01(\t\x12\x19\n\x11triton_model_name\x18\x02 \x01(\t\x12\x12\n\ntriton_url\x18\x03 \x01(\t\"h\n\x0eMbMelganTriton\x12\x13\n\x0b\x63onfig_path\x18\x01 \x01(\t\x12\x12\n\nstats_path\x18\x02 \x01(\t\x12\x19\n\x11triton_model_name\x18\x03 \x01(\t\x12\x12\n\ntriton_url\x18\x04 \x01(\t\"\x8f\x01\n\x07\x43\x61\x63hing\x12\x0e\n\x06\x61\x63tive\x18\x01 \x01(\x08\x12\x1d\n\x15memory_cache_max_size\x18\x02 \x01(\x03\x12\x15\n\rsampling_rate\x18\x03 \x01(\x03\x12\x12\n\nload_cache\x18\x04 \x01(\x08\x12\x12\n\nsave_cache\x18\x05 \x01(\x08\x12\x16\n\x0e\x63\x61\x63he_save_dir\x18\x06 \x01(\t\"Q\n\rNormalization\x12\x10\n\x08language\x18\x01 \x01(\t\x12\x10\n\x08pipeline\x18\x02 \x03(\t\x12\x1c\n\x14\x63ustom_phonemizer_id\x18\x03 \x01(\t\"\xb0\x01\n\x0ePostprocessing\x12\x14\n\x0csilence_secs\x18\x01 \x01(\x02\x12\x10\n\x08pipeline\x18\x02 \x03(\t\x12$\n\x07logmmse\x18\x03 \x01(\x0b\x32\x13.ondewo.t2s.Logmnse\x12\"\n\x06wiener\x18\x04 \x01(\x0b\x32\x12.ondewo.t2s.Wiener\x12,\n\x0b\x61podization\x18\x05 \x01(\x0b\x32\x17.ondewo.t2s.Apodization\"N\n\x07Logmnse\x12\x15\n\rinitial_noise\x18\x01 \x01(\x03\x12\x13\n\x0bwindow_size\x18\x02 \x01(\x03\x12\x17\n\x0fnoise_threshold\x18\x03 \x01(\x02\"a\n\x06Wiener\x12\x11\n\tframe_len\x18\x01 \x01(\x03\x12\x11\n\tlpc_order\x18\x02 \x01(\x03\x12\x12\n\niterations\x18\x03 \x01(\x03\x12\r\n\x05\x61lpha\x18\x04 \x01(\x02\x12\x0e\n\x06thresh\x18\x05 \x01(\x02\"\'\n\x0b\x41podization\x12\x18\n\x10\x61podization_secs\x18\x01 \x01(\x02*M\n\x0b\x41udioFormat\x12\x07\n\x03wav\x10\x00\x12\x08\n\x04\x66lac\x10\x01\x12\x07\n\x03\x63\x61\x66\x10\x02\x12\x07\n\x03mp3\x10\x03\x12\x07\n\x03\x61\x61\x63\x10\x04\x12\x07\n\x03ogg\x10\x05\x12\x07\n\x03wma\x10\x06\x32\xb0\x05\n\x0bText2Speech\x12M\n\nSynthesize\x12\x1d.ondewo.t2s.SynthesizeRequest\x1a\x1e.ondewo.t2s.SynthesizeResponse\"\x00\x12L\n\x0eGetT2sPipeline\x12\x19.ondewo.t2s.T2sPipelineId\x1a\x1d.ondewo.t2s.Text2SpeechConfig\"\x00\x12O\n\x11\x43reateT2sPipeline\x12\x1d.ondewo.t2s.Text2SpeechConfig\x1a\x19.ondewo.t2s.T2sPipelineId\"\x00\x12H\n\x11\x44\x65leteT2sPipeline\x12\x19.ondewo.t2s.T2sPipelineId\x1a\x16.google.protobuf.Empty\"\x00\x12L\n\x11UpdateT2sPipeline\x12\x1d.ondewo.t2s.Text2SpeechConfig\x1a\x16.google.protobuf.Empty\"\x00\x12_\n\x10ListT2sPipelines\x12#.ondewo.t2s.ListT2sPipelinesRequest\x1a$.ondewo.t2s.ListT2sPipelinesResponse\"\x00\x12_\n\x10ListT2sLanguages\x12#.ondewo.t2s.ListT2sLanguagesRequest\x1a$.ondewo.t2s.ListT2sLanguagesResponse\"\x00\x12Y\n\x0eListT2sDomains\x12!.ondewo.t2s.ListT2sDomainsRequest\x1a\".ondewo.t2s.ListT2sDomainsResponse\"\x00\x62\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -70,8 +70,8 @@ _AUDIOFORMAT = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=2942,
-  serialized_end=3019,
+  serialized_start=3292,
+  serialized_end=3369,
 )
 _sym_db.RegisterEnumDescriptor(_AUDIOFORMAT)
 
@@ -377,6 +377,176 @@ _LISTT2SPIPELINESRESPONSE = _descriptor.Descriptor(
 )
 
 
+_LISTT2SLANGUAGESREQUEST = _descriptor.Descriptor(
+  name='ListT2sLanguagesRequest',
+  full_name='ondewo.t2s.ListT2sLanguagesRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='speaker_sexes', full_name='ondewo.t2s.ListT2sLanguagesRequest.speaker_sexes', index=0,
+      number=1, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='pipeline_owners', full_name='ondewo.t2s.ListT2sLanguagesRequest.pipeline_owners', index=1,
+      number=2, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='speaker_names', full_name='ondewo.t2s.ListT2sLanguagesRequest.speaker_names', index=2,
+      number=3, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='domains', full_name='ondewo.t2s.ListT2sLanguagesRequest.domains', index=3,
+      number=4, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=791,
+  serialized_end=904,
+)
+
+
+_LISTT2SLANGUAGESRESPONSE = _descriptor.Descriptor(
+  name='ListT2sLanguagesResponse',
+  full_name='ondewo.t2s.ListT2sLanguagesResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='languages', full_name='ondewo.t2s.ListT2sLanguagesResponse.languages', index=0,
+      number=1, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=906,
+  serialized_end=951,
+)
+
+
+_LISTT2SDOMAINSREQUEST = _descriptor.Descriptor(
+  name='ListT2sDomainsRequest',
+  full_name='ondewo.t2s.ListT2sDomainsRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='speaker_sexes', full_name='ondewo.t2s.ListT2sDomainsRequest.speaker_sexes', index=0,
+      number=1, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='pipeline_owners', full_name='ondewo.t2s.ListT2sDomainsRequest.pipeline_owners', index=1,
+      number=2, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='speaker_names', full_name='ondewo.t2s.ListT2sDomainsRequest.speaker_names', index=2,
+      number=3, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='languages', full_name='ondewo.t2s.ListT2sDomainsRequest.languages', index=3,
+      number=4, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=953,
+  serialized_end=1066,
+)
+
+
+_LISTT2SDOMAINSRESPONSE = _descriptor.Descriptor(
+  name='ListT2sDomainsResponse',
+  full_name='ondewo.t2s.ListT2sDomainsResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='domains', full_name='ondewo.t2s.ListT2sDomainsResponse.domains', index=0,
+      number=1, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1068,
+  serialized_end=1109,
+)
+
+
 _T2SPIPELINEID = _descriptor.Descriptor(
   name='T2sPipelineId',
   full_name='ondewo.t2s.T2sPipelineId',
@@ -404,8 +574,8 @@ _T2SPIPELINEID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=791,
-  serialized_end=818,
+  serialized_start=1111,
+  serialized_end=1138,
 )
 
 
@@ -471,8 +641,8 @@ _TEXT2SPEECHCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=821,
-  serialized_end=1058,
+  serialized_start=1141,
+  serialized_end=1378,
 )
 
 
@@ -538,8 +708,8 @@ _DESCRIPTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1061,
-  serialized_end=1193,
+  serialized_start=1381,
+  serialized_end=1513,
 )
 
 
@@ -584,8 +754,8 @@ _INFERENCE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1195,
-  serialized_end=1319,
+  serialized_start=1515,
+  serialized_end=1639,
 )
 
 
@@ -623,8 +793,8 @@ _COMPOSITEINFERENCE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1321,
-  serialized_end=1423,
+  serialized_start=1641,
+  serialized_end=1743,
 )
 
 
@@ -669,8 +839,8 @@ _TEXT2MEL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1425,
-  serialized_end=1540,
+  serialized_start=1745,
+  serialized_end=1860,
 )
 
 
@@ -743,8 +913,8 @@ _GLOWTTS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1543,
-  serialized_end=1691,
+  serialized_start=1863,
+  serialized_end=2011,
 )
 
 
@@ -824,8 +994,8 @@ _GLOWTTSTRITON = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1694,
-  serialized_end=1889,
+  serialized_start=2014,
+  serialized_end=2209,
 )
 
 
@@ -877,8 +1047,8 @@ _MEL2AUDIO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1892,
-  serialized_end=2062,
+  serialized_start=2212,
+  serialized_end=2382,
 )
 
 
@@ -930,8 +1100,8 @@ _HIFIGAN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2064,
-  serialized_end=2151,
+  serialized_start=2384,
+  serialized_end=2471,
 )
 
 
@@ -976,8 +1146,8 @@ _HIFIGANTRITON = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2153,
-  serialized_end=2236,
+  serialized_start=2473,
+  serialized_end=2556,
 )
 
 
@@ -1029,8 +1199,8 @@ _MBMELGANTRITON = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2238,
-  serialized_end=2342,
+  serialized_start=2558,
+  serialized_end=2662,
 )
 
 
@@ -1096,8 +1266,8 @@ _CACHING = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2345,
-  serialized_end=2488,
+  serialized_start=2665,
+  serialized_end=2808,
 )
 
 
@@ -1123,6 +1293,13 @@ _NORMALIZATION = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='custom_phonemizer_id', full_name='ondewo.t2s.Normalization.custom_phonemizer_id', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1135,8 +1312,8 @@ _NORMALIZATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2490,
-  serialized_end=2541,
+  serialized_start=2810,
+  serialized_end=2891,
 )
 
 
@@ -1195,8 +1372,8 @@ _POSTPROCESSING = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2544,
-  serialized_end=2720,
+  serialized_start=2894,
+  serialized_end=3070,
 )
 
 
@@ -1241,8 +1418,8 @@ _LOGMNSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2722,
-  serialized_end=2800,
+  serialized_start=3072,
+  serialized_end=3150,
 )
 
 
@@ -1301,8 +1478,8 @@ _WIENER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2802,
-  serialized_end=2899,
+  serialized_start=3152,
+  serialized_end=3249,
 )
 
 
@@ -1333,8 +1510,8 @@ _APODIZATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2901,
-  serialized_end=2940,
+  serialized_start=3251,
+  serialized_end=3290,
 )
 
 _SYNTHESIZEREQUEST.fields_by_name['pcm'].enum_type = _SYNTHESIZEREQUEST_PCM
@@ -1362,6 +1539,10 @@ DESCRIPTOR.message_types_by_name['SynthesizeRequest'] = _SYNTHESIZEREQUEST
 DESCRIPTOR.message_types_by_name['SynthesizeResponse'] = _SYNTHESIZERESPONSE
 DESCRIPTOR.message_types_by_name['ListT2sPipelinesRequest'] = _LISTT2SPIPELINESREQUEST
 DESCRIPTOR.message_types_by_name['ListT2sPipelinesResponse'] = _LISTT2SPIPELINESRESPONSE
+DESCRIPTOR.message_types_by_name['ListT2sLanguagesRequest'] = _LISTT2SLANGUAGESREQUEST
+DESCRIPTOR.message_types_by_name['ListT2sLanguagesResponse'] = _LISTT2SLANGUAGESRESPONSE
+DESCRIPTOR.message_types_by_name['ListT2sDomainsRequest'] = _LISTT2SDOMAINSREQUEST
+DESCRIPTOR.message_types_by_name['ListT2sDomainsResponse'] = _LISTT2SDOMAINSRESPONSE
 DESCRIPTOR.message_types_by_name['T2sPipelineId'] = _T2SPIPELINEID
 DESCRIPTOR.message_types_by_name['Text2SpeechConfig'] = _TEXT2SPEECHCONFIG
 DESCRIPTOR.message_types_by_name['Description'] = _DESCRIPTION
@@ -1410,6 +1591,34 @@ ListT2sPipelinesResponse = _reflection.GeneratedProtocolMessageType('ListT2sPipe
   # @@protoc_insertion_point(class_scope:ondewo.t2s.ListT2sPipelinesResponse)
   })
 _sym_db.RegisterMessage(ListT2sPipelinesResponse)
+
+ListT2sLanguagesRequest = _reflection.GeneratedProtocolMessageType('ListT2sLanguagesRequest', (_message.Message,), {
+  'DESCRIPTOR' : _LISTT2SLANGUAGESREQUEST,
+  '__module__' : 'ondewo.t2s.text_to_speech_pb2'
+  # @@protoc_insertion_point(class_scope:ondewo.t2s.ListT2sLanguagesRequest)
+  })
+_sym_db.RegisterMessage(ListT2sLanguagesRequest)
+
+ListT2sLanguagesResponse = _reflection.GeneratedProtocolMessageType('ListT2sLanguagesResponse', (_message.Message,), {
+  'DESCRIPTOR' : _LISTT2SLANGUAGESRESPONSE,
+  '__module__' : 'ondewo.t2s.text_to_speech_pb2'
+  # @@protoc_insertion_point(class_scope:ondewo.t2s.ListT2sLanguagesResponse)
+  })
+_sym_db.RegisterMessage(ListT2sLanguagesResponse)
+
+ListT2sDomainsRequest = _reflection.GeneratedProtocolMessageType('ListT2sDomainsRequest', (_message.Message,), {
+  'DESCRIPTOR' : _LISTT2SDOMAINSREQUEST,
+  '__module__' : 'ondewo.t2s.text_to_speech_pb2'
+  # @@protoc_insertion_point(class_scope:ondewo.t2s.ListT2sDomainsRequest)
+  })
+_sym_db.RegisterMessage(ListT2sDomainsRequest)
+
+ListT2sDomainsResponse = _reflection.GeneratedProtocolMessageType('ListT2sDomainsResponse', (_message.Message,), {
+  'DESCRIPTOR' : _LISTT2SDOMAINSRESPONSE,
+  '__module__' : 'ondewo.t2s.text_to_speech_pb2'
+  # @@protoc_insertion_point(class_scope:ondewo.t2s.ListT2sDomainsResponse)
+  })
+_sym_db.RegisterMessage(ListT2sDomainsResponse)
 
 T2sPipelineId = _reflection.GeneratedProtocolMessageType('T2sPipelineId', (_message.Message,), {
   'DESCRIPTOR' : _T2SPIPELINEID,
@@ -1546,8 +1755,8 @@ _TEXT2SPEECH = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=3022,
-  serialized_end=3522,
+  serialized_start=3372,
+  serialized_end=4060,
   methods=[
   _descriptor.MethodDescriptor(
     name='Synthesize',
@@ -1606,6 +1815,26 @@ _TEXT2SPEECH = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_LISTT2SPIPELINESREQUEST,
     output_type=_LISTT2SPIPELINESRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='ListT2sLanguages',
+    full_name='ondewo.t2s.Text2Speech.ListT2sLanguages',
+    index=6,
+    containing_service=None,
+    input_type=_LISTT2SLANGUAGESREQUEST,
+    output_type=_LISTT2SLANGUAGESRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='ListT2sDomains',
+    full_name='ondewo.t2s.Text2Speech.ListT2sDomains',
+    index=7,
+    containing_service=None,
+    input_type=_LISTT2SDOMAINSREQUEST,
+    output_type=_LISTT2SDOMAINSRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

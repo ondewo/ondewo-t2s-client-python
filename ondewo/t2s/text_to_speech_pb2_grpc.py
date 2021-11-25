@@ -46,6 +46,16 @@ class Text2SpeechStub(object):
                 request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sPipelinesRequest.SerializeToString,
                 response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sPipelinesResponse.FromString,
                 )
+        self.ListT2sLanguages = channel.unary_unary(
+                '/ondewo.t2s.Text2Speech/ListT2sLanguages',
+                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sLanguagesRequest.SerializeToString,
+                response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sLanguagesResponse.FromString,
+                )
+        self.ListT2sDomains = channel.unary_unary(
+                '/ondewo.t2s.Text2Speech/ListT2sDomains',
+                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsRequest.SerializeToString,
+                response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsResponse.FromString,
+                )
 
 
 class Text2SpeechServicer(object):
@@ -88,6 +98,18 @@ class Text2SpeechServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ListT2sLanguages(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListT2sDomains(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_Text2SpeechServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -120,6 +142,16 @@ def add_Text2SpeechServicer_to_server(servicer, server):
                     servicer.ListT2sPipelines,
                     request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sPipelinesRequest.FromString,
                     response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sPipelinesResponse.SerializeToString,
+            ),
+            'ListT2sLanguages': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListT2sLanguages,
+                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sLanguagesRequest.FromString,
+                    response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sLanguagesResponse.SerializeToString,
+            ),
+            'ListT2sDomains': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListT2sDomains,
+                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsRequest.FromString,
+                    response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -231,5 +263,39 @@ class Text2Speech(object):
         return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.Text2Speech/ListT2sPipelines',
             ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sPipelinesRequest.SerializeToString,
             ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sPipelinesResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ListT2sLanguages(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.Text2Speech/ListT2sLanguages',
+            ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sLanguagesRequest.SerializeToString,
+            ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sLanguagesResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ListT2sDomains(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.Text2Speech/ListT2sDomains',
+            ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsRequest.SerializeToString,
+            ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
