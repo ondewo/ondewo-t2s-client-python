@@ -21,6 +21,11 @@ class Text2SpeechStub(object):
                 request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.SynthesizeRequest.SerializeToString,
                 response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.SynthesizeResponse.FromString,
                 )
+        self.BatchSynthesize = channel.unary_unary(
+                '/ondewo.t2s.Text2Speech/BatchSynthesize',
+                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeRequest.SerializeToString,
+                response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeResponse.FromString,
+                )
         self.GetT2sPipeline = channel.unary_unary(
                 '/ondewo.t2s.Text2Speech/GetT2sPipeline',
                 request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.T2sPipelineId.SerializeToString,
@@ -63,49 +68,65 @@ class Text2SpeechServicer(object):
     """
 
     def Synthesize(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Synthesizes an specific text sent in the request with the configuration requirements and retrieves a response
+        that includes the synthesized text to audio and the configuration wanted.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def BatchSynthesize(self, request, context):
+        """will this safe time when doing batch predict on the AI model?
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetT2sPipeline(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Retrieves the configuration of the specified pipeline.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def CreateT2sPipeline(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Creates a pipeline with the specified configuration and retrieves its id.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def DeleteT2sPipeline(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Deletes the specified pipeline.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def UpdateT2sPipeline(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Update a specified pipeline with certain configuration.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ListT2sPipelines(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Retrieve the list of pipelines with an specific requirement.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ListT2sLanguages(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Retrieve the list of languages given a specific config request.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ListT2sDomains(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Retrieve the list of domains given a specific config request.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -117,6 +138,11 @@ def add_Text2SpeechServicer_to_server(servicer, server):
                     servicer.Synthesize,
                     request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.SynthesizeRequest.FromString,
                     response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.SynthesizeResponse.SerializeToString,
+            ),
+            'BatchSynthesize': grpc.unary_unary_rpc_method_handler(
+                    servicer.BatchSynthesize,
+                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeRequest.FromString,
+                    response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeResponse.SerializeToString,
             ),
             'GetT2sPipeline': grpc.unary_unary_rpc_method_handler(
                     servicer.GetT2sPipeline,
@@ -178,6 +204,23 @@ class Text2Speech(object):
         return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.Text2Speech/Synthesize',
             ondewo_dot_t2s_dot_text__to__speech__pb2.SynthesizeRequest.SerializeToString,
             ondewo_dot_t2s_dot_text__to__speech__pb2.SynthesizeResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def BatchSynthesize(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.Text2Speech/BatchSynthesize',
+            ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeRequest.SerializeToString,
+            ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
