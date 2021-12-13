@@ -18,7 +18,7 @@ Python Installation
 ```bash
 git clone git@github.com:ondewo/ondewo-t2s-client-python.git
 cd ondewo-t2s-client-python
-pip install -r requirements.txt
+pip install -e .
 ```
 
 Let's Get Started! (WIP)
