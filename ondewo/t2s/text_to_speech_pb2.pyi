@@ -22,6 +22,7 @@ from typing import (
     Tuple as typing___Tuple,
     Union as typing___Union,
     cast as typing___cast,
+    overload as typing___overload,
 )
 
 from typing_extensions import (
@@ -38,6 +39,34 @@ if sys.version_info < (3,):
     builtin___buffer = buffer
     builtin___unicode = unicode
 
+
+class Pcm(builtin___int):
+    DESCRIPTOR: google___protobuf___descriptor___EnumDescriptor = ...
+    @classmethod
+    def Name(cls, number: builtin___int) -> builtin___str: ...
+    @classmethod
+    def Value(cls, name: builtin___str) -> 'Pcm': ...
+    @classmethod
+    def keys(cls) -> typing___List[builtin___str]: ...
+    @classmethod
+    def values(cls) -> typing___List['Pcm']: ...
+    @classmethod
+    def items(cls) -> typing___List[typing___Tuple[builtin___str, 'Pcm']]: ...
+    PCM_16 = typing___cast('Pcm', 0)
+    PCM_24 = typing___cast('Pcm', 1)
+    PCM_32 = typing___cast('Pcm', 2)
+    PCM_S8 = typing___cast('Pcm', 3)
+    PCM_U8 = typing___cast('Pcm', 4)
+    FLOAT = typing___cast('Pcm', 5)
+    DOUBLE = typing___cast('Pcm', 6)
+PCM_16 = typing___cast('Pcm', 0)
+PCM_24 = typing___cast('Pcm', 1)
+PCM_32 = typing___cast('Pcm', 2)
+PCM_S8 = typing___cast('Pcm', 3)
+PCM_U8 = typing___cast('Pcm', 4)
+FLOAT = typing___cast('Pcm', 5)
+DOUBLE = typing___cast('Pcm', 6)
+global___Pcm = Pcm
 
 class AudioFormat(builtin___int):
     DESCRIPTOR: google___protobuf___descriptor___EnumDescriptor = ...
@@ -69,51 +98,15 @@ global___AudioFormat = AudioFormat
 
 class SynthesizeRequest(google___protobuf___message___Message):
     DESCRIPTOR: google___protobuf___descriptor___Descriptor = ...
-    class Pcm(builtin___int):
-        DESCRIPTOR: google___protobuf___descriptor___EnumDescriptor = ...
-        @classmethod
-        def Name(cls, number: builtin___int) -> builtin___str: ...
-        @classmethod
-        def Value(cls, name: builtin___str) -> 'SynthesizeRequest.Pcm': ...
-        @classmethod
-        def keys(cls) -> typing___List[builtin___str]: ...
-        @classmethod
-        def values(cls) -> typing___List['SynthesizeRequest.Pcm']: ...
-        @classmethod
-        def items(cls) -> typing___List[typing___Tuple[builtin___str, 'SynthesizeRequest.Pcm']]: ...
-        PCM_16 = typing___cast('SynthesizeRequest.Pcm', 0)
-        PCM_24 = typing___cast('SynthesizeRequest.Pcm', 1)
-        PCM_32 = typing___cast('SynthesizeRequest.Pcm', 2)
-        PCM_S8 = typing___cast('SynthesizeRequest.Pcm', 3)
-        PCM_U8 = typing___cast('SynthesizeRequest.Pcm', 4)
-        FLOAT = typing___cast('SynthesizeRequest.Pcm', 5)
-        DOUBLE = typing___cast('SynthesizeRequest.Pcm', 6)
-    PCM_16 = typing___cast('SynthesizeRequest.Pcm', 0)
-    PCM_24 = typing___cast('SynthesizeRequest.Pcm', 1)
-    PCM_32 = typing___cast('SynthesizeRequest.Pcm', 2)
-    PCM_S8 = typing___cast('SynthesizeRequest.Pcm', 3)
-    PCM_U8 = typing___cast('SynthesizeRequest.Pcm', 4)
-    FLOAT = typing___cast('SynthesizeRequest.Pcm', 5)
-    DOUBLE = typing___cast('SynthesizeRequest.Pcm', 6)
-    global___Pcm = Pcm
-
-    t2s_pipeline_id = ... # type: typing___Text
     text = ... # type: typing___Text
-    length_scale = ... # type: builtin___float
-    noise_scale = ... # type: builtin___float
-    sample_rate = ... # type: builtin___int
-    pcm = ... # type: global___SynthesizeRequest.Pcm
-    audio_format = ... # type: global___AudioFormat
+
+    @property
+    def config(self) -> global___RequestConfig: ...
 
     def __init__(self,
         *,
-        t2s_pipeline_id : typing___Optional[typing___Text] = None,
         text : typing___Optional[typing___Text] = None,
-        length_scale : typing___Optional[builtin___float] = None,
-        noise_scale : typing___Optional[builtin___float] = None,
-        sample_rate : typing___Optional[builtin___int] = None,
-        pcm : typing___Optional[global___SynthesizeRequest.Pcm] = None,
-        audio_format : typing___Optional[global___AudioFormat] = None,
+        config : typing___Optional[global___RequestConfig] = None,
         ) -> None: ...
     if sys.version_info >= (3,):
         @classmethod
@@ -123,28 +116,115 @@ class SynthesizeRequest(google___protobuf___message___Message):
         def FromString(cls, s: typing___Union[builtin___bytes, builtin___buffer, builtin___unicode]) -> SynthesizeRequest: ...
     def MergeFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
     def CopyFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
-    def ClearField(self, field_name: typing_extensions___Literal[u"audio_format",b"audio_format",u"length_scale",b"length_scale",u"noise_scale",b"noise_scale",u"pcm",b"pcm",u"sample_rate",b"sample_rate",u"t2s_pipeline_id",b"t2s_pipeline_id",u"text",b"text"]) -> None: ...
+    def HasField(self, field_name: typing_extensions___Literal[u"config",b"config"]) -> builtin___bool: ...
+    def ClearField(self, field_name: typing_extensions___Literal[u"config",b"config",u"text",b"text"]) -> None: ...
 global___SynthesizeRequest = SynthesizeRequest
 
-class SynthesizeResponse(google___protobuf___message___Message):
+class BatchSynthesizeRequest(google___protobuf___message___Message):
     DESCRIPTOR: google___protobuf___descriptor___Descriptor = ...
-    audio = ... # type: builtin___bytes
-    generation_time = ... # type: builtin___float
-    audio_length = ... # type: builtin___float
-    t2s_pipeline_id = ... # type: typing___Text
-    audio_format = ... # type: global___AudioFormat
-    text = ... # type: typing___Text
-    sample_rate = ... # type: builtin___int
+
+    @property
+    def batch_request(self) -> google___protobuf___internal___containers___RepeatedCompositeFieldContainer[global___SynthesizeRequest]: ...
 
     def __init__(self,
         *,
+        batch_request : typing___Optional[typing___Iterable[global___SynthesizeRequest]] = None,
+        ) -> None: ...
+    if sys.version_info >= (3,):
+        @classmethod
+        def FromString(cls, s: builtin___bytes) -> BatchSynthesizeRequest: ...
+    else:
+        @classmethod
+        def FromString(cls, s: typing___Union[builtin___bytes, builtin___buffer, builtin___unicode]) -> BatchSynthesizeRequest: ...
+    def MergeFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def CopyFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def ClearField(self, field_name: typing_extensions___Literal[u"batch_request",b"batch_request"]) -> None: ...
+global___BatchSynthesizeRequest = BatchSynthesizeRequest
+
+class BatchSynthesizeResponse(google___protobuf___message___Message):
+    DESCRIPTOR: google___protobuf___descriptor___Descriptor = ...
+
+    @property
+    def batch_response(self) -> google___protobuf___internal___containers___RepeatedCompositeFieldContainer[global___SynthesizeResponse]: ...
+
+    def __init__(self,
+        *,
+        batch_response : typing___Optional[typing___Iterable[global___SynthesizeResponse]] = None,
+        ) -> None: ...
+    if sys.version_info >= (3,):
+        @classmethod
+        def FromString(cls, s: builtin___bytes) -> BatchSynthesizeResponse: ...
+    else:
+        @classmethod
+        def FromString(cls, s: typing___Union[builtin___bytes, builtin___buffer, builtin___unicode]) -> BatchSynthesizeResponse: ...
+    def MergeFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def CopyFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def ClearField(self, field_name: typing_extensions___Literal[u"batch_response",b"batch_response"]) -> None: ...
+global___BatchSynthesizeResponse = BatchSynthesizeResponse
+
+class RequestConfig(google___protobuf___message___Message):
+    DESCRIPTOR: google___protobuf___descriptor___Descriptor = ...
+    t2s_pipeline_id = ... # type: typing___Text
+    length_scale = ... # type: builtin___float
+    noise_scale = ... # type: builtin___float
+    sample_rate = ... # type: builtin___int
+    pcm = ... # type: global___Pcm
+    audio_format = ... # type: global___AudioFormat
+    use_cache = ... # type: builtin___bool
+
+    def __init__(self,
+        *,
+        t2s_pipeline_id : typing___Optional[typing___Text] = None,
+        length_scale : typing___Optional[builtin___float] = None,
+        noise_scale : typing___Optional[builtin___float] = None,
+        sample_rate : typing___Optional[builtin___int] = None,
+        pcm : typing___Optional[global___Pcm] = None,
+        audio_format : typing___Optional[global___AudioFormat] = None,
+        use_cache : typing___Optional[builtin___bool] = None,
+        ) -> None: ...
+    if sys.version_info >= (3,):
+        @classmethod
+        def FromString(cls, s: builtin___bytes) -> RequestConfig: ...
+    else:
+        @classmethod
+        def FromString(cls, s: typing___Union[builtin___bytes, builtin___buffer, builtin___unicode]) -> RequestConfig: ...
+    def MergeFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def CopyFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def HasField(self, field_name: typing_extensions___Literal[u"_AudioFormat",b"_AudioFormat",u"_Pcm",b"_Pcm",u"_length_scale",b"_length_scale",u"_noise_scale",b"_noise_scale",u"_sample_rate",b"_sample_rate",u"_use_cache",b"_use_cache",u"audio_format",b"audio_format",u"length_scale",b"length_scale",u"noise_scale",b"noise_scale",u"pcm",b"pcm",u"sample_rate",b"sample_rate",u"use_cache",b"use_cache"]) -> builtin___bool: ...
+    def ClearField(self, field_name: typing_extensions___Literal[u"_AudioFormat",b"_AudioFormat",u"_Pcm",b"_Pcm",u"_length_scale",b"_length_scale",u"_noise_scale",b"_noise_scale",u"_sample_rate",b"_sample_rate",u"_use_cache",b"_use_cache",u"audio_format",b"audio_format",u"length_scale",b"length_scale",u"noise_scale",b"noise_scale",u"pcm",b"pcm",u"sample_rate",b"sample_rate",u"t2s_pipeline_id",b"t2s_pipeline_id",u"use_cache",b"use_cache"]) -> None: ...
+    @typing___overload
+    def WhichOneof(self, oneof_group: typing_extensions___Literal[u"_AudioFormat",b"_AudioFormat"]) -> typing_extensions___Literal["audio_format"]: ...
+    @typing___overload
+    def WhichOneof(self, oneof_group: typing_extensions___Literal[u"_Pcm",b"_Pcm"]) -> typing_extensions___Literal["pcm"]: ...
+    @typing___overload
+    def WhichOneof(self, oneof_group: typing_extensions___Literal[u"_length_scale",b"_length_scale"]) -> typing_extensions___Literal["length_scale"]: ...
+    @typing___overload
+    def WhichOneof(self, oneof_group: typing_extensions___Literal[u"_noise_scale",b"_noise_scale"]) -> typing_extensions___Literal["noise_scale"]: ...
+    @typing___overload
+    def WhichOneof(self, oneof_group: typing_extensions___Literal[u"_sample_rate",b"_sample_rate"]) -> typing_extensions___Literal["sample_rate"]: ...
+    @typing___overload
+    def WhichOneof(self, oneof_group: typing_extensions___Literal[u"_use_cache",b"_use_cache"]) -> typing_extensions___Literal["use_cache"]: ...
+global___RequestConfig = RequestConfig
+
+class SynthesizeResponse(google___protobuf___message___Message):
+    DESCRIPTOR: google___protobuf___descriptor___Descriptor = ...
+    audio_uuid = ... # type: typing___Text
+    audio = ... # type: builtin___bytes
+    generation_time = ... # type: builtin___float
+    audio_length = ... # type: builtin___float
+    text = ... # type: typing___Text
+
+    @property
+    def config(self) -> global___RequestConfig: ...
+
+    def __init__(self,
+        *,
+        audio_uuid : typing___Optional[typing___Text] = None,
         audio : typing___Optional[builtin___bytes] = None,
         generation_time : typing___Optional[builtin___float] = None,
         audio_length : typing___Optional[builtin___float] = None,
-        t2s_pipeline_id : typing___Optional[typing___Text] = None,
-        audio_format : typing___Optional[global___AudioFormat] = None,
         text : typing___Optional[typing___Text] = None,
-        sample_rate : typing___Optional[builtin___int] = None,
+        config : typing___Optional[global___RequestConfig] = None,
         ) -> None: ...
     if sys.version_info >= (3,):
         @classmethod
@@ -154,8 +234,28 @@ class SynthesizeResponse(google___protobuf___message___Message):
         def FromString(cls, s: typing___Union[builtin___bytes, builtin___buffer, builtin___unicode]) -> SynthesizeResponse: ...
     def MergeFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
     def CopyFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
-    def ClearField(self, field_name: typing_extensions___Literal[u"audio",b"audio",u"audio_format",b"audio_format",u"audio_length",b"audio_length",u"generation_time",b"generation_time",u"sample_rate",b"sample_rate",u"t2s_pipeline_id",b"t2s_pipeline_id",u"text",b"text"]) -> None: ...
+    def HasField(self, field_name: typing_extensions___Literal[u"config",b"config"]) -> builtin___bool: ...
+    def ClearField(self, field_name: typing_extensions___Literal[u"audio",b"audio",u"audio_length",b"audio_length",u"audio_uuid",b"audio_uuid",u"config",b"config",u"generation_time",b"generation_time",u"text",b"text"]) -> None: ...
 global___SynthesizeResponse = SynthesizeResponse
+
+class GetServiceInfoResponse(google___protobuf___message___Message):
+    DESCRIPTOR: google___protobuf___descriptor___Descriptor = ...
+    version = ... # type: typing___Text
+
+    def __init__(self,
+        *,
+        version : typing___Optional[typing___Text] = None,
+        ) -> None: ...
+    if sys.version_info >= (3,):
+        @classmethod
+        def FromString(cls, s: builtin___bytes) -> GetServiceInfoResponse: ...
+    else:
+        @classmethod
+        def FromString(cls, s: typing___Union[builtin___bytes, builtin___buffer, builtin___unicode]) -> GetServiceInfoResponse: ...
+    def MergeFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def CopyFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def ClearField(self, field_name: typing_extensions___Literal[u"version",b"version"]) -> None: ...
+global___GetServiceInfoResponse = GetServiceInfoResponse
 
 class ListT2sPipelinesRequest(google___protobuf___message___Message):
     DESCRIPTOR: google___protobuf___descriptor___Descriptor = ...
@@ -204,6 +304,94 @@ class ListT2sPipelinesResponse(google___protobuf___message___Message):
     def CopyFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
     def ClearField(self, field_name: typing_extensions___Literal[u"pipelines",b"pipelines"]) -> None: ...
 global___ListT2sPipelinesResponse = ListT2sPipelinesResponse
+
+class ListT2sLanguagesRequest(google___protobuf___message___Message):
+    DESCRIPTOR: google___protobuf___descriptor___Descriptor = ...
+    speaker_sexes = ... # type: google___protobuf___internal___containers___RepeatedScalarFieldContainer[typing___Text]
+    pipeline_owners = ... # type: google___protobuf___internal___containers___RepeatedScalarFieldContainer[typing___Text]
+    speaker_names = ... # type: google___protobuf___internal___containers___RepeatedScalarFieldContainer[typing___Text]
+    domains = ... # type: google___protobuf___internal___containers___RepeatedScalarFieldContainer[typing___Text]
+
+    def __init__(self,
+        *,
+        speaker_sexes : typing___Optional[typing___Iterable[typing___Text]] = None,
+        pipeline_owners : typing___Optional[typing___Iterable[typing___Text]] = None,
+        speaker_names : typing___Optional[typing___Iterable[typing___Text]] = None,
+        domains : typing___Optional[typing___Iterable[typing___Text]] = None,
+        ) -> None: ...
+    if sys.version_info >= (3,):
+        @classmethod
+        def FromString(cls, s: builtin___bytes) -> ListT2sLanguagesRequest: ...
+    else:
+        @classmethod
+        def FromString(cls, s: typing___Union[builtin___bytes, builtin___buffer, builtin___unicode]) -> ListT2sLanguagesRequest: ...
+    def MergeFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def CopyFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def ClearField(self, field_name: typing_extensions___Literal[u"domains",b"domains",u"pipeline_owners",b"pipeline_owners",u"speaker_names",b"speaker_names",u"speaker_sexes",b"speaker_sexes"]) -> None: ...
+global___ListT2sLanguagesRequest = ListT2sLanguagesRequest
+
+class ListT2sLanguagesResponse(google___protobuf___message___Message):
+    DESCRIPTOR: google___protobuf___descriptor___Descriptor = ...
+    languages = ... # type: google___protobuf___internal___containers___RepeatedScalarFieldContainer[typing___Text]
+
+    def __init__(self,
+        *,
+        languages : typing___Optional[typing___Iterable[typing___Text]] = None,
+        ) -> None: ...
+    if sys.version_info >= (3,):
+        @classmethod
+        def FromString(cls, s: builtin___bytes) -> ListT2sLanguagesResponse: ...
+    else:
+        @classmethod
+        def FromString(cls, s: typing___Union[builtin___bytes, builtin___buffer, builtin___unicode]) -> ListT2sLanguagesResponse: ...
+    def MergeFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def CopyFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def ClearField(self, field_name: typing_extensions___Literal[u"languages",b"languages"]) -> None: ...
+global___ListT2sLanguagesResponse = ListT2sLanguagesResponse
+
+class ListT2sDomainsRequest(google___protobuf___message___Message):
+    DESCRIPTOR: google___protobuf___descriptor___Descriptor = ...
+    speaker_sexes = ... # type: google___protobuf___internal___containers___RepeatedScalarFieldContainer[typing___Text]
+    pipeline_owners = ... # type: google___protobuf___internal___containers___RepeatedScalarFieldContainer[typing___Text]
+    speaker_names = ... # type: google___protobuf___internal___containers___RepeatedScalarFieldContainer[typing___Text]
+    languages = ... # type: google___protobuf___internal___containers___RepeatedScalarFieldContainer[typing___Text]
+
+    def __init__(self,
+        *,
+        speaker_sexes : typing___Optional[typing___Iterable[typing___Text]] = None,
+        pipeline_owners : typing___Optional[typing___Iterable[typing___Text]] = None,
+        speaker_names : typing___Optional[typing___Iterable[typing___Text]] = None,
+        languages : typing___Optional[typing___Iterable[typing___Text]] = None,
+        ) -> None: ...
+    if sys.version_info >= (3,):
+        @classmethod
+        def FromString(cls, s: builtin___bytes) -> ListT2sDomainsRequest: ...
+    else:
+        @classmethod
+        def FromString(cls, s: typing___Union[builtin___bytes, builtin___buffer, builtin___unicode]) -> ListT2sDomainsRequest: ...
+    def MergeFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def CopyFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def ClearField(self, field_name: typing_extensions___Literal[u"languages",b"languages",u"pipeline_owners",b"pipeline_owners",u"speaker_names",b"speaker_names",u"speaker_sexes",b"speaker_sexes"]) -> None: ...
+global___ListT2sDomainsRequest = ListT2sDomainsRequest
+
+class ListT2sDomainsResponse(google___protobuf___message___Message):
+    DESCRIPTOR: google___protobuf___descriptor___Descriptor = ...
+    domains = ... # type: google___protobuf___internal___containers___RepeatedScalarFieldContainer[typing___Text]
+
+    def __init__(self,
+        *,
+        domains : typing___Optional[typing___Iterable[typing___Text]] = None,
+        ) -> None: ...
+    if sys.version_info >= (3,):
+        @classmethod
+        def FromString(cls, s: builtin___bytes) -> ListT2sDomainsResponse: ...
+    else:
+        @classmethod
+        def FromString(cls, s: typing___Union[builtin___bytes, builtin___buffer, builtin___unicode]) -> ListT2sDomainsResponse: ...
+    def MergeFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def CopyFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
+    def ClearField(self, field_name: typing_extensions___Literal[u"domains",b"domains"]) -> None: ...
+global___ListT2sDomainsResponse = ListT2sDomainsResponse
 
 class T2sPipelineId(google___protobuf___message___Message):
     DESCRIPTOR: google___protobuf___descriptor___Descriptor = ...
@@ -575,11 +763,13 @@ class Normalization(google___protobuf___message___Message):
     DESCRIPTOR: google___protobuf___descriptor___Descriptor = ...
     language = ... # type: typing___Text
     pipeline = ... # type: google___protobuf___internal___containers___RepeatedScalarFieldContainer[typing___Text]
+    custom_phonemizer_id = ... # type: typing___Text
 
     def __init__(self,
         *,
         language : typing___Optional[typing___Text] = None,
         pipeline : typing___Optional[typing___Iterable[typing___Text]] = None,
+        custom_phonemizer_id : typing___Optional[typing___Text] = None,
         ) -> None: ...
     if sys.version_info >= (3,):
         @classmethod
@@ -589,7 +779,7 @@ class Normalization(google___protobuf___message___Message):
         def FromString(cls, s: typing___Union[builtin___bytes, builtin___buffer, builtin___unicode]) -> Normalization: ...
     def MergeFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
     def CopyFrom(self, other_msg: google___protobuf___message___Message) -> None: ...
-    def ClearField(self, field_name: typing_extensions___Literal[u"language",b"language",u"pipeline",b"pipeline"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions___Literal[u"custom_phonemizer_id",b"custom_phonemizer_id",u"language",b"language",u"pipeline",b"pipeline"]) -> None: ...
 global___Normalization = Normalization
 
 class Postprocessing(google___protobuf___message___Message):
