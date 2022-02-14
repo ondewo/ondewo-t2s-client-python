@@ -1,5 +1,12 @@
 # Release History
 *****************
+## Release ONDEWO APIS 3.0.0
+
+### Breaking Changes
+* [[OND231-334]] -
+Rename Description, GetServiceInfoResponse, Inference and Normalization messages to include T2S
+
+*****************
 
 ## ONDEWO-T2S Python Client 1.5.0
 

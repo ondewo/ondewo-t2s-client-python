@@ -61,6 +61,11 @@ class Text2SpeechStub(object):
                 request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsRequest.SerializeToString,
                 response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsResponse.FromString,
                 )
+        self.GetServiceInfo = channel.unary_unary(
+                '/ondewo.t2s.Text2Speech/GetServiceInfo',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.T2SGetServiceInfoResponse.FromString,
+                )
 
 
 class Text2SpeechServicer(object):
@@ -131,6 +136,13 @@ class Text2SpeechServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetServiceInfo(self, request, context):
+        """Returns a message containing the version of the running text to speech server.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_Text2SpeechServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -178,6 +190,11 @@ def add_Text2SpeechServicer_to_server(servicer, server):
                     servicer.ListT2sDomains,
                     request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsRequest.FromString,
                     response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsResponse.SerializeToString,
+            ),
+            'GetServiceInfo': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetServiceInfo,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.T2SGetServiceInfoResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -340,5 +357,22 @@ class Text2Speech(object):
         return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.Text2Speech/ListT2sDomains',
             ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsRequest.SerializeToString,
             ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetServiceInfo(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.Text2Speech/GetServiceInfo',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ondewo_dot_t2s_dot_text__to__speech__pb2.T2SGetServiceInfoResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
