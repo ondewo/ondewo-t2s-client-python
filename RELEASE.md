@@ -1,5 +1,12 @@
 # Release History
 *****************
+## Release ONDEWO APIS 3.0.0
+
+### Breaking Changes
+* [[OND231-334]] -
+Rename Description, GetServiceInfoResponse, Inference and Normalization messages to include T2S
+
+*****************
 
 ## Release ONDEWO APIS 3.1.0
 * Added list_t2s_pipelines, get_service_info, list_t2s_languages, list_t2s_domains endpoints to T2S client
