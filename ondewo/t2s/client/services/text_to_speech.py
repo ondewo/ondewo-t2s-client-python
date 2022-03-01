@@ -6,6 +6,8 @@ from ondewo.t2s.text_to_speech_pb2 import (
     ListT2sPipelinesResponse,
     ListT2sLanguagesRequest,
     ListT2sLanguagesResponse,
+    ListT2sDomainsRequest,
+    ListT2sDomainsResponse,
     SynthesizeRequest,
     SynthesizeResponse,
     T2sPipelineId,
@@ -57,4 +59,8 @@ class Text2Speech(BaseServicesInterface):
 
     def list_t2s_languages(self, request: ListT2sLanguagesRequest) -> ListT2sLanguagesResponse:
         response: ListT2sLanguagesResponse = self.stub.ListT2sLanguages(request)
+        return response
+
+    def list_t2s_domains(self, request: ListT2sDomainsRequest) -> ListT2sDomainsResponse:
+        response: ListT2sDomainsRequest = self.stub.ListT2sDomains(request)
         return response
