@@ -50,5 +50,5 @@ class Text2Speech(BaseServicesInterface):
         return response
 
     def get_service_info(self) -> T2SGetServiceInfoResponse:
-        response: T2SGetServiceInfoResponse = self.stub.GetServiceInfo(Empty)
+        response: T2SGetServiceInfoResponse = self.stub.GetServiceInfo(Empty())
         return response
