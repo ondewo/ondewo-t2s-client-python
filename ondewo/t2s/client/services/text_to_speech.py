@@ -1,3 +1,5 @@
+from typing import List
+
 from google.protobuf.empty_pb2 import Empty
 from ondewo.utils.base_services_interface import BaseServicesInterface
 
@@ -30,6 +32,10 @@ class Text2Speech(BaseServicesInterface):
         return stub
 
     def synthesize(self, request: SynthesizeRequest) -> SynthesizeResponse:
+        response: SynthesizeResponse = self.stub.Synthesize(request)
+        return response
+
+    def batch_synthesize(self, request: List[SynthesizeRequest]) -> List[SynthesizeResponse]:
         response: SynthesizeResponse = self.stub.Synthesize(request)
         return response
 
