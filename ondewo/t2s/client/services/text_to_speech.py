@@ -8,6 +8,7 @@ from ondewo.t2s.text_to_speech_pb2 import (
     SynthesizeResponse,
     T2sPipelineId,
     Text2SpeechConfig,
+    T2SGetServiceInfoResponse,
 )
 from ondewo.t2s.text_to_speech_pb2_grpc import Text2SpeechStub
 
@@ -46,4 +47,8 @@ class Text2Speech(BaseServicesInterface):
 
     def list_t2s_pipelines(self, request: ListT2sPipelinesRequest) -> ListT2sPipelinesResponse:
         response: ListT2sPipelinesResponse = self.stub.ListT2sPipelines(request)
+        return response
+
+    def get_service_info(self) -> T2SGetServiceInfoResponse:
+        response: T2SGetServiceInfoResponse = self.stub.GetServiceInfo(Empty)
         return response
