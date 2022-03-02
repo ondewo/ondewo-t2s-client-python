@@ -12,6 +12,8 @@ from ondewo.t2s.text_to_speech_pb2 import (
     ListT2sDomainsResponse,
     SynthesizeRequest,
     SynthesizeResponse,
+    BatchSynthesizeRequest,
+    BatchSynthesizeResponse,
     T2sPipelineId,
     Text2SpeechConfig,
     T2SGetServiceInfoResponse,
@@ -35,8 +37,8 @@ class Text2Speech(BaseServicesInterface):
         response: SynthesizeResponse = self.stub.Synthesize(request)
         return response
 
-    def batch_synthesize(self, request: List[SynthesizeRequest]) -> List[SynthesizeResponse]:
-        response: List[SynthesizeResponse] = self.stub.BatchSynthesize(request)
+    def batch_synthesize(self, request: BatchSynthesizeRequest) -> BatchSynthesizeResponse:
+        response: BatchSynthesizeResponse = self.stub.BatchSynthesize(request)
         return response
 
     def get_t2s_pipeline(self, request: T2sPipelineId) -> Text2SpeechConfig:
