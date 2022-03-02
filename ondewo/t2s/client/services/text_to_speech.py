@@ -1,5 +1,3 @@
-from typing import List
-
 from google.protobuf.empty_pb2 import Empty
 from ondewo.utils.base_services_interface import BaseServicesInterface
 
@@ -12,6 +10,8 @@ from ondewo.t2s.text_to_speech_pb2 import (
     ListT2sDomainsResponse,
     SynthesizeRequest,
     SynthesizeResponse,
+    BatchSynthesizeRequest,
+    BatchSynthesizeResponse,
     T2sPipelineId,
     Text2SpeechConfig,
     T2SGetServiceInfoResponse,
@@ -35,8 +35,8 @@ class Text2Speech(BaseServicesInterface):
         response: SynthesizeResponse = self.stub.Synthesize(request)
         return response
 
-    def batch_synthesize(self, request: List[SynthesizeRequest]) -> List[SynthesizeResponse]:
-        response: SynthesizeResponse = self.stub.Synthesize(request)
+    def batch_synthesize(self, request: BatchSynthesizeRequest) -> BatchSynthesizeResponse:
+        response: BatchSynthesizeResponse = self.stub.BatchSynthesize(request)
         return response
 
     def get_t2s_pipeline(self, request: T2sPipelineId) -> Text2SpeechConfig:
@@ -68,5 +68,5 @@ class Text2Speech(BaseServicesInterface):
         return response
 
     def list_t2s_domains(self, request: ListT2sDomainsRequest) -> ListT2sDomainsResponse:
-        response: ListT2sDomainsRequest = self.stub.ListT2sDomains(request)
+        response: ListT2sDomainsResponse = self.stub.ListT2sDomains(request)
         return response
