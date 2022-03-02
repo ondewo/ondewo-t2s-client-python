@@ -36,7 +36,7 @@ class Text2Speech(BaseServicesInterface):
         return response
 
     def batch_synthesize(self, request: List[SynthesizeRequest]) -> List[SynthesizeResponse]:
-        response: SynthesizeResponse = self.stub.Synthesize(request)
+        response: List[SynthesizeResponse] = self.stub.BatchSynthesize(request)
         return response
 
     def get_t2s_pipeline(self, request: T2sPipelineId) -> Text2SpeechConfig:
@@ -68,5 +68,5 @@ class Text2Speech(BaseServicesInterface):
         return response
 
     def list_t2s_domains(self, request: ListT2sDomainsRequest) -> ListT2sDomainsResponse:
-        response: ListT2sDomainsRequest = self.stub.ListT2sDomains(request)
+        response: ListT2sDomainsResponse = self.stub.ListT2sDomains(request)
         return response
