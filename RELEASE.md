@@ -51,3 +51,4 @@ Rename Description, GetServiceInfoResponse, Inference and Normalization messages
 ### Known issues not covered in this release
  * CI/CD Integration is missing
  * Extend the README.md with an examples usage
+

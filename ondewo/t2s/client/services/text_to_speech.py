@@ -1,5 +1,3 @@
-from typing import List
-
 from google.protobuf.empty_pb2 import Empty
 from ondewo.utils.base_services_interface import BaseServicesInterface
 
