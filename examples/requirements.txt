@@ -1,3 +1,10 @@
-numpy
-soundfile
-ipython
+numba>=0.55.1
+soundfile>=0.10.3.post1
+ipython>=8.2.0
+colorama>=0.4.4
+numba>=0.55.1
+Cython>=0.29.28
+scipy>=1.8.0
+inflect>=5.5.2
+nltk>=3.7
+regex
