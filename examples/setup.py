@@ -7,14 +7,14 @@ with open("requirements.txt") as f:
     requires = f.read().splitlines()
 
 setuptools.setup(
-    name="ondewo-t2s-client",
-    version="4.0.0",
-    author="Ondewo GbmH",
+    name="ondewo-t22-client",
+    version="3.0.0",
+    author="ONDEWO GbmH",
     author_email="info@ondewo.com",
-    description="provides endpoints and messages for gRPC communication with the ONDEWO T2S server",
+    description="exposes the ondewo-t2s-grpc-server endpoints in a user-friendly way",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/ondewo/ondewo-t2s-client-python",
+    url="https://github.com/ondewo/ondewo-t22-client-python",
     packages=[
         np for np in filter(lambda n: n.startswith("ondewo.") or n == "ondewo", setuptools.find_packages())
     ],

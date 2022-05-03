@@ -1,4 +1,12 @@
 # Release History
+
+*****************
+## Release ONDEWO APIS 4.0.0
+
+### Breaking Changes
+* [[OND232-343]] -
+Rename oneof attributes and merged custom-phonemizer proto into text-to-speech proto
+
 *****************
 ## Release ONDEWO APIS 3.1.1
 * Added batch_synthesis endpoint to T2S client
