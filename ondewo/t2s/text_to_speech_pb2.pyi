@@ -595,6 +595,7 @@ class GlowTTSTriton(google.protobuf.message.Message):
     CLEANERS_FIELD_NUMBER: builtins.int
     MAX_TEXT_LENGTH_FIELD_NUMBER: builtins.int
     PARAM_CONFIG_PATH_FIELD_NUMBER: builtins.int
+    TRITON_URL_FIELD_NUMBER: builtins.int
     TRITON_MODEL_NAME_FIELD_NUMBER: builtins.int
     batch_size: builtins.int
     length_scale: builtins.float
@@ -603,6 +604,7 @@ class GlowTTSTriton(google.protobuf.message.Message):
     def cleaners(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]: ...
     max_text_length: builtins.int
     param_config_path: typing.Text
+    triton_url: typing.Text
     triton_model_name: typing.Text
     def __init__(self,
         *,
@@ -612,9 +614,10 @@ class GlowTTSTriton(google.protobuf.message.Message):
         cleaners: typing.Optional[typing.Iterable[typing.Text]] = ...,
         max_text_length: builtins.int = ...,
         param_config_path: typing.Text = ...,
+        triton_url: typing.Text = ...,
         triton_model_name: typing.Text = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["batch_size",b"batch_size","cleaners",b"cleaners","length_scale",b"length_scale","max_text_length",b"max_text_length","noise_scale",b"noise_scale","param_config_path",b"param_config_path","triton_model_name",b"triton_model_name"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["batch_size",b"batch_size","cleaners",b"cleaners","length_scale",b"length_scale","max_text_length",b"max_text_length","noise_scale",b"noise_scale","param_config_path",b"param_config_path","triton_model_name",b"triton_model_name","triton_url",b"triton_url"]) -> None: ...
 global___GlowTTSTriton = GlowTTSTriton
 
 class Mel2Audio(google.protobuf.message.Message):
@@ -665,14 +668,17 @@ class HiFiGanTriton(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
     CONFIG_PATH_FIELD_NUMBER: builtins.int
     TRITON_MODEL_NAME_FIELD_NUMBER: builtins.int
+    TRITON_URL_FIELD_NUMBER: builtins.int
     config_path: typing.Text
     triton_model_name: typing.Text
+    triton_url: typing.Text
     def __init__(self,
         *,
         config_path: typing.Text = ...,
         triton_model_name: typing.Text = ...,
+        triton_url: typing.Text = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_path",b"config_path","triton_model_name",b"triton_model_name"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config_path",b"config_path","triton_model_name",b"triton_model_name","triton_url",b"triton_url"]) -> None: ...
 global___HiFiGanTriton = HiFiGanTriton
 
 class MbMelganTriton(google.protobuf.message.Message):
