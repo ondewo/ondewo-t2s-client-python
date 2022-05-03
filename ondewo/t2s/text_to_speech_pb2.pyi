@@ -70,7 +70,6 @@ class SynthesizeRequest(google.protobuf.message.Message):
     """//////////////
     SYNTHESIZE //
     //////////////
-<<<<<<< HEAD
 
     Represents a Synthesize Request.
     A Synthesize Request contains the information need to perform a text to speech conversion.
@@ -81,18 +80,6 @@ class SynthesizeRequest(google.protobuf.message.Message):
     text: typing.Text
     """Required. Represents the text that will be transformed to speech."""
 
-=======
-
-    Represents a Synthesize Request.
-    A Synthesize Request contains the information need to perform a text to speech conversion.
-    """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-    TEXT_FIELD_NUMBER: builtins.int
-    CONFIG_FIELD_NUMBER: builtins.int
-    text: typing.Text
-    """Required. Represents the text that will be transformed to speech."""
-
->>>>>>> master
     @property
     def config(self) -> global___RequestConfig:
         """Required. Represents the specifications needed to do the text to speech transformation."""
@@ -159,22 +146,6 @@ class RequestConfig(google.protobuf.message.Message):
         audio_format: global___AudioFormat.ValueType = ...,
         use_cache: builtins.bool = ...,
         ) -> None: ...
-<<<<<<< HEAD
-    def HasField(self, field_name: typing_extensions.Literal["_AudioFormat",b"_AudioFormat","_Pcm",b"_Pcm","_length_scale",b"_length_scale","_noise_scale",b"_noise_scale","_sample_rate",b"_sample_rate","_use_cache",b"_use_cache","audio_format",b"audio_format","length_scale",b"length_scale","noise_scale",b"noise_scale","pcm",b"pcm","sample_rate",b"sample_rate","use_cache",b"use_cache"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_AudioFormat",b"_AudioFormat","_Pcm",b"_Pcm","_length_scale",b"_length_scale","_noise_scale",b"_noise_scale","_sample_rate",b"_sample_rate","_use_cache",b"_use_cache","audio_format",b"audio_format","length_scale",b"length_scale","noise_scale",b"noise_scale","pcm",b"pcm","sample_rate",b"sample_rate","t2s_pipeline_id",b"t2s_pipeline_id","use_cache",b"use_cache"]) -> None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_AudioFormat",b"_AudioFormat"]) -> typing.Optional[typing_extensions.Literal["audio_format"]]: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_Pcm",b"_Pcm"]) -> typing.Optional[typing_extensions.Literal["pcm"]]: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_length_scale",b"_length_scale"]) -> typing.Optional[typing_extensions.Literal["length_scale"]]: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_noise_scale",b"_noise_scale"]) -> typing.Optional[typing_extensions.Literal["noise_scale"]]: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_sample_rate",b"_sample_rate"]) -> typing.Optional[typing_extensions.Literal["sample_rate"]]: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_use_cache",b"_use_cache"]) -> typing.Optional[typing_extensions.Literal["use_cache"]]: ...
-=======
     def HasField(self, field_name: typing_extensions.Literal["audio_format",b"audio_format","length_scale",b"length_scale","noise_scale",b"noise_scale","oneof_AudioFormat",b"oneof_AudioFormat","oneof_Pcm",b"oneof_Pcm","oneof_length_scale",b"oneof_length_scale","oneof_noise_scale",b"oneof_noise_scale","oneof_sample_rate",b"oneof_sample_rate","oneof_use_cache",b"oneof_use_cache","pcm",b"pcm","sample_rate",b"sample_rate","use_cache",b"use_cache"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["audio_format",b"audio_format","length_scale",b"length_scale","noise_scale",b"noise_scale","oneof_AudioFormat",b"oneof_AudioFormat","oneof_Pcm",b"oneof_Pcm","oneof_length_scale",b"oneof_length_scale","oneof_noise_scale",b"oneof_noise_scale","oneof_sample_rate",b"oneof_sample_rate","oneof_use_cache",b"oneof_use_cache","pcm",b"pcm","sample_rate",b"sample_rate","t2s_pipeline_id",b"t2s_pipeline_id","use_cache",b"use_cache"]) -> None: ...
     @typing.overload
@@ -189,7 +160,6 @@ class RequestConfig(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing_extensions.Literal["oneof_sample_rate",b"oneof_sample_rate"]) -> typing.Optional[typing_extensions.Literal["sample_rate"]]: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["oneof_use_cache",b"oneof_use_cache"]) -> typing.Optional[typing_extensions.Literal["use_cache"]]: ...
->>>>>>> master
 global___RequestConfig = RequestConfig
 
 class SynthesizeResponse(google.protobuf.message.Message):
@@ -208,7 +178,6 @@ class SynthesizeResponse(google.protobuf.message.Message):
 
     audio: builtins.bytes
     """Required. Generated file with the parameters described in request."""
-<<<<<<< HEAD
 
     generation_time: builtins.float
     """Required. Time to generate audio."""
@@ -216,15 +185,6 @@ class SynthesizeResponse(google.protobuf.message.Message):
     audio_length: builtins.float
     """Required. Audio length."""
 
-=======
-
-    generation_time: builtins.float
-    """Required. Time to generate audio."""
-
-    audio_length: builtins.float
-    """Required. Audio length."""
-
->>>>>>> master
     text: typing.Text
     """Required. Text from which audio was generated."""
 
@@ -635,10 +595,6 @@ class GlowTTSTriton(google.protobuf.message.Message):
     CLEANERS_FIELD_NUMBER: builtins.int
     MAX_TEXT_LENGTH_FIELD_NUMBER: builtins.int
     PARAM_CONFIG_PATH_FIELD_NUMBER: builtins.int
-<<<<<<< HEAD
-=======
-    TRITON_URL_FIELD_NUMBER: builtins.int
->>>>>>> master
     TRITON_MODEL_NAME_FIELD_NUMBER: builtins.int
     batch_size: builtins.int
     length_scale: builtins.float
@@ -647,10 +603,6 @@ class GlowTTSTriton(google.protobuf.message.Message):
     def cleaners(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]: ...
     max_text_length: builtins.int
     param_config_path: typing.Text
-<<<<<<< HEAD
-=======
-    triton_url: typing.Text
->>>>>>> master
     triton_model_name: typing.Text
     def __init__(self,
         *,
@@ -660,16 +612,9 @@ class GlowTTSTriton(google.protobuf.message.Message):
         cleaners: typing.Optional[typing.Iterable[typing.Text]] = ...,
         max_text_length: builtins.int = ...,
         param_config_path: typing.Text = ...,
-<<<<<<< HEAD
         triton_model_name: typing.Text = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["batch_size",b"batch_size","cleaners",b"cleaners","length_scale",b"length_scale","max_text_length",b"max_text_length","noise_scale",b"noise_scale","param_config_path",b"param_config_path","triton_model_name",b"triton_model_name"]) -> None: ...
-=======
-        triton_url: typing.Text = ...,
-        triton_model_name: typing.Text = ...,
-        ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["batch_size",b"batch_size","cleaners",b"cleaners","length_scale",b"length_scale","max_text_length",b"max_text_length","noise_scale",b"noise_scale","param_config_path",b"param_config_path","triton_model_name",b"triton_model_name","triton_url",b"triton_url"]) -> None: ...
->>>>>>> master
 global___GlowTTSTriton = GlowTTSTriton
 
 class Mel2Audio(google.protobuf.message.Message):
@@ -720,27 +665,14 @@ class HiFiGanTriton(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
     CONFIG_PATH_FIELD_NUMBER: builtins.int
     TRITON_MODEL_NAME_FIELD_NUMBER: builtins.int
-<<<<<<< HEAD
     config_path: typing.Text
     triton_model_name: typing.Text
-=======
-    TRITON_URL_FIELD_NUMBER: builtins.int
-    config_path: typing.Text
-    triton_model_name: typing.Text
-    triton_url: typing.Text
->>>>>>> master
     def __init__(self,
         *,
         config_path: typing.Text = ...,
         triton_model_name: typing.Text = ...,
-<<<<<<< HEAD
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["config_path",b"config_path","triton_model_name",b"triton_model_name"]) -> None: ...
-=======
-        triton_url: typing.Text = ...,
-        ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_path",b"config_path","triton_model_name",b"triton_model_name","triton_url",b"triton_url"]) -> None: ...
->>>>>>> master
 global___HiFiGanTriton = HiFiGanTriton
 
 class MbMelganTriton(google.protobuf.message.Message):
