@@ -595,10 +595,7 @@ class GlowTTSTriton(google.protobuf.message.Message):
     CLEANERS_FIELD_NUMBER: builtins.int
     MAX_TEXT_LENGTH_FIELD_NUMBER: builtins.int
     PARAM_CONFIG_PATH_FIELD_NUMBER: builtins.int
-<<<<<<< HEAD
-=======
     TRITON_URL_FIELD_NUMBER: builtins.int
->>>>>>> master
     TRITON_MODEL_NAME_FIELD_NUMBER: builtins.int
     batch_size: builtins.int
     length_scale: builtins.float
@@ -607,10 +604,7 @@ class GlowTTSTriton(google.protobuf.message.Message):
     def cleaners(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]: ...
     max_text_length: builtins.int
     param_config_path: typing.Text
-<<<<<<< HEAD
-=======
     triton_url: typing.Text
->>>>>>> master
     triton_model_name: typing.Text
     def __init__(self,
         *,
@@ -620,16 +614,10 @@ class GlowTTSTriton(google.protobuf.message.Message):
         cleaners: typing.Optional[typing.Iterable[typing.Text]] = ...,
         max_text_length: builtins.int = ...,
         param_config_path: typing.Text = ...,
-<<<<<<< HEAD
-        triton_model_name: typing.Text = ...,
-        ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["batch_size",b"batch_size","cleaners",b"cleaners","length_scale",b"length_scale","max_text_length",b"max_text_length","noise_scale",b"noise_scale","param_config_path",b"param_config_path","triton_model_name",b"triton_model_name"]) -> None: ...
-=======
         triton_url: typing.Text = ...,
         triton_model_name: typing.Text = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["batch_size",b"batch_size","cleaners",b"cleaners","length_scale",b"length_scale","max_text_length",b"max_text_length","noise_scale",b"noise_scale","param_config_path",b"param_config_path","triton_model_name",b"triton_model_name","triton_url",b"triton_url"]) -> None: ...
->>>>>>> master
 global___GlowTTSTriton = GlowTTSTriton
 
 class Mel2Audio(google.protobuf.message.Message):
@@ -680,27 +668,17 @@ class HiFiGanTriton(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
     CONFIG_PATH_FIELD_NUMBER: builtins.int
     TRITON_MODEL_NAME_FIELD_NUMBER: builtins.int
-<<<<<<< HEAD
-    config_path: typing.Text
-    triton_model_name: typing.Text
-=======
     TRITON_URL_FIELD_NUMBER: builtins.int
     config_path: typing.Text
     triton_model_name: typing.Text
     triton_url: typing.Text
->>>>>>> master
     def __init__(self,
         *,
         config_path: typing.Text = ...,
         triton_model_name: typing.Text = ...,
-<<<<<<< HEAD
-        ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config_path",b"config_path","triton_model_name",b"triton_model_name"]) -> None: ...
-=======
         triton_url: typing.Text = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["config_path",b"config_path","triton_model_name",b"triton_model_name","triton_url",b"triton_url"]) -> None: ...
->>>>>>> master
 global___HiFiGanTriton = HiFiGanTriton
 
 class MbMelganTriton(google.protobuf.message.Message):
@@ -754,20 +732,25 @@ class T2SNormalization(google.protobuf.message.Message):
     LANGUAGE_FIELD_NUMBER: builtins.int
     PIPELINE_FIELD_NUMBER: builtins.int
     CUSTOM_PHONEMIZER_ID_FIELD_NUMBER: builtins.int
+    CUSTOM_LENGTH_SCALES_FIELD_NUMBER: builtins.int
     ARPABET_MAPPPING_FIELD_NUMBER: builtins.int
     language: typing.Text
     @property
     def pipeline(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]: ...
     custom_phonemizer_id: typing.Text
+    @property
+    def custom_length_scales(self) -> global___T2SCustomLengthScales: ...
     arpabet_mappping: typing.Text
     def __init__(self,
         *,
         language: typing.Text = ...,
         pipeline: typing.Optional[typing.Iterable[typing.Text]] = ...,
         custom_phonemizer_id: typing.Text = ...,
+        custom_length_scales: typing.Optional[global___T2SCustomLengthScales] = ...,
         arpabet_mappping: typing.Text = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["arpabet_mappping",b"arpabet_mappping","custom_phonemizer_id",b"custom_phonemizer_id","language",b"language","pipeline",b"pipeline"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["custom_length_scales",b"custom_length_scales"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["arpabet_mappping",b"arpabet_mappping","custom_length_scales",b"custom_length_scales","custom_phonemizer_id",b"custom_phonemizer_id","language",b"language","pipeline",b"pipeline"]) -> None: ...
 global___T2SNormalization = T2SNormalization
 
 class Postprocessing(google.protobuf.message.Message):
@@ -848,6 +831,32 @@ class Apodization(google.protobuf.message.Message):
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["apodization_secs",b"apodization_secs"]) -> None: ...
 global___Apodization = Apodization
+
+class T2SCustomLengthScales(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    TEXT_FIELD_NUMBER: builtins.int
+    EMAIL_FIELD_NUMBER: builtins.int
+    URL_FIELD_NUMBER: builtins.int
+    PHONE_FIELD_NUMBER: builtins.int
+    SPELL_FIELD_NUMBER: builtins.int
+    SPELL_WITH_NAMES_FIELD_NUMBER: builtins.int
+    text: builtins.float
+    email: builtins.float
+    url: builtins.float
+    phone: builtins.float
+    spell: builtins.float
+    spell_with_names: builtins.float
+    def __init__(self,
+        *,
+        text: builtins.float = ...,
+        email: builtins.float = ...,
+        url: builtins.float = ...,
+        phone: builtins.float = ...,
+        spell: builtins.float = ...,
+        spell_with_names: builtins.float = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["email",b"email","phone",b"phone","spell",b"spell","spell_with_names",b"spell_with_names","text",b"text","url",b"url"]) -> None: ...
+global___T2SCustomLengthScales = T2SCustomLengthScales
 
 class PhonemizerId(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
