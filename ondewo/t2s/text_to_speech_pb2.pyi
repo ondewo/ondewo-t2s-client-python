@@ -732,20 +732,25 @@ class T2SNormalization(google.protobuf.message.Message):
     LANGUAGE_FIELD_NUMBER: builtins.int
     PIPELINE_FIELD_NUMBER: builtins.int
     CUSTOM_PHONEMIZER_ID_FIELD_NUMBER: builtins.int
+    CUSTOM_LENGTH_SCALES_FIELD_NUMBER: builtins.int
     ARPABET_MAPPPING_FIELD_NUMBER: builtins.int
     language: typing.Text
     @property
     def pipeline(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]: ...
     custom_phonemizer_id: typing.Text
+    @property
+    def custom_length_scales(self) -> global___T2SCustomLengthScales: ...
     arpabet_mappping: typing.Text
     def __init__(self,
         *,
         language: typing.Text = ...,
         pipeline: typing.Optional[typing.Iterable[typing.Text]] = ...,
         custom_phonemizer_id: typing.Text = ...,
+        custom_length_scales: typing.Optional[global___T2SCustomLengthScales] = ...,
         arpabet_mappping: typing.Text = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["arpabet_mappping",b"arpabet_mappping","custom_phonemizer_id",b"custom_phonemizer_id","language",b"language","pipeline",b"pipeline"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["custom_length_scales",b"custom_length_scales"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["arpabet_mappping",b"arpabet_mappping","custom_length_scales",b"custom_length_scales","custom_phonemizer_id",b"custom_phonemizer_id","language",b"language","pipeline",b"pipeline"]) -> None: ...
 global___T2SNormalization = T2SNormalization
 
 class Postprocessing(google.protobuf.message.Message):
@@ -826,6 +831,32 @@ class Apodization(google.protobuf.message.Message):
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["apodization_secs",b"apodization_secs"]) -> None: ...
 global___Apodization = Apodization
+
+class T2SCustomLengthScales(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    TEXT_FIELD_NUMBER: builtins.int
+    EMAIL_FIELD_NUMBER: builtins.int
+    URL_FIELD_NUMBER: builtins.int
+    PHONE_FIELD_NUMBER: builtins.int
+    SPELL_FIELD_NUMBER: builtins.int
+    SPELL_WITH_NAMES_FIELD_NUMBER: builtins.int
+    text: builtins.float
+    email: builtins.float
+    url: builtins.float
+    phone: builtins.float
+    spell: builtins.float
+    spell_with_names: builtins.float
+    def __init__(self,
+        *,
+        text: builtins.float = ...,
+        email: builtins.float = ...,
+        url: builtins.float = ...,
+        phone: builtins.float = ...,
+        spell: builtins.float = ...,
+        spell_with_names: builtins.float = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["email",b"email","phone",b"phone","spell",b"spell","spell_with_names",b"spell_with_names","text",b"text","url",b"url"]) -> None: ...
+global___T2SCustomLengthScales = T2SCustomLengthScales
 
 class PhonemizerId(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
