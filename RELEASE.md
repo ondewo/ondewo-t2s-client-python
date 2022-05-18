@@ -1,6 +1,12 @@
 # Release History
 
 *****************
+## Release ONDEWO APIS 4.0.4
+
+### Breaking Changes
+* Add field T2SCustomLengthScales to T2SNormalizePipeline.
+
+*****************
 ## Release ONDEWO APIS 4.0.3
 ### New Features
 * [[OND232-348]] -
@@ -11,6 +17,13 @@ Add field normalized_text to SynthesizeResponse.
 ### Breaking Changes
 * [[OND232-343]] -
 Rename oneof attributes and merged custom-phonemizer proto into text-to-speech proto
+
+*****************
+## Release ONDEWO APIS 4.0.1
+
+### Breaking Changes
+* [[OND232-343]] -
+Rename oneof attributes and merged custom-phonemizer proto into text-to-speech proto.
 
 *****************
 ## Release ONDEWO APIS 3.1.1
@@ -64,4 +77,3 @@ Rename Description, GetServiceInfoResponse, Inference and Normalization messages
 ### Known issues not covered in this release
  * CI/CD Integration is missing
  * Extend the README.md with an examples usage
-
