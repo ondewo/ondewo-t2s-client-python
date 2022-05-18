@@ -1,6 +1,12 @@
 # Release History
 
 *****************
+## Release ONDEWO APIS 4.0.4
+
+### Breaking Changes
+* Add field T2SCustomLengthScales to T2SNormalizePipeline.
+
+*****************
 ## Release ONDEWO APIS 4.0.1
 
 ### Breaking Changes
