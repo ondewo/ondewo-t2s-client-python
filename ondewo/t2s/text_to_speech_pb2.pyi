@@ -733,6 +733,7 @@ class T2SNormalization(google.protobuf.message.Message):
     CUSTOM_PHONEMIZER_ID_FIELD_NUMBER: builtins.int
     CUSTOM_LENGTH_SCALES_FIELD_NUMBER: builtins.int
     ARPABET_MAPPPING_FIELD_NUMBER: builtins.int
+    NUMERIC_MAPPING_FIELD_NUMBER: builtins.int
     language: typing.Text
     @property
     def pipeline(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]: ...
@@ -740,6 +741,7 @@ class T2SNormalization(google.protobuf.message.Message):
     @property
     def custom_length_scales(self) -> global___T2SCustomLengthScales: ...
     arpabet_mappping: typing.Text
+    numeric_mapping: typing.Text
     def __init__(self,
         *,
         language: typing.Text = ...,
@@ -747,9 +749,10 @@ class T2SNormalization(google.protobuf.message.Message):
         custom_phonemizer_id: typing.Text = ...,
         custom_length_scales: typing.Optional[global___T2SCustomLengthScales] = ...,
         arpabet_mappping: typing.Text = ...,
+        numeric_mapping: typing.Text = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["custom_length_scales",b"custom_length_scales"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["arpabet_mappping",b"arpabet_mappping","custom_length_scales",b"custom_length_scales","custom_phonemizer_id",b"custom_phonemizer_id","language",b"language","pipeline",b"pipeline"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["arpabet_mappping",b"arpabet_mappping","custom_length_scales",b"custom_length_scales","custom_phonemizer_id",b"custom_phonemizer_id","language",b"language","numeric_mapping",b"numeric_mapping","pipeline",b"pipeline"]) -> None: ...
 global___T2SNormalization = T2SNormalization
 
 class Postprocessing(google.protobuf.message.Message):
