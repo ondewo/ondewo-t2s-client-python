@@ -210,6 +210,36 @@ class SynthesizeResponse(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["audio",b"audio","audio_length",b"audio_length","audio_uuid",b"audio_uuid","config",b"config","generation_time",b"generation_time","normalized_text",b"normalized_text","text",b"text"]) -> None: ...
 global___SynthesizeResponse = SynthesizeResponse
 
+class NormalizeTextRequest(google.protobuf.message.Message):
+    """/////////////
+    NORMALIZE //
+    /////////////
+
+    """
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    ID_FIELD_NUMBER: builtins.int
+    TEXT_FIELD_NUMBER: builtins.int
+    id: typing.Text
+    text: typing.Text
+    def __init__(self,
+        *,
+        id: typing.Text = ...,
+        text: typing.Text = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["id",b"id","text",b"text"]) -> None: ...
+global___NormalizeTextRequest = NormalizeTextRequest
+
+class NormalizeTextResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    NORMALIZED_TEXT_FIELD_NUMBER: builtins.int
+    normalized_text: typing.Text
+    def __init__(self,
+        *,
+        normalized_text: typing.Text = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["normalized_text",b"normalized_text"]) -> None: ...
+global___NormalizeTextResponse = NormalizeTextResponse
+
 class T2SGetServiceInfoResponse(google.protobuf.message.Message):
     """////////////////////
     GET SERVICE INFO //

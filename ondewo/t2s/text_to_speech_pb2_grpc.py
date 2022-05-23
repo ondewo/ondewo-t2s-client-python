@@ -26,6 +26,11 @@ class Text2SpeechStub(object):
                 request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeRequest.SerializeToString,
                 response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeResponse.FromString,
                 )
+        self.NormalizeText = channel.unary_unary(
+                '/ondewo.t2s.Text2Speech/NormalizeText',
+                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.NormalizeTextRequest.SerializeToString,
+                response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.NormalizeTextResponse.FromString,
+                )
         self.GetT2sPipeline = channel.unary_unary(
                 '/ondewo.t2s.Text2Speech/GetT2sPipeline',
                 request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.T2sPipelineId.SerializeToString,
@@ -82,6 +87,13 @@ class Text2SpeechServicer(object):
 
     def BatchSynthesize(self, request, context):
         """will this safe time when doing batch predict on the AI model?
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def NormalizeText(self, request, context):
+        """Normalize a text according to a specific pipeline normalization rules.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -155,6 +167,11 @@ def add_Text2SpeechServicer_to_server(servicer, server):
                     servicer.BatchSynthesize,
                     request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeRequest.FromString,
                     response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeResponse.SerializeToString,
+            ),
+            'NormalizeText': grpc.unary_unary_rpc_method_handler(
+                    servicer.NormalizeText,
+                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.NormalizeTextRequest.FromString,
+                    response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.NormalizeTextResponse.SerializeToString,
             ),
             'GetT2sPipeline': grpc.unary_unary_rpc_method_handler(
                     servicer.GetT2sPipeline,
@@ -238,6 +255,23 @@ class Text2Speech(object):
         return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.Text2Speech/BatchSynthesize',
             ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeRequest.SerializeToString,
             ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def NormalizeText(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.Text2Speech/NormalizeText',
+            ondewo_dot_t2s_dot_text__to__speech__pb2.NormalizeTextRequest.SerializeToString,
+            ondewo_dot_t2s_dot_text__to__speech__pb2.NormalizeTextResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
