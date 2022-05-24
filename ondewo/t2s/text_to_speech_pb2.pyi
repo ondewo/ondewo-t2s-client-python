@@ -217,16 +217,16 @@ class NormalizeTextRequest(google.protobuf.message.Message):
 
     """
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
-    ID_FIELD_NUMBER: builtins.int
+    T2S_PIPELINE_ID_FIELD_NUMBER: builtins.int
     TEXT_FIELD_NUMBER: builtins.int
-    id: typing.Text
+    t2s_pipeline_id: typing.Text
     text: typing.Text
     def __init__(self,
         *,
-        id: typing.Text = ...,
+        t2s_pipeline_id: typing.Text = ...,
         text: typing.Text = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["id",b"id","text",b"text"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["t2s_pipeline_id",b"t2s_pipeline_id","text",b"text"]) -> None: ...
 global___NormalizeTextRequest = NormalizeTextRequest
 
 class NormalizeTextResponse(google.protobuf.message.Message):
