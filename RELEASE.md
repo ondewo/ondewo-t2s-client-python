@@ -1,4 +1,9 @@
 # Release History
+*****************
+## Release ONDEWO APIS 4.0.5
+
+### New features
+* Delegate generation of proto files to proto-compoiler image.
 
 *****************
 ## Release ONDEWO APIS 4.0.4
