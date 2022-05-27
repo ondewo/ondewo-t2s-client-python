@@ -1,9 +1,10 @@
-# Release History
+git b# Release History
 *****************
 ## Release ONDEWO APIS 4.0.5
 
 ### New features
 * Delegate generation of proto files to proto-compoiler image.
+* Add NormalizeText endpoint, that allows for text normalization without speech synthesis.
 
 *****************
 ## Release ONDEWO APIS 4.0.4
