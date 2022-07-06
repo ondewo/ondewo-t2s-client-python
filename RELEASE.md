@@ -1,5 +1,12 @@
 git b# Release History
 *****************
+## Release ONDEWO APIS 4.1.0
+
+### New features
+* Refactor Makefile, dockerize packaging.
+* Update grpc libraries and other requirements.
+
+*****************
 ## Release ONDEWO APIS 4.0.5
 
 ### New features
