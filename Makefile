@@ -5,7 +5,7 @@
 # Step 3: Execute "make build_and_push_to_pypi_via_docker"
 
 # Choose the submodule version to build ondewo-t2s-client-python
-ONDEWO_T2S_API_GIT_BRANCH=tags/4.0.3
+ONDEWO_T2S_API_GIT_BRANCH=tags/4.1.0
 ONDEWO_PROTO_COMPILER_GIT_BRANCH=tags/2.0.0
 PYPI_USERNAME=ENTER_HERE_YOUR_PYPI_USERNAME
 PYPI_PASSWORD=ENTER_HERE_YOUR_PYPI_PASSWORD

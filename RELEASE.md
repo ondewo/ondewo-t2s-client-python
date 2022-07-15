@@ -1,4 +1,11 @@
-git b# Release History
+# Release History
+
+*****************
+## Release ONDEWO APIS 4.2.2
+
+### New features
+* Add normalizer to synthesize message
+
 *****************
 ## Release ONDEWO APIS 4.1.0
 

@@ -127,6 +127,7 @@ class RequestConfig(google.protobuf.message.Message):
     PCM_FIELD_NUMBER: builtins.int
     AUDIO_FORMAT_FIELD_NUMBER: builtins.int
     USE_CACHE_FIELD_NUMBER: builtins.int
+    NORMALIZER_FIELD_NUMBER: builtins.int
     t2s_pipeline_id: typing.Text
     """Required. Represents the pipeline id of the model configuration that will be used."""
 
@@ -136,6 +137,7 @@ class RequestConfig(google.protobuf.message.Message):
     pcm: global___Pcm.ValueType
     audio_format: global___AudioFormat.ValueType
     use_cache: builtins.bool
+    normalizer: typing.Text
     def __init__(self,
         *,
         t2s_pipeline_id: typing.Text = ...,
@@ -145,9 +147,10 @@ class RequestConfig(google.protobuf.message.Message):
         pcm: global___Pcm.ValueType = ...,
         audio_format: global___AudioFormat.ValueType = ...,
         use_cache: builtins.bool = ...,
+        normalizer: typing.Text = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["audio_format",b"audio_format","length_scale",b"length_scale","noise_scale",b"noise_scale","oneof_AudioFormat",b"oneof_AudioFormat","oneof_Pcm",b"oneof_Pcm","oneof_length_scale",b"oneof_length_scale","oneof_noise_scale",b"oneof_noise_scale","oneof_sample_rate",b"oneof_sample_rate","oneof_use_cache",b"oneof_use_cache","pcm",b"pcm","sample_rate",b"sample_rate","use_cache",b"use_cache"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["audio_format",b"audio_format","length_scale",b"length_scale","noise_scale",b"noise_scale","oneof_AudioFormat",b"oneof_AudioFormat","oneof_Pcm",b"oneof_Pcm","oneof_length_scale",b"oneof_length_scale","oneof_noise_scale",b"oneof_noise_scale","oneof_sample_rate",b"oneof_sample_rate","oneof_use_cache",b"oneof_use_cache","pcm",b"pcm","sample_rate",b"sample_rate","t2s_pipeline_id",b"t2s_pipeline_id","use_cache",b"use_cache"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["audio_format",b"audio_format","length_scale",b"length_scale","noise_scale",b"noise_scale","normalizer",b"normalizer","oneof_AudioFormat",b"oneof_AudioFormat","oneof_Pcm",b"oneof_Pcm","oneof_length_scale",b"oneof_length_scale","oneof_noise_scale",b"oneof_noise_scale","oneof_normalizer",b"oneof_normalizer","oneof_sample_rate",b"oneof_sample_rate","oneof_use_cache",b"oneof_use_cache","pcm",b"pcm","sample_rate",b"sample_rate","use_cache",b"use_cache"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["audio_format",b"audio_format","length_scale",b"length_scale","noise_scale",b"noise_scale","normalizer",b"normalizer","oneof_AudioFormat",b"oneof_AudioFormat","oneof_Pcm",b"oneof_Pcm","oneof_length_scale",b"oneof_length_scale","oneof_noise_scale",b"oneof_noise_scale","oneof_normalizer",b"oneof_normalizer","oneof_sample_rate",b"oneof_sample_rate","oneof_use_cache",b"oneof_use_cache","pcm",b"pcm","sample_rate",b"sample_rate","t2s_pipeline_id",b"t2s_pipeline_id","use_cache",b"use_cache"]) -> None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["oneof_AudioFormat",b"oneof_AudioFormat"]) -> typing.Optional[typing_extensions.Literal["audio_format"]]: ...
     @typing.overload
@@ -156,6 +159,8 @@ class RequestConfig(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing_extensions.Literal["oneof_length_scale",b"oneof_length_scale"]) -> typing.Optional[typing_extensions.Literal["length_scale"]]: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["oneof_noise_scale",b"oneof_noise_scale"]) -> typing.Optional[typing_extensions.Literal["noise_scale"]]: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["oneof_normalizer",b"oneof_normalizer"]) -> typing.Optional[typing_extensions.Literal["normalizer"]]: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["oneof_sample_rate",b"oneof_sample_rate"]) -> typing.Optional[typing_extensions.Literal["sample_rate"]]: ...
     @typing.overload
@@ -762,27 +767,30 @@ class T2SNormalization(google.protobuf.message.Message):
     PIPELINE_FIELD_NUMBER: builtins.int
     CUSTOM_PHONEMIZER_ID_FIELD_NUMBER: builtins.int
     CUSTOM_LENGTH_SCALES_FIELD_NUMBER: builtins.int
-    ARPABET_MAPPPING_FIELD_NUMBER: builtins.int
+    ARPABET_MAPPING_FIELD_NUMBER: builtins.int
     NUMERIC_MAPPING_FIELD_NUMBER: builtins.int
+    CALLSIGNS_MAPPING_FIELD_NUMBER: builtins.int
     language: typing.Text
     @property
     def pipeline(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]: ...
     custom_phonemizer_id: typing.Text
     @property
     def custom_length_scales(self) -> global___T2SCustomLengthScales: ...
-    arpabet_mappping: typing.Text
+    arpabet_mapping: typing.Text
     numeric_mapping: typing.Text
+    callsigns_mapping: typing.Text
     def __init__(self,
         *,
         language: typing.Text = ...,
         pipeline: typing.Optional[typing.Iterable[typing.Text]] = ...,
         custom_phonemizer_id: typing.Text = ...,
         custom_length_scales: typing.Optional[global___T2SCustomLengthScales] = ...,
-        arpabet_mappping: typing.Text = ...,
+        arpabet_mapping: typing.Text = ...,
         numeric_mapping: typing.Text = ...,
+        callsigns_mapping: typing.Text = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["custom_length_scales",b"custom_length_scales"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["arpabet_mappping",b"arpabet_mappping","custom_length_scales",b"custom_length_scales","custom_phonemizer_id",b"custom_phonemizer_id","language",b"language","numeric_mapping",b"numeric_mapping","pipeline",b"pipeline"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["arpabet_mapping",b"arpabet_mapping","callsigns_mapping",b"callsigns_mapping","custom_length_scales",b"custom_length_scales","custom_phonemizer_id",b"custom_phonemizer_id","language",b"language","numeric_mapping",b"numeric_mapping","pipeline",b"pipeline"]) -> None: ...
 global___T2SNormalization = T2SNormalization
 
 class Postprocessing(google.protobuf.message.Message):
@@ -872,12 +880,16 @@ class T2SCustomLengthScales(google.protobuf.message.Message):
     PHONE_FIELD_NUMBER: builtins.int
     SPELL_FIELD_NUMBER: builtins.int
     SPELL_WITH_NAMES_FIELD_NUMBER: builtins.int
+    CALLSIGN_LONG_FIELD_NUMBER: builtins.int
+    CALLSIGN_SHORT_FIELD_NUMBER: builtins.int
     text: builtins.float
     email: builtins.float
     url: builtins.float
     phone: builtins.float
     spell: builtins.float
     spell_with_names: builtins.float
+    callsign_long: builtins.float
+    callsign_short: builtins.float
     def __init__(self,
         *,
         text: builtins.float = ...,
@@ -886,8 +898,10 @@ class T2SCustomLengthScales(google.protobuf.message.Message):
         phone: builtins.float = ...,
         spell: builtins.float = ...,
         spell_with_names: builtins.float = ...,
+        callsign_long: builtins.float = ...,
+        callsign_short: builtins.float = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["email",b"email","phone",b"phone","spell",b"spell","spell_with_names",b"spell_with_names","text",b"text","url",b"url"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["callsign_long",b"callsign_long","callsign_short",b"callsign_short","email",b"email","phone",b"phone","spell",b"spell","spell_with_names",b"spell_with_names","text",b"text","url",b"url"]) -> None: ...
 global___T2SCustomLengthScales = T2SCustomLengthScales
 
 class PhonemizerId(google.protobuf.message.Message):
