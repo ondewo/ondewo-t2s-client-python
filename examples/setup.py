@@ -8,7 +8,7 @@ with open("requirements.txt") as f:
 
 setuptools.setup(
     name="ondewo-t22-client",
-    version="4.0.4",
+    version="4.2.2",
     author="ONDEWO GbmH",
     author_email="info@ondewo.com",
     description="exposes the ondewo-t2s-grpc-server endpoints in a user-friendly way",

@@ -127,6 +127,7 @@ class RequestConfig(google.protobuf.message.Message):
     PCM_FIELD_NUMBER: builtins.int
     AUDIO_FORMAT_FIELD_NUMBER: builtins.int
     USE_CACHE_FIELD_NUMBER: builtins.int
+    NORMALIZER_FIELD_NUMBER: builtins.int
     t2s_pipeline_id: typing.Text
     """Required. Represents the pipeline id of the model configuration that will be used."""
 
@@ -136,6 +137,7 @@ class RequestConfig(google.protobuf.message.Message):
     pcm: global___Pcm.ValueType
     audio_format: global___AudioFormat.ValueType
     use_cache: builtins.bool
+    normalizer: typing.Text
     def __init__(self,
         *,
         t2s_pipeline_id: typing.Text = ...,
@@ -145,9 +147,10 @@ class RequestConfig(google.protobuf.message.Message):
         pcm: global___Pcm.ValueType = ...,
         audio_format: global___AudioFormat.ValueType = ...,
         use_cache: builtins.bool = ...,
+        normalizer: typing.Text = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["audio_format",b"audio_format","length_scale",b"length_scale","noise_scale",b"noise_scale","oneof_AudioFormat",b"oneof_AudioFormat","oneof_Pcm",b"oneof_Pcm","oneof_length_scale",b"oneof_length_scale","oneof_noise_scale",b"oneof_noise_scale","oneof_sample_rate",b"oneof_sample_rate","oneof_use_cache",b"oneof_use_cache","pcm",b"pcm","sample_rate",b"sample_rate","use_cache",b"use_cache"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["audio_format",b"audio_format","length_scale",b"length_scale","noise_scale",b"noise_scale","oneof_AudioFormat",b"oneof_AudioFormat","oneof_Pcm",b"oneof_Pcm","oneof_length_scale",b"oneof_length_scale","oneof_noise_scale",b"oneof_noise_scale","oneof_sample_rate",b"oneof_sample_rate","oneof_use_cache",b"oneof_use_cache","pcm",b"pcm","sample_rate",b"sample_rate","t2s_pipeline_id",b"t2s_pipeline_id","use_cache",b"use_cache"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["audio_format",b"audio_format","length_scale",b"length_scale","noise_scale",b"noise_scale","normalizer",b"normalizer","oneof_AudioFormat",b"oneof_AudioFormat","oneof_Pcm",b"oneof_Pcm","oneof_length_scale",b"oneof_length_scale","oneof_noise_scale",b"oneof_noise_scale","oneof_normalizer",b"oneof_normalizer","oneof_sample_rate",b"oneof_sample_rate","oneof_use_cache",b"oneof_use_cache","pcm",b"pcm","sample_rate",b"sample_rate","use_cache",b"use_cache"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["audio_format",b"audio_format","length_scale",b"length_scale","noise_scale",b"noise_scale","normalizer",b"normalizer","oneof_AudioFormat",b"oneof_AudioFormat","oneof_Pcm",b"oneof_Pcm","oneof_length_scale",b"oneof_length_scale","oneof_noise_scale",b"oneof_noise_scale","oneof_normalizer",b"oneof_normalizer","oneof_sample_rate",b"oneof_sample_rate","oneof_use_cache",b"oneof_use_cache","pcm",b"pcm","sample_rate",b"sample_rate","t2s_pipeline_id",b"t2s_pipeline_id","use_cache",b"use_cache"]) -> None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["oneof_AudioFormat",b"oneof_AudioFormat"]) -> typing.Optional[typing_extensions.Literal["audio_format"]]: ...
     @typing.overload
@@ -156,6 +159,8 @@ class RequestConfig(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing_extensions.Literal["oneof_length_scale",b"oneof_length_scale"]) -> typing.Optional[typing_extensions.Literal["length_scale"]]: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["oneof_noise_scale",b"oneof_noise_scale"]) -> typing.Optional[typing_extensions.Literal["noise_scale"]]: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["oneof_normalizer",b"oneof_normalizer"]) -> typing.Optional[typing_extensions.Literal["normalizer"]]: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["oneof_sample_rate",b"oneof_sample_rate"]) -> typing.Optional[typing_extensions.Literal["sample_rate"]]: ...
     @typing.overload

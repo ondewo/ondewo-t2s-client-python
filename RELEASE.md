@@ -14,6 +14,26 @@ git b# Release History
 * Add NormalizeText endpoint, that allows for text normalization without speech synthesis.
 
 *****************
+## Release ONDEWO APIS 4.2.2
+
+### New features
+* Add normalizer to synthesize message
+
+*****************
+## Release ONDEWO APIS 4.1.0
+
+### New features
+* Refactor Makefile, dockerize packaging.
+* Update grpc libraries and other requirements.
+
+*****************
+## Release ONDEWO APIS 4.0.5
+
+### New features
+* Delegate generation of proto files to proto-compoiler image.
+* Add NormalizeText endpoint, that allows for text normalization without speech synthesis.
+
+*****************
 ## Release ONDEWO APIS 4.0.4
 
 ### Breaking Changes
