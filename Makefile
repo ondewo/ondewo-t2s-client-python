@@ -3,8 +3,8 @@
 # Release Process Steps:
 # 1 - Create Release Branch and push
 # 2 - Create Release Tag and push
-# 2 - GitHub Release
-# 3 - PyPI Release
+# 3 - GitHub Release
+# 4 - PyPI Release
 
 include ./envs/versions.env
 export
@@ -32,6 +32,10 @@ IMAGE_UTILS_NAME=ondewo-t2s-client-utils-python:${ONDEWO_T2S_VERSION}
 # First comment after target starting with double ## specifies usage
 help:  ## Print usage info about help targets
 	@grep -E '(^[a-zA-Z_-]+:.*?##.*$$)|(^##)' Makefile | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
+
+# BEFORE "release"
+update_setup: ## Update T2S Version in setup.py
+	@sed -i "s/version='[0-9]*.[0-9]*.[0-9]*'/version='${ONDEWO_T2S_VERSION}'/g" setup.py
 
 release: ## Automate the entire release process
 	@echo "Release Automation started"
