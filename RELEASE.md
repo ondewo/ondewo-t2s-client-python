@@ -1,6 +1,6 @@
 # Release History
 *****************
-## Release ONDEWO T2S Python Client 4.2.2
+## Release ONDEWO T2S Python Client 4.3.0
 
 ### New features
  * [[OND211-2039]](https://ondewo.atlassian.net/browse/OND211-2039) - Automated Release Process
