@@ -3,6 +3,12 @@
 ## Release ONDEWO T2S Python Client 4.2.2
 
 ### New features
+ * [[OND211-2039]](https://ondewo.atlassian.net/browse/OND211-2039) - Automated Release Process
+
+*****************
+## Release ONDEWO T2S Python Client 4.2.2
+
+### New features
 * Add normalizer to synthesize message
 
 *****************

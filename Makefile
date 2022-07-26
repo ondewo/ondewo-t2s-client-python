@@ -33,7 +33,7 @@ CURRENT_RELEASE_NOTES=`cat RELEASE.md \
 GH_REPO="https://github.com/ondewo/ondewo-t2s-client-python"
 
 # Submodule paths
-ONDEWO_T2S_API_DIR=ondewo-ts2-api
+ONDEWO_T2S_API_DIR=ondewo-t2s-api
 ONDEWO_PROTO_COMPILER_DIR=ondewo-proto-compiler
 
 # Specify protos directories
