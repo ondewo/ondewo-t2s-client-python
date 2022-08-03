@@ -1,5 +1,12 @@
 # Release History
 *****************
+## Release ONDEWO T2S Python Client 4.4.0
+
+### Improvements
+ * [[OND211-2039]](https://ondewo.atlassian.net/browse/OND211-2039) - added pre-commit hooks and adjusted files to them
+ * Updated API to 4.3.0
+
+*****************
 ## Release ONDEWO T2S Python Client 4.3.0
 
 ### New features

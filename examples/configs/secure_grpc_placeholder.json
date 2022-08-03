@@ -1,5 +1,5 @@
 {
-  "host": "grpc-t2s.ondewo.com",
-  "port": "55505",
-  "grpc_cert": "YOUR_GRPC_CERTIFICATE"
+    "grpc_cert": "YOUR_GRPC_CERTIFICATE",
+    "host": "grpc-t2s.ondewo.com",
+    "port": "55505"
 }
