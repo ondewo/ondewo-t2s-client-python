@@ -81,6 +81,21 @@ TEST:
 	@echo ${PYPI_PASSWORD}
 	@echo ${CURRENT_RELEASE_NOTES}
 
+check_build: ## Checks if all built proto-code is there
+	@rm -rf build_check.txt
+	@for proto in `find ondewo-t2s-api/ondewo -iname "*.proto*"`; \
+	do \
+		echo $${proto} | cut -d "/" -f 4 | cut -d "." -f 1 >> build_check.txt; \
+	done
+	@echo "`sort build_check.txt | uniq`" > build_check.txt
+	@sed -i "s/\-/\_/g" build_check.txt
+	@for file in `cat build_check.txt`;\
+	do \
+		find ondewo -iname "*pb*" | grep -q $${file}; \
+		if test $$? != 0; then  echo "No Proto-Code for $${file}" & exit 1;fi \
+	done
+	@rm -rf build_check.txt
+
 ########################################################
 #       Repo Specific Make Targets
 ########################################################
@@ -222,4 +237,3 @@ spc: ## Checks if the Release Branch, Tag and Pypi version already exist
 	@if test "$(filtered_branches)" != ""; then echo "-- Test 1: Branch exists!!" & exit 1; else echo "-- Test 1: Branch is fine";fi
 	@if test "$(filtered_tags)" != ""; then echo "-- Test 2: Tag exists!!" & exit 1; else echo "-- Test 2: Tag is fine";fi
 	@if test "$(setuppy_version)" != "version='${ONDEWO_T2S_VERSION}',"; then echo "-- Test 3: Setup.py not updated!!" & exit 1; else echo "-- Test 3: Setup.py is fine";fi
-
