@@ -20,7 +20,7 @@ export
 ONDEWO_T2S_VERSION=4.4.0
 
 ONDEWO_T2S_API_GIT_BRANCH=tags/4.3.0
-ONDEWO_PROTO_COMPILER_GIT_BRANCH=tags/2.0.0
+ONDEWO_PROTO_COMPILER_GIT_BRANCH=tags/4.1.1
 PYPI_USERNAME?=ENTER_HERE_YOUR_PYPI_USERNAME
 PYPI_PASSWORD?=ENTER_HERE_YOUR_PYPI_PASSWORD
 
@@ -58,8 +58,6 @@ precommit_hooks_run_all_files: ## Runs all pre-commit hooks on all files and not
 
 install_dependencies_locally: ## Install dependencies locally
 	pip install -r requirements-dev.txt
-
-install:  ## Install requirements
 	pip install -r requirements.txt
 
 flake8:
@@ -130,10 +128,38 @@ generate_ondewo_protos:  ## Generate python code from proto files
 		TARGET_DIR='ondewo' \
 		OUTPUT_DIR=${OUTPUT_DIR}
 
+setup_conda_env: ## Checks for CONDA Environment
+	@echo "\n START SETTING UP CONDA ENV \n"
+	@conda env list | grep -q ondewo-nlu-client-python \
+	&& make release || ( echo "\n CONDA ENV FOR REPO DOESNT EXIST \n" \
+	&& make create_conda_env)
+
+create_conda_env: ##Creates CONDA Environment
+	conda create -y --name ondewo-nlu-client-python python=3.8
+	/bin/bash -c 'source `conda info --base`/bin/activate ondewo-nlu-client-python; make setup_developer_environment_locally && echo "\n PRECOMMIT INSTALLED \n"'
+	make release
+
 ########################################################
 #		Release
 
-release: create_release_branch create_release_tag build_and_release_to_github_via_docker build_and_push_to_pypi_via_docker ## Automate the entire release process
+release: ## Automate the entire release process
+	@echo "Start Release"
+	make build
+	/bin/bash -c 'source `conda info --base`/bin/activate ondewo-t2s-client-python; make precommit_hooks_run_all_files || echo "PRECOMMIT FOUND SOMETHING"'
+	git status
+	make check_build
+	git add ondewo
+	git add Makefile
+	git add RELEASE.md
+	git add setup.py
+	git add ${ONDEWO_PROTO_COMPILER_DIR}
+	git status
+# git commit -m "PREPARING FOR RELEASE ${ONDEWO_T2S_VERSION}"
+# git push
+# make create_release_branch
+# make create_release_tag
+# make release_to_github_via_docker
+# make push_to_pypi_via_docker
 	@echo "Release Finished"
 
 create_release_branch: ## Create Release Branch and push it to origin
@@ -226,14 +252,14 @@ clone_devops_accounts: ## Clones devops-accounts repo
 	if [ -d $(DEVOPS_ACCOUNT_GIT) ]; then rm -Rf $(DEVOPS_ACCOUNT_GIT); fi
 	git clone git@bitbucket.org:ondewo/${DEVOPS_ACCOUNT_GIT}.git
 
-run_release_with_devops:
+run_release_with_devops: ## Gets Credentials from devops-repo and run release command with them
 	$(eval info:= $(shell cat ${DEVOPS_ACCOUNT_DIR}/account_github.env | grep GITHUB_GH & cat ${DEVOPS_ACCOUNT_DIR}/account_pypi.env | grep PYPI_USERNAME & cat ${DEVOPS_ACCOUNT_DIR}/account_pypi.env | grep PYPI_PASSWORD))
-	make release $(info)
+	@echo ${CONDA_PREFIX} | grep -q t2s-client-python && make release $(info) || (make setup_conda_env $(info))
 
 spc: ## Checks if the Release Branch, Tag and Pypi version already exist
 	$(eval filtered_branches:= $(shell git branch --all | grep "release/${ONDEWO_T2S_VERSION}"))
 	$(eval filtered_tags:= $(shell git tag --list | grep "${ONDEWO_T2S_VERSION}"))
 	$(eval setuppy_version:= $(shell cat setup.py | grep "version"))
-	@if test "$(filtered_branches)" != ""; then echo "-- Test 1: Branch exists!!" & exit 1; else echo "-- Test 1: Branch is fine";fi
-	@if test "$(filtered_tags)" != ""; then echo "-- Test 2: Tag exists!!" & exit 1; else echo "-- Test 2: Tag is fine";fi
-	@if test "$(setuppy_version)" != "version='${ONDEWO_T2S_VERSION}',"; then echo "-- Test 3: Setup.py not updated!!" & exit 1; else echo "-- Test 3: Setup.py is fine";fi
+# @if test "$(filtered_branches)" != ""; then echo "-- Test 1: Branch exists!!" & exit 1; else echo "-- Test 1: Branch is fine";fi
+# @if test "$(filtered_tags)" != ""; then echo "-- Test 2: Tag exists!!" & exit 1; else echo "-- Test 2: Tag is fine";fi
+# @if test "$(setuppy_version)" != "version='${ONDEWO_T2S_VERSION}',"; then echo "-- Test 3: Setup.py not updated!!" & exit 1; else echo "-- Test 3: Setup.py is fine";fi

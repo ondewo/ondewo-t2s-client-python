@@ -30,7 +30,7 @@ COPY setup.cfg .
 
 COPY README.md .
 
-COPY ondewo ondewo 
+COPY ondewo ondewo
 
 # run the container forever
 CMD tail -f /dev/null
