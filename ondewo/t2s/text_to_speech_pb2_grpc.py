@@ -7,7 +7,7 @@ from ondewo.t2s import text_to_speech_pb2 as ondewo_dot_t2s_dot_text__to__speech
 
 
 class Text2SpeechStub(object):
-    """endpoints of t2s generate service
+    """Text2Speech service provides endpoints for text-to-speech generation.
     """
 
     def __init__(self, channel):
@@ -71,85 +71,180 @@ class Text2SpeechStub(object):
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.T2SGetServiceInfoResponse.FromString,
                 )
+        self.GetCustomPhonemizer = channel.unary_unary(
+                '/ondewo.t2s.Text2Speech/GetCustomPhonemizer',
+                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.PhonemizerId.SerializeToString,
+                response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.CustomPhonemizerProto.FromString,
+                )
+        self.CreateCustomPhonemizer = channel.unary_unary(
+                '/ondewo.t2s.Text2Speech/CreateCustomPhonemizer',
+                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.CreateCustomPhonemizerRequest.SerializeToString,
+                response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.PhonemizerId.FromString,
+                )
+        self.DeleteCustomPhonemizer = channel.unary_unary(
+                '/ondewo.t2s.Text2Speech/DeleteCustomPhonemizer',
+                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.PhonemizerId.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
+        self.UpdateCustomPhonemizer = channel.unary_unary(
+                '/ondewo.t2s.Text2Speech/UpdateCustomPhonemizer',
+                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.UpdateCustomPhonemizerRequest.SerializeToString,
+                response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.CustomPhonemizerProto.FromString,
+                )
+        self.ListCustomPhonemizer = channel.unary_unary(
+                '/ondewo.t2s.Text2Speech/ListCustomPhonemizer',
+                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerRequest.SerializeToString,
+                response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerResponse.FromString,
+                )
 
 
 class Text2SpeechServicer(object):
-    """endpoints of t2s generate service
+    """Text2Speech service provides endpoints for text-to-speech generation.
     """
 
     def Synthesize(self, request, context):
-        """Synthesizes an specific text sent in the request with the configuration requirements and retrieves a response
-        that includes the synthesized text to audio and the configuration wanted.
+        """Synthesize RPC
+
+        Synthesizes a specific text sent in the request with the provided configuration requirements
+        and retrieves a response that includes the synthesized text as audio and the requested configuration.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def BatchSynthesize(self, request, context):
-        """will this safe time when doing batch predict on the AI model?
+        """BatchSynthesize RPC
+
+        Performs batch synthesis by accepting a batch of synthesis requests and returning a batch response.
+        This can be more efficient for generating predictions on the AI model in bulk.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def NormalizeText(self, request, context):
-        """Normalize a text according to a specific pipeline normalization rules.
+        """NormalizeText RPC
+
+        Normalizes a text according to the specific pipeline's normalization rules.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetT2sPipeline(self, request, context):
-        """Retrieves the configuration of the specified pipeline.
+        """GetT2sPipeline RPC
+
+        Retrieves the configuration of the specified text-to-speech pipeline.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def CreateT2sPipeline(self, request, context):
-        """Creates a pipeline with the specified configuration and retrieves its id.
+        """CreateT2sPipeline RPC
+
+        Creates a new text-to-speech pipeline with the provided configuration and returns its pipeline ID.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def DeleteT2sPipeline(self, request, context):
-        """Deletes the specified pipeline.
+        """DeleteT2sPipeline RPC
+
+        Deletes the specified text-to-speech pipeline.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def UpdateT2sPipeline(self, request, context):
-        """Update a specified pipeline with certain configuration.
+        """UpdateT2sPipeline RPC
+
+        Updates the specified text-to-speech pipeline with the given configuration.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ListT2sPipelines(self, request, context):
-        """Retrieve the list of pipelines with an specific requirement.
+        """ListT2sPipelines RPC
+
+        Retrieves a list of text-to-speech pipelines based on specific requirements.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ListT2sLanguages(self, request, context):
-        """Retrieve the list of languages given a specific config request.
+        """ListT2sLanguages RPC
+
+        Retrieves a list of languages available based on specific configuration requirements.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ListT2sDomains(self, request, context):
-        """Retrieve the list of domains given a specific config request.
+        """ListT2sDomains RPC
+
+        Retrieves a list of domains available based on specific configuration requirements.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetServiceInfo(self, request, context):
-        """Returns a message containing the version of the running text to speech server.
+        """GetServiceInfo RPC
+
+        Retrieves the version information of the running text-to-speech server.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetCustomPhonemizer(self, request, context):
+        """GetCustomPhonemizer RPC
+
+        Retrieves a custom phonemizer based on the provided PhonemizerId.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CreateCustomPhonemizer(self, request, context):
+        """CreateCustomPhonemizer RPC
+
+        Creates a custom phonemizer based on the provided CreateCustomPhonemizerRequest.
+        Returns the PhonemizerId associated with the created custom phonemizer.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteCustomPhonemizer(self, request, context):
+        """DeleteCustomPhonemizer RPC
+
+        Deletes a custom phonemizer based on the provided PhonemizerId.
+        Returns an Empty response upon successful deletion.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateCustomPhonemizer(self, request, context):
+        """UpdateCustomPhonemizer RPC
+
+        Updates the specified custom phonemizer with the provided configuration.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListCustomPhonemizer(self, request, context):
+        """ListCustomPhonemizer RPC
+
+        Retrieves a list of custom phonemizers based on specific requirements.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -213,6 +308,31 @@ def add_Text2SpeechServicer_to_server(servicer, server):
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.T2SGetServiceInfoResponse.SerializeToString,
             ),
+            'GetCustomPhonemizer': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCustomPhonemizer,
+                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.PhonemizerId.FromString,
+                    response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.CustomPhonemizerProto.SerializeToString,
+            ),
+            'CreateCustomPhonemizer': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateCustomPhonemizer,
+                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.CreateCustomPhonemizerRequest.FromString,
+                    response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.PhonemizerId.SerializeToString,
+            ),
+            'DeleteCustomPhonemizer': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteCustomPhonemizer,
+                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.PhonemizerId.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
+            'UpdateCustomPhonemizer': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateCustomPhonemizer,
+                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.UpdateCustomPhonemizerRequest.FromString,
+                    response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.CustomPhonemizerProto.SerializeToString,
+            ),
+            'ListCustomPhonemizer': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListCustomPhonemizer,
+                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerRequest.FromString,
+                    response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
             'ondewo.t2s.Text2Speech', rpc_method_handlers)
@@ -221,7 +341,7 @@ def add_Text2SpeechServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class Text2Speech(object):
-    """endpoints of t2s generate service
+    """Text2Speech service provides endpoints for text-to-speech generation.
     """
 
     @staticmethod
@@ -411,117 +531,6 @@ class Text2Speech(object):
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
-
-class CustomPhonemizersStub(object):
-    """endpoints of custom phonemizer
-    """
-
-    def __init__(self, channel):
-        """Constructor.
-
-        Args:
-            channel: A grpc.Channel.
-        """
-        self.GetCustomPhonemizer = channel.unary_unary(
-                '/ondewo.t2s.CustomPhonemizers/GetCustomPhonemizer',
-                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.PhonemizerId.SerializeToString,
-                response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.CustomPhonemizerProto.FromString,
-                )
-        self.CreateCustomPhonemizer = channel.unary_unary(
-                '/ondewo.t2s.CustomPhonemizers/CreateCustomPhonemizer',
-                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.CreateCustomPhonemizerRequest.SerializeToString,
-                response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.PhonemizerId.FromString,
-                )
-        self.DeleteCustomPhonemizer = channel.unary_unary(
-                '/ondewo.t2s.CustomPhonemizers/DeleteCustomPhonemizer',
-                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.PhonemizerId.SerializeToString,
-                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                )
-        self.UpdateCustomPhonemizer = channel.unary_unary(
-                '/ondewo.t2s.CustomPhonemizers/UpdateCustomPhonemizer',
-                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.UpdateCustomPhonemizerRequest.SerializeToString,
-                response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.CustomPhonemizerProto.FromString,
-                )
-        self.ListCustomPhonemizer = channel.unary_unary(
-                '/ondewo.t2s.CustomPhonemizers/ListCustomPhonemizer',
-                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerRequest.SerializeToString,
-                response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerResponse.FromString,
-                )
-
-
-class CustomPhonemizersServicer(object):
-    """endpoints of custom phonemizer
-    """
-
-    def GetCustomPhonemizer(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def CreateCustomPhonemizer(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def DeleteCustomPhonemizer(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def UpdateCustomPhonemizer(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def ListCustomPhonemizer(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-
-def add_CustomPhonemizersServicer_to_server(servicer, server):
-    rpc_method_handlers = {
-            'GetCustomPhonemizer': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetCustomPhonemizer,
-                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.PhonemizerId.FromString,
-                    response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.CustomPhonemizerProto.SerializeToString,
-            ),
-            'CreateCustomPhonemizer': grpc.unary_unary_rpc_method_handler(
-                    servicer.CreateCustomPhonemizer,
-                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.CreateCustomPhonemizerRequest.FromString,
-                    response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.PhonemizerId.SerializeToString,
-            ),
-            'DeleteCustomPhonemizer': grpc.unary_unary_rpc_method_handler(
-                    servicer.DeleteCustomPhonemizer,
-                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.PhonemizerId.FromString,
-                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            ),
-            'UpdateCustomPhonemizer': grpc.unary_unary_rpc_method_handler(
-                    servicer.UpdateCustomPhonemizer,
-                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.UpdateCustomPhonemizerRequest.FromString,
-                    response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.CustomPhonemizerProto.SerializeToString,
-            ),
-            'ListCustomPhonemizer': grpc.unary_unary_rpc_method_handler(
-                    servicer.ListCustomPhonemizer,
-                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerRequest.FromString,
-                    response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerResponse.SerializeToString,
-            ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-            'ondewo.t2s.CustomPhonemizers', rpc_method_handlers)
-    server.add_generic_rpc_handlers((generic_handler,))
-
-
- # This class is part of an EXPERIMENTAL API.
-class CustomPhonemizers(object):
-    """endpoints of custom phonemizer
-    """
-
     @staticmethod
     def GetCustomPhonemizer(request,
             target,
@@ -533,7 +542,7 @@ class CustomPhonemizers(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.CustomPhonemizers/GetCustomPhonemizer',
+        return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.Text2Speech/GetCustomPhonemizer',
             ondewo_dot_t2s_dot_text__to__speech__pb2.PhonemizerId.SerializeToString,
             ondewo_dot_t2s_dot_text__to__speech__pb2.CustomPhonemizerProto.FromString,
             options, channel_credentials,
@@ -550,7 +559,7 @@ class CustomPhonemizers(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.CustomPhonemizers/CreateCustomPhonemizer',
+        return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.Text2Speech/CreateCustomPhonemizer',
             ondewo_dot_t2s_dot_text__to__speech__pb2.CreateCustomPhonemizerRequest.SerializeToString,
             ondewo_dot_t2s_dot_text__to__speech__pb2.PhonemizerId.FromString,
             options, channel_credentials,
@@ -567,7 +576,7 @@ class CustomPhonemizers(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.CustomPhonemizers/DeleteCustomPhonemizer',
+        return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.Text2Speech/DeleteCustomPhonemizer',
             ondewo_dot_t2s_dot_text__to__speech__pb2.PhonemizerId.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
@@ -584,7 +593,7 @@ class CustomPhonemizers(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.CustomPhonemizers/UpdateCustomPhonemizer',
+        return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.Text2Speech/UpdateCustomPhonemizer',
             ondewo_dot_t2s_dot_text__to__speech__pb2.UpdateCustomPhonemizerRequest.SerializeToString,
             ondewo_dot_t2s_dot_text__to__speech__pb2.CustomPhonemizerProto.FromString,
             options, channel_credentials,
@@ -601,7 +610,7 @@ class CustomPhonemizers(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.CustomPhonemizers/ListCustomPhonemizer',
+        return grpc.experimental.unary_unary(request, target, '/ondewo.t2s.Text2Speech/ListCustomPhonemizer',
             ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerRequest.SerializeToString,
             ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerResponse.FromString,
             options, channel_credentials,
