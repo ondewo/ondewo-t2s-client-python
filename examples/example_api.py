@@ -25,7 +25,11 @@ from ondewo.t2s import text_to_speech_pb2
 from ondewo.t2s.client.client import Client
 from ondewo.t2s.client.client_config import ClientConfig
 from ondewo.t2s.client.services.text_to_speech import Text2Speech
-from ondewo.t2s.text_to_speech_pb2 import ListT2sPipelinesRequest, Text2SpeechConfig
+from ondewo.t2s.text_to_speech_pb2 import (
+    ListT2sPipelinesRequest,
+    Text2SpeechConfig,
+)
+
 
 # DESCRIPTION:
 # In this example we do the following:
@@ -51,7 +55,7 @@ def synthesis_request(t2s_service: Text2Speech, **req_kwargs: Any):
     return audio
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="API example.")
     parser.add_argument("--config", type=str)
     parser.add_argument("--secure", default=False, action="store_true")
@@ -65,7 +69,8 @@ def main():
 
     # 2. List all available pipelines and filter on english language ones
     # List all t2s pipelines present on the server
-    t2s_service.list_t2s_pipelines(request=ListT2sPipelinesRequest()).pipelines
+    for pipeline in t2s_service.list_t2s_pipelines(request=ListT2sPipelinesRequest()).pipelines:
+        print(pipeline)
 
     # List pipelines based on conditions
     german_pipelines = t2s_service.list_t2s_pipelines(

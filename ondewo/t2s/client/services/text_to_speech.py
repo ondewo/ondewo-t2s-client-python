@@ -2,21 +2,27 @@ from google.protobuf.empty_pb2 import Empty
 from ondewo.utils.base_services_interface import BaseServicesInterface
 
 from ondewo.t2s.text_to_speech_pb2 import (
-    ListT2sPipelinesRequest,
-    ListT2sPipelinesResponse,
-    ListT2sLanguagesRequest,
-    ListT2sLanguagesResponse,
-    ListT2sDomainsRequest,
-    ListT2sDomainsResponse,
-    SynthesizeRequest,
-    SynthesizeResponse,
     BatchSynthesizeRequest,
     BatchSynthesizeResponse,
+    CreateCustomPhonemizerRequest,
+    CustomPhonemizerProto,
+    ListCustomPhonemizerRequest,
+    ListCustomPhonemizerResponse,
+    ListT2sDomainsRequest,
+    ListT2sDomainsResponse,
+    ListT2sLanguagesRequest,
+    ListT2sLanguagesResponse,
+    ListT2sPipelinesRequest,
+    ListT2sPipelinesResponse,
     NormalizeTextRequest,
     NormalizeTextResponse,
+    PhonemizerId,
+    SynthesizeRequest,
+    SynthesizeResponse,
+    T2SGetServiceInfoResponse,
     T2sPipelineId,
     Text2SpeechConfig,
-    T2SGetServiceInfoResponse,
+    UpdateCustomPhonemizerRequest,
 )
 from ondewo.t2s.text_to_speech_pb2_grpc import Text2SpeechStub
 
@@ -76,3 +82,21 @@ class Text2Speech(BaseServicesInterface):
     def list_t2s_domains(self, request: ListT2sDomainsRequest) -> ListT2sDomainsResponse:
         response: ListT2sDomainsResponse = self.stub.ListT2sDomains(request)
         return response
+
+    # region phonemizer
+    def create_custom_phonemizer(self, request: CreateCustomPhonemizerRequest) -> PhonemizerId:
+        response: PhonemizerId = self.stub.CreateCustomPhonemizer(request)
+        return response
+
+    def delete_custom_phonemizer(self, request: PhonemizerId) -> Empty:
+        response: Empty = self.stub.DeleteCustomPhonemizer(request)
+        return response
+
+    def update_custom_phonemizer(self, request: UpdateCustomPhonemizerRequest) -> CustomPhonemizerProto:
+        response: CustomPhonemizerProto = self.stub.UpdateCustomPhonemizer(request)
+        return response
+
+    def list_custom_phonemizer(self, request: ListCustomPhonemizerRequest) -> ListCustomPhonemizerResponse:
+        response: ListCustomPhonemizerResponse = self.stub.ListCustomPhonemizer(request)
+        return response
+    # endregion phonemizer
