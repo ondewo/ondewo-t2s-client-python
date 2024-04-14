@@ -683,6 +683,7 @@ class T2SInference(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
     TYPE_FIELD_NUMBER: builtins.int
     COMPOSITE_INFERENCE_FIELD_NUMBER: builtins.int
+    SINGLE_INFERENCE_FIELD_NUMBER: builtins.int
     CACHING_FIELD_NUMBER: builtins.int
     type: typing.Text
     """The type of inference."""
@@ -692,6 +693,10 @@ class T2SInference(google.protobuf.message.Message):
         """Composite inference settings."""
         pass
     @property
+    def single_inference(self) -> global___SingleInference:
+        """Single inference settings."""
+        pass
+    @property
     def caching(self) -> global___Caching:
         """Caching settings."""
         pass
@@ -699,10 +704,11 @@ class T2SInference(google.protobuf.message.Message):
         *,
         type: typing.Text = ...,
         composite_inference: typing.Optional[global___CompositeInference] = ...,
+        single_inference: typing.Optional[global___SingleInference] = ...,
         caching: typing.Optional[global___Caching] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["caching",b"caching","composite_inference",b"composite_inference"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["caching",b"caching","composite_inference",b"composite_inference","type",b"type"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["caching",b"caching","composite_inference",b"composite_inference","single_inference",b"single_inference"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["caching",b"caching","composite_inference",b"composite_inference","single_inference",b"single_inference","type",b"type"]) -> None: ...
 global___T2SInference = T2SInference
 
 class CompositeInference(google.protobuf.message.Message):
@@ -726,6 +732,22 @@ class CompositeInference(google.protobuf.message.Message):
     def HasField(self, field_name: typing_extensions.Literal["mel2audio",b"mel2audio","text2mel",b"text2mel"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["mel2audio",b"mel2audio","text2mel",b"text2mel"]) -> None: ...
 global___CompositeInference = CompositeInference
+
+class SingleInference(google.protobuf.message.Message):
+    """SingleInference message inference settings of text2audio models."""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    TEXT2AUDIO_FIELD_NUMBER: builtins.int
+    @property
+    def text2audio(self) -> global___Text2Audio:
+        """Text-to-audio inference settings."""
+        pass
+    def __init__(self,
+        *,
+        text2audio: typing.Optional[global___Text2Audio] = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["text2audio",b"text2audio"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["text2audio",b"text2audio"]) -> None: ...
+global___SingleInference = SingleInference
 
 class Text2Mel(google.protobuf.message.Message):
     """Text2Mel message contains settings for text-to-mel inference."""
@@ -753,6 +775,33 @@ class Text2Mel(google.protobuf.message.Message):
     def HasField(self, field_name: typing_extensions.Literal["glow_tts",b"glow_tts","glow_tts_triton",b"glow_tts_triton"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["glow_tts",b"glow_tts","glow_tts_triton",b"glow_tts_triton","type",b"type"]) -> None: ...
 global___Text2Mel = Text2Mel
+
+class Text2Audio(google.protobuf.message.Message):
+    """Text2Audio message contains settings for text-to-audio inference."""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    TYPE_FIELD_NUMBER: builtins.int
+    VITS_FIELD_NUMBER: builtins.int
+    VITS_TRITON_FIELD_NUMBER: builtins.int
+    type: typing.Text
+    """The type of text-to-audio inference."""
+
+    @property
+    def vits(self) -> global___Vits:
+        """Vits inference settings."""
+        pass
+    @property
+    def vits_triton(self) -> global___VitsTriton:
+        """Vits Triton inference settings."""
+        pass
+    def __init__(self,
+        *,
+        type: typing.Text = ...,
+        vits: typing.Optional[global___Vits] = ...,
+        vits_triton: typing.Optional[global___VitsTriton] = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["vits",b"vits","vits_triton",b"vits_triton"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["type",b"type","vits",b"vits","vits_triton",b"vits_triton"]) -> None: ...
+global___Text2Audio = Text2Audio
 
 class GlowTTS(google.protobuf.message.Message):
     """GlowTTS message contains settings for the GlowTTS inference."""
@@ -853,6 +902,105 @@ class GlowTTSTriton(google.protobuf.message.Message):
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["batch_size",b"batch_size","cleaners",b"cleaners","length_scale",b"length_scale","max_text_length",b"max_text_length","noise_scale",b"noise_scale","param_config_path",b"param_config_path","triton_model_name",b"triton_model_name","triton_server_host",b"triton_server_host","triton_server_port",b"triton_server_port"]) -> None: ...
 global___GlowTTSTriton = GlowTTSTriton
+
+class Vits(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    BATCH_SIZE_FIELD_NUMBER: builtins.int
+    USE_GPU_FIELD_NUMBER: builtins.int
+    LENGTH_SCALE_FIELD_NUMBER: builtins.int
+    NOISE_SCALE_FIELD_NUMBER: builtins.int
+    PATH_FIELD_NUMBER: builtins.int
+    CLEANERS_FIELD_NUMBER: builtins.int
+    PARAM_CONFIG_PATH_FIELD_NUMBER: builtins.int
+    batch_size: builtins.int
+    """The batch size for inference."""
+
+    use_gpu: builtins.bool
+    """Flag indicating whether to use GPU for inference."""
+
+    length_scale: builtins.float
+    """The length scale for inference."""
+
+    noise_scale: builtins.float
+    """The noise scale for inference."""
+
+    path: typing.Text
+    """The path to the Vits model."""
+
+    @property
+    def cleaners(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]:
+        """Repeated field containing the cleaners for text normalization."""
+        pass
+    param_config_path: typing.Text
+    """The path to the parameter configuration."""
+
+    def __init__(self,
+        *,
+        batch_size: builtins.int = ...,
+        use_gpu: builtins.bool = ...,
+        length_scale: builtins.float = ...,
+        noise_scale: builtins.float = ...,
+        path: typing.Text = ...,
+        cleaners: typing.Optional[typing.Iterable[typing.Text]] = ...,
+        param_config_path: typing.Text = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["batch_size",b"batch_size","cleaners",b"cleaners","length_scale",b"length_scale","noise_scale",b"noise_scale","param_config_path",b"param_config_path","path",b"path","use_gpu",b"use_gpu"]) -> None: ...
+global___Vits = Vits
+
+class VitsTriton(google.protobuf.message.Message):
+    """VitsTriton message contains settings for the Vits Triton inference."""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    BATCH_SIZE_FIELD_NUMBER: builtins.int
+    LENGTH_SCALE_FIELD_NUMBER: builtins.int
+    NOISE_SCALE_FIELD_NUMBER: builtins.int
+    CLEANERS_FIELD_NUMBER: builtins.int
+    MAX_TEXT_LENGTH_FIELD_NUMBER: builtins.int
+    PARAM_CONFIG_PATH_FIELD_NUMBER: builtins.int
+    TRITON_MODEL_NAME_FIELD_NUMBER: builtins.int
+    TRITON_SERVER_HOST_FIELD_NUMBER: builtins.int
+    TRITON_SERVER_PORT_FIELD_NUMBER: builtins.int
+    batch_size: builtins.int
+    """The batch size for inference."""
+
+    length_scale: builtins.float
+    """The length scale for inference."""
+
+    noise_scale: builtins.float
+    """The noise scale for inference."""
+
+    @property
+    def cleaners(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]:
+        """Repeated field containing the cleaners for text normalization."""
+        pass
+    max_text_length: builtins.int
+    """The maximum text length allowed."""
+
+    param_config_path: typing.Text
+    """The path to the parameter configuration."""
+
+    triton_model_name: typing.Text
+    """The name of the Triton model."""
+
+    triton_server_host: typing.Text
+    """The host of the Triton inference server which servers the model."""
+
+    triton_server_port: builtins.int
+    """The port of the Triton inference server which servers the model."""
+
+    def __init__(self,
+        *,
+        batch_size: builtins.int = ...,
+        length_scale: builtins.float = ...,
+        noise_scale: builtins.float = ...,
+        cleaners: typing.Optional[typing.Iterable[typing.Text]] = ...,
+        max_text_length: builtins.int = ...,
+        param_config_path: typing.Text = ...,
+        triton_model_name: typing.Text = ...,
+        triton_server_host: typing.Text = ...,
+        triton_server_port: builtins.int = ...,
+        ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["batch_size",b"batch_size","cleaners",b"cleaners","length_scale",b"length_scale","max_text_length",b"max_text_length","noise_scale",b"noise_scale","param_config_path",b"param_config_path","triton_model_name",b"triton_model_name","triton_server_host",b"triton_server_host","triton_server_port",b"triton_server_port"]) -> None: ...
+global___VitsTriton = VitsTriton
 
 class Mel2Audio(google.protobuf.message.Message):
     """Mel2Audio message contains settings for mel-to-audio inference."""

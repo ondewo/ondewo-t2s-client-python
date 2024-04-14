@@ -8,7 +8,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="ondewo-t2s-client",
-    version='5.2.0',
+    version='5.3.0',
     author="Ondewo GbmH",
     author_email="office@ondewo.com",
     description="provides endpoints and messages for gRPC communication with the ONDEWO T2S server",
