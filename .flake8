@@ -5,6 +5,7 @@ max-line-length = 120
 exclude =
     # No need to traverse our git directory
     .git,
+    build,
     ondewo/t2s/text_to_speech_pb2.py
     ondewo/t2s/text_to_speech_pb2.pyi
     ondewo/t2s/text_to_speech_pb2_grpc.py
