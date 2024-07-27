@@ -1,4 +1,7 @@
-from setuptools import setup, find_packages
+from setuptools import (
+    find_packages,
+    setup,
+)
 
 with open("README.md", "r") as f:
     long_description = f.read()
@@ -8,10 +11,10 @@ with open("requirements.txt") as f:
 
 setup(
     name="ondewo-t2s-client",
-    version='5.3.0',
-    author="Ondewo GbmH",
+    version='5.3.1',
+    author="ONDEWO GmbH",
     author_email="office@ondewo.com",
-    description="provides endpoints and messages for gRPC communication with the ONDEWO T2S server",
+    description="ONDEWO Text 2 Speech (T2S) Client library for Python",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ondewo/ondewo-t2s-client-python",
@@ -27,10 +30,16 @@ setup(
         'ondewo.t2s': ['py.typed', '*.pyi'],
     },
     classifiers=[
-        "Programming Language :: Python :: 3",
-        "Operating System :: OS Independent",
-        "Development Status :: 3 - Alpha",
-        "Topic :: Software Development :: Libraries",
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: Apache Software License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Topic :: Software Development :: Libraries',
     ],
     python_requires='>=3',
     install_requires=requires,
