@@ -3,20 +3,25 @@ import pytest
 from ondewo.t2s.client.client import Client
 from ondewo.t2s.text_to_speech_pb2 import (
     ListT2sLanguagesRequest,
+    ListT2sLanguagesResponse,
     ListT2sPipelinesRequest,
+    ListT2sPipelinesResponse,
     RequestConfig,
     SynthesizeRequest,
+    SynthesizeResponse,
     T2sPipelineId,
 )
 
 
 def test_list_pipelines(client: Client):
-    pipelines = client.services.text_to_speech.list_t2s_pipelines(request=ListT2sPipelinesRequest()).pipelines
-    assert len(pipelines) > 0
+    pipelines: ListT2sPipelinesResponse = client.services.text_to_speech.list_t2s_pipelines(
+        request=ListT2sPipelinesRequest())
+    assert len(pipelines.pipelines) > 0
 
 
 def test_list_languages(client: Client):
-    response = client.services.text_to_speech.list_t2s_languages(request=ListT2sLanguagesRequest())
+    response: ListT2sLanguagesResponse = client.services.text_to_speech.list_t2s_languages(
+        request=ListT2sLanguagesRequest())
     assert response is not None
 
 
@@ -27,16 +32,17 @@ def test_list_languages(client: Client):
     ]
 )
 def test_synthesize_request(client: Client, text: str, length_scale: float):
-    pipelines = client.services.text_to_speech.list_t2s_pipelines(request=ListT2sPipelinesRequest()).pipelines
-    pipeline_id: str = pipelines[0].id
-    synthesize_pipeline = T2sPipelineId(id=pipeline_id)
-    config = RequestConfig(
+    pipelines: ListT2sPipelinesResponse = client.services.text_to_speech.list_t2s_pipelines(
+        request=ListT2sPipelinesRequest())
+    pipeline_id: str = pipelines.pipelines[0].id
+    synthesize_pipeline: T2sPipelineId = T2sPipelineId(id=pipeline_id)
+    config: RequestConfig = RequestConfig(
         t2s_pipeline_id=synthesize_pipeline.id,
         length_scale=length_scale,
     )
-    request = SynthesizeRequest(
+    request: SynthesizeRequest = SynthesizeRequest(
         text=text,
         config=config,
     )
-    response = client.services.text_to_speech.synthesize(request=request)
+    response: SynthesizeResponse = client.services.text_to_speech.synthesize(request=request)
     assert response is not None
