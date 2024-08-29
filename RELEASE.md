@@ -1,4 +1,11 @@
 # Release History
+
+*****************
+## Release ONDEWO T2S Python Client 5.4.0
+
+### Improvements
+ * Tracking API Version [5.4.0](https://github.com/ondewo/ondewo-t2s-api/releases/tag/5.4.0) ( [Documentation](https://ondewo.github.io/ondewo-t2s-api/) )
+
 *****************
 ## Release ONDEWO T2S Python Client 5.3.1
 
