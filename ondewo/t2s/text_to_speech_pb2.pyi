@@ -1244,6 +1244,7 @@ class T2SNormalization(google.protobuf.message.Message):
     ARPABET_MAPPING_FIELD_NUMBER: builtins.int
     NUMERIC_MAPPING_FIELD_NUMBER: builtins.int
     CALLSIGNS_MAPPING_FIELD_NUMBER: builtins.int
+    PHONEME_CORRECTION_MAPPING_FIELD_NUMBER: builtins.int
     language: builtins.str
     """The language for which the normalization is applied."""
     custom_phonemizer_id: builtins.str
@@ -1254,6 +1255,8 @@ class T2SNormalization(google.protobuf.message.Message):
     """The mapping for numeric expressions."""
     callsigns_mapping: builtins.str
     """The mapping for callsigns."""
+    phoneme_correction_mapping: builtins.str
+    """The mapping for phoneme correction."""
     @property
     def pipeline(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
         """The pipeline(s) used for normalization."""
@@ -1272,9 +1275,10 @@ class T2SNormalization(google.protobuf.message.Message):
         arpabet_mapping: builtins.str = ...,
         numeric_mapping: builtins.str = ...,
         callsigns_mapping: builtins.str = ...,
+        phoneme_correction_mapping: builtins.str = ...,
     ) -> None: ...
     def HasField(self, field_name: typing.Literal["custom_length_scales", b"custom_length_scales"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["arpabet_mapping", b"arpabet_mapping", "callsigns_mapping", b"callsigns_mapping", "custom_length_scales", b"custom_length_scales", "custom_phonemizer_id", b"custom_phonemizer_id", "language", b"language", "numeric_mapping", b"numeric_mapping", "pipeline", b"pipeline"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["arpabet_mapping", b"arpabet_mapping", "callsigns_mapping", b"callsigns_mapping", "custom_length_scales", b"custom_length_scales", "custom_phonemizer_id", b"custom_phonemizer_id", "language", b"language", "numeric_mapping", b"numeric_mapping", "phoneme_correction_mapping", b"phoneme_correction_mapping", "pipeline", b"pipeline"]) -> None: ...
 
 global___T2SNormalization = T2SNormalization
 
