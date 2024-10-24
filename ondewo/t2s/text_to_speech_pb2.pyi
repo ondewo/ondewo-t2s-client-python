@@ -122,6 +122,7 @@ class SynthesizeRequest(google.protobuf.message.Message):
 
     TEXT_FIELD_NUMBER: builtins.int
     CONFIG_FIELD_NUMBER: builtins.int
+    T2S_SERVICE_CONFIG_FIELD_NUMBER: builtins.int
     text: builtins.str
     """Required. Represents the text that will be transformed to speech.
 
@@ -152,14 +153,18 @@ class SynthesizeRequest(google.protobuf.message.Message):
     @property
     def config(self) -> global___RequestConfig:
         """Required. Represents the specifications needed to do the text to speech transformation."""
+    @property
+    def t2s_service_config(self) -> google.protobuf.struct_pb2.Struct:
+        """t2s_service_config for cloud api services."""
     def __init__(
         self,
         *,
         text: builtins.str = ...,
         config: global___RequestConfig | None = ...,
+        t2s_service_config: google.protobuf.struct_pb2.Struct | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["config", b"config"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["config", b"config", "text", b"text"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["config", b"config", "t2s_service_config", b"t2s_service_config"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["config", b"config", "t2s_service_config", b"t2s_service_config", "text", b"text"]) -> None: ...
 
 global___SynthesizeRequest = SynthesizeRequest
 
@@ -1204,7 +1209,6 @@ class T2SNormalization(google.protobuf.message.Message):
     NUMERIC_MAPPING_FIELD_NUMBER: builtins.int
     CALLSIGNS_MAPPING_FIELD_NUMBER: builtins.int
     PHONEME_CORRECTION_MAPPING_FIELD_NUMBER: builtins.int
-    T2S_SERVICE_CONFIG_FIELD_NUMBER: builtins.int
     language: builtins.str
     """The language for which the normalization is applied."""
     @property
@@ -1223,9 +1227,6 @@ class T2SNormalization(google.protobuf.message.Message):
     """The mapping for callsigns."""
     phoneme_correction_mapping: builtins.str
     """The mapping for phoneme correction."""
-    @property
-    def t2s_service_config(self) -> google.protobuf.struct_pb2.Struct:
-        """t2s_service_config for cloud api services."""
     def __init__(
         self,
         *,
@@ -1237,10 +1238,9 @@ class T2SNormalization(google.protobuf.message.Message):
         numeric_mapping: builtins.str = ...,
         callsigns_mapping: builtins.str = ...,
         phoneme_correction_mapping: builtins.str = ...,
-        t2s_service_config: google.protobuf.struct_pb2.Struct | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["custom_length_scales", b"custom_length_scales", "t2s_service_config", b"t2s_service_config"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["arpabet_mapping", b"arpabet_mapping", "callsigns_mapping", b"callsigns_mapping", "custom_length_scales", b"custom_length_scales", "custom_phonemizer_id", b"custom_phonemizer_id", "language", b"language", "numeric_mapping", b"numeric_mapping", "phoneme_correction_mapping", b"phoneme_correction_mapping", "pipeline", b"pipeline", "t2s_service_config", b"t2s_service_config"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["custom_length_scales", b"custom_length_scales"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["arpabet_mapping", b"arpabet_mapping", "callsigns_mapping", b"callsigns_mapping", "custom_length_scales", b"custom_length_scales", "custom_phonemizer_id", b"custom_phonemizer_id", "language", b"language", "numeric_mapping", b"numeric_mapping", "phoneme_correction_mapping", b"phoneme_correction_mapping", "pipeline", b"pipeline"]) -> None: ...
 
 global___T2SNormalization = T2SNormalization
 
