@@ -823,6 +823,7 @@ class Text2Audio(google.protobuf.message.Message):
     TYPE_FIELD_NUMBER: builtins.int
     VITS_FIELD_NUMBER: builtins.int
     VITS_TRITON_FIELD_NUMBER: builtins.int
+    ELEVEN_LABS_FIELD_NUMBER: builtins.int
     type: builtins.str
     """The type of text-to-audio inference."""
     @property
@@ -831,15 +832,19 @@ class Text2Audio(google.protobuf.message.Message):
     @property
     def vits_triton(self) -> global___VitsTriton:
         """Vits Triton inference settings."""
+    @property
+    def eleven_labs(self) -> global___ElevenLabsCloudAPI:
+        """ElevenLabs inference settings."""
     def __init__(
         self,
         *,
         type: builtins.str = ...,
         vits: global___Vits | None = ...,
         vits_triton: global___VitsTriton | None = ...,
+        eleven_labs: global___ElevenLabsCloudAPI | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["vits", b"vits", "vits_triton", b"vits_triton"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["type", b"type", "vits", b"vits", "vits_triton", b"vits_triton"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["eleven_labs", b"eleven_labs", "vits", b"vits", "vits_triton", b"vits_triton"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["eleven_labs", b"eleven_labs", "type", b"type", "vits", b"vits", "vits_triton", b"vits_triton"]) -> None: ...
 
 global___Text2Audio = Text2Audio
 
@@ -1028,6 +1033,28 @@ class VitsTriton(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["batch_size", b"batch_size", "cleaners", b"cleaners", "length_scale", b"length_scale", "max_text_length", b"max_text_length", "noise_scale", b"noise_scale", "param_config_path", b"param_config_path", "triton_model_name", b"triton_model_name", "triton_server_host", b"triton_server_host", "triton_server_port", b"triton_server_port"]) -> None: ...
 
 global___VitsTriton = VitsTriton
+
+@typing_extensions.final
+class ElevenLabsCloudAPI(google.protobuf.message.Message):
+    """ElevenLabsCloudAPI message contains settings for the ElevenLabsCloudAPI inference."""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    LENGTH_SCALE_FIELD_NUMBER: builtins.int
+    NOISE_SCALE_FIELD_NUMBER: builtins.int
+    length_scale: builtins.float
+    """The length scale for inference."""
+    noise_scale: builtins.float
+    """The noise scale for inference."""
+    def __init__(
+        self,
+        *,
+        length_scale: builtins.float = ...,
+        noise_scale: builtins.float = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["length_scale", b"length_scale", "noise_scale", b"noise_scale"]) -> None: ...
+
+global___ElevenLabsCloudAPI = ElevenLabsCloudAPI
 
 @typing_extensions.final
 class Mel2Audio(google.protobuf.message.Message):
