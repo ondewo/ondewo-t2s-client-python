@@ -1040,21 +1040,65 @@ class CloudServiceElevenLabsT2s(google.protobuf.message.Message):
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    LENGTH_SCALE_FIELD_NUMBER: builtins.int
-    NOISE_SCALE_FIELD_NUMBER: builtins.int
-    length_scale: builtins.float
-    """The length scale for inference."""
-    noise_scale: builtins.float
-    """The noise scale for inference."""
+    VOICE_ID_FIELD_NUMBER: builtins.int
+    VOICE_SETTINGS_FIELD_NUMBER: builtins.int
+    USE_SPEAKER_BOOST_FIELD_NUMBER: builtins.int
+    SEED_FIELD_NUMBER: builtins.int
+    USE_PVC_AS_IVC_FIELD_NUMBER: builtins.int
+    APPLY_TEXT_NORMALIZATION_FIELD_NUMBER: builtins.int
+    voice_id: builtins.str
+    """Voice ID indicating the speaker"""
+    @property
+    def voice_settings(self) -> global___VoiceSettings:
+        """Voice setting of the inference"""
+    use_speaker_boost: builtins.bool
+    """Flag to indicate speaker boost"""
+    seed: builtins.int
+    """Seed value for inference"""
+    use_pvc_as_ivc: builtins.bool
+    """Flag to indicate using pvc_as_ivc"""
+    apply_text_normalization: builtins.str
+    """Flag to indicate applying text normalization"""
     def __init__(
         self,
         *,
-        length_scale: builtins.float = ...,
-        noise_scale: builtins.float = ...,
+        voice_id: builtins.str = ...,
+        voice_settings: global___VoiceSettings | None = ...,
+        use_speaker_boost: builtins.bool = ...,
+        seed: builtins.int = ...,
+        use_pvc_as_ivc: builtins.bool = ...,
+        apply_text_normalization: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["length_scale", b"length_scale", "noise_scale", b"noise_scale"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["voice_settings", b"voice_settings"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["apply_text_normalization", b"apply_text_normalization", "seed", b"seed", "use_pvc_as_ivc", b"use_pvc_as_ivc", "use_speaker_boost", b"use_speaker_boost", "voice_id", b"voice_id", "voice_settings", b"voice_settings"]) -> None: ...
 
 global___CloudServiceElevenLabsT2s = CloudServiceElevenLabsT2s
+
+@typing_extensions.final
+class VoiceSettings(google.protobuf.message.Message):
+    """VoiceSettings message contains settings for ElevenLabs inference."""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    STABILITY_FIELD_NUMBER: builtins.int
+    SIMILARITY_BOOST_FIELD_NUMBER: builtins.int
+    STYLE_FIELD_NUMBER: builtins.int
+    stability: builtins.float
+    """stability value for elevenlabs inference"""
+    similarity_boost: builtins.float
+    """similarity boost value for ElevenLabs inference."""
+    style: builtins.float
+    """style boost value for ElevenLabs inference."""
+    def __init__(
+        self,
+        *,
+        stability: builtins.float = ...,
+        similarity_boost: builtins.float = ...,
+        style: builtins.float = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["similarity_boost", b"similarity_boost", "stability", b"stability", "style", b"style"]) -> None: ...
+
+global___VoiceSettings = VoiceSettings
 
 @typing_extensions.final
 class Mel2Audio(google.protobuf.message.Message):
