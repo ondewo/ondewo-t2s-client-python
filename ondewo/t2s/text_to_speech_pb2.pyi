@@ -833,7 +833,7 @@ class Text2Audio(google.protobuf.message.Message):
     def vits_triton(self) -> global___VitsTriton:
         """Vits Triton inference settings."""
     @property
-    def cloud_service_eleven_labs_t2s(self) -> global___CloudServiceElevenLabsT2S:
+    def cloud_service_eleven_labs_t2s(self) -> global___CloudServiceElevenLabsT2s:
         """ElevenLabs cloud service inference settings."""
     def __init__(
         self,
@@ -841,7 +841,7 @@ class Text2Audio(google.protobuf.message.Message):
         type: builtins.str = ...,
         vits: global___Vits | None = ...,
         vits_triton: global___VitsTriton | None = ...,
-        cloud_service_eleven_labs_t2s: global___CloudServiceElevenLabsT2S | None = ...,
+        cloud_service_eleven_labs_t2s: global___CloudServiceElevenLabsT2s | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["cloud_service_eleven_labs_t2s", b"cloud_service_eleven_labs_t2s", "vits", b"vits", "vits_triton", b"vits_triton"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["cloud_service_eleven_labs_t2s", b"cloud_service_eleven_labs_t2s", "type", b"type", "vits", b"vits", "vits_triton", b"vits_triton"]) -> None: ...
@@ -1035,8 +1035,8 @@ class VitsTriton(google.protobuf.message.Message):
 global___VitsTriton = VitsTriton
 
 @typing_extensions.final
-class CloudServiceElevenLabsT2S(google.protobuf.message.Message):
-    """CloudServiceElevenLabsT2S message contains settings for the ElevenLabs Cloud service inference."""
+class CloudServiceElevenLabsT2s(google.protobuf.message.Message):
+    """CloudServiceElevenLabsT2s message contains settings for the ElevenLabs Cloud service inference."""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1054,7 +1054,7 @@ class CloudServiceElevenLabsT2S(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["length_scale", b"length_scale", "noise_scale", b"noise_scale"]) -> None: ...
 
-global___CloudServiceElevenLabsT2S = CloudServiceElevenLabsT2S
+global___CloudServiceElevenLabsT2s = CloudServiceElevenLabsT2s
 
 @typing_extensions.final
 class Mel2Audio(google.protobuf.message.Message):
