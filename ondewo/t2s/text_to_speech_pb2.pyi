@@ -823,7 +823,7 @@ class Text2Audio(google.protobuf.message.Message):
     TYPE_FIELD_NUMBER: builtins.int
     VITS_FIELD_NUMBER: builtins.int
     VITS_TRITON_FIELD_NUMBER: builtins.int
-    ELEVENLABS_CLOUD_FIELD_NUMBER: builtins.int
+    CLOUD_SERVICE_ELEVEN_LABS_T2S_FIELD_NUMBER: builtins.int
     type: builtins.str
     """The type of text-to-audio inference."""
     @property
@@ -833,18 +833,18 @@ class Text2Audio(google.protobuf.message.Message):
     def vits_triton(self) -> global___VitsTriton:
         """Vits Triton inference settings."""
     @property
-    def elevenlabs_cloud(self) -> global___ElevenLabsCloud:
-        """ElevenLabs inference settings."""
+    def cloud_service_eleven_labs_t2s(self) -> global___CloudServiceElevenLabsT2S:
+        """ElevenLabs cloud service inference settings."""
     def __init__(
         self,
         *,
         type: builtins.str = ...,
         vits: global___Vits | None = ...,
         vits_triton: global___VitsTriton | None = ...,
-        elevenlabs_cloud: global___ElevenLabsCloud | None = ...,
+        cloud_service_eleven_labs_t2s: global___CloudServiceElevenLabsT2S | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["elevenlabs_cloud", b"elevenlabs_cloud", "vits", b"vits", "vits_triton", b"vits_triton"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["elevenlabs_cloud", b"elevenlabs_cloud", "type", b"type", "vits", b"vits", "vits_triton", b"vits_triton"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["cloud_service_eleven_labs_t2s", b"cloud_service_eleven_labs_t2s", "vits", b"vits", "vits_triton", b"vits_triton"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["cloud_service_eleven_labs_t2s", b"cloud_service_eleven_labs_t2s", "type", b"type", "vits", b"vits", "vits_triton", b"vits_triton"]) -> None: ...
 
 global___Text2Audio = Text2Audio
 
@@ -1035,8 +1035,8 @@ class VitsTriton(google.protobuf.message.Message):
 global___VitsTriton = VitsTriton
 
 @typing_extensions.final
-class ElevenLabsCloud(google.protobuf.message.Message):
-    """ElevenLabsCloud message contains settings for the ElevenLabsCloud inference."""
+class CloudServiceElevenLabsT2S(google.protobuf.message.Message):
+    """CloudServiceElevenLabsT2S message contains settings for the ElevenLabs Cloud service inference."""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1054,7 +1054,7 @@ class ElevenLabsCloud(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["length_scale", b"length_scale", "noise_scale", b"noise_scale"]) -> None: ...
 
-global___ElevenLabsCloud = ElevenLabsCloud
+global___CloudServiceElevenLabsT2S = CloudServiceElevenLabsT2S
 
 @typing_extensions.final
 class Mel2Audio(google.protobuf.message.Message):
