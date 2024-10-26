@@ -1046,6 +1046,8 @@ class CloudServiceElevenLabsT2s(google.protobuf.message.Message):
     SEED_FIELD_NUMBER: builtins.int
     USE_PVC_AS_IVC_FIELD_NUMBER: builtins.int
     APPLY_TEXT_NORMALIZATION_FIELD_NUMBER: builtins.int
+    LENGTH_SCALE_FIELD_NUMBER: builtins.int
+    NOISE_SCALE_FIELD_NUMBER: builtins.int
     voice_id: builtins.str
     """Voice ID indicating the speaker"""
     @property
@@ -1059,6 +1061,10 @@ class CloudServiceElevenLabsT2s(google.protobuf.message.Message):
     """Flag to indicate using pvc_as_ivc"""
     apply_text_normalization: builtins.str
     """Flag to indicate applying text normalization"""
+    length_scale: builtins.float
+    """The length scale for inference."""
+    noise_scale: builtins.float
+    """The noise scale for inference."""
     def __init__(
         self,
         *,
@@ -1068,9 +1074,11 @@ class CloudServiceElevenLabsT2s(google.protobuf.message.Message):
         seed: builtins.int = ...,
         use_pvc_as_ivc: builtins.bool = ...,
         apply_text_normalization: builtins.str = ...,
+        length_scale: builtins.float = ...,
+        noise_scale: builtins.float = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["voice_settings", b"voice_settings"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["apply_text_normalization", b"apply_text_normalization", "seed", b"seed", "use_pvc_as_ivc", b"use_pvc_as_ivc", "use_speaker_boost", b"use_speaker_boost", "voice_id", b"voice_id", "voice_settings", b"voice_settings"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["apply_text_normalization", b"apply_text_normalization", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "seed", b"seed", "use_pvc_as_ivc", b"use_pvc_as_ivc", "use_speaker_boost", b"use_speaker_boost", "voice_id", b"voice_id", "voice_settings", b"voice_settings"]) -> None: ...
 
 global___CloudServiceElevenLabsT2s = CloudServiceElevenLabsT2s
 
