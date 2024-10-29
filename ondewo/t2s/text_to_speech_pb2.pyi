@@ -1143,9 +1143,12 @@ class CloudServiceGoogleT2s(google.protobuf.message.Message):
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    VOICE_ID_FIELD_NUMBER: builtins.int
     SPEAKING_RATE_FIELD_NUMBER: builtins.int
     VOLUME_GAIN_DB_FIELD_NUMBER: builtins.int
     PITCH_FIELD_NUMBER: builtins.int
+    voice_id: builtins.str
+    """Voice ID indicating the speaker"""
     speaking_rate: builtins.float
     """Speaking rate to control the speed of audio."""
     volume_gain_db: builtins.float
@@ -1155,11 +1158,12 @@ class CloudServiceGoogleT2s(google.protobuf.message.Message):
     def __init__(
         self,
         *,
+        voice_id: builtins.str = ...,
         speaking_rate: builtins.float = ...,
         volume_gain_db: builtins.float = ...,
         pitch: builtins.float = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["pitch", b"pitch", "speaking_rate", b"speaking_rate", "volume_gain_db", b"volume_gain_db"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["pitch", b"pitch", "speaking_rate", b"speaking_rate", "voice_id", b"voice_id", "volume_gain_db", b"volume_gain_db"]) -> None: ...
 
 global___CloudServiceGoogleT2s = CloudServiceGoogleT2s
 
