@@ -845,7 +845,7 @@ class Text2Audio(google.protobuf.message.Message):
     def cloud_service_google_t2s(self) -> global___CloudServiceGoogleT2s:
         """Google cloud service inference settings."""
     @property
-    def cloud_service_microsoft_t2s(self) -> global___CloudServiceMicrosoftT2s:
+    def cloud_service_microsoft_t2s(self) -> global___CloudServiceMicrosoftAzureT2s:
         """Microsoft cloud service inference settings."""
     def __init__(
         self,
@@ -856,7 +856,7 @@ class Text2Audio(google.protobuf.message.Message):
         cloud_service_eleven_labs_t2s: global___CloudServiceElevenLabsT2s | None = ...,
         cloud_service_amazon_aws_t2s: global___CloudServiceAmazonAwsT2s | None = ...,
         cloud_service_google_t2s: global___CloudServiceGoogleT2s | None = ...,
-        cloud_service_microsoft_t2s: global___CloudServiceMicrosoftT2s | None = ...,
+        cloud_service_microsoft_t2s: global___CloudServiceMicrosoftAzureT2s | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["cloud_service_amazon_aws_t2s", b"cloud_service_amazon_aws_t2s", "cloud_service_eleven_labs_t2s", b"cloud_service_eleven_labs_t2s", "cloud_service_google_t2s", b"cloud_service_google_t2s", "cloud_service_microsoft_t2s", b"cloud_service_microsoft_t2s", "vits", b"vits", "vits_triton", b"vits_triton"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["cloud_service_amazon_aws_t2s", b"cloud_service_amazon_aws_t2s", "cloud_service_eleven_labs_t2s", b"cloud_service_eleven_labs_t2s", "cloud_service_google_t2s", b"cloud_service_google_t2s", "cloud_service_microsoft_t2s", b"cloud_service_microsoft_t2s", "type", b"type", "vits", b"vits", "vits_triton", b"vits_triton"]) -> None: ...
@@ -1164,8 +1164,8 @@ class CloudServiceGoogleT2s(google.protobuf.message.Message):
 global___CloudServiceGoogleT2s = CloudServiceGoogleT2s
 
 @typing_extensions.final
-class CloudServiceMicrosoftT2s(google.protobuf.message.Message):
-    """CloudServiceMicrosoftT2s message contains settings for the Microsoft Cloud service inference."""
+class CloudServiceMicrosoftAzureT2s(google.protobuf.message.Message):
+    """CloudServiceMicrosoftAzureT2s message contains settings for the Microsoft Azure Cloud service inference."""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1183,7 +1183,7 @@ class CloudServiceMicrosoftT2s(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["use_default_speaker", b"use_default_speaker", "voice_id", b"voice_id"]) -> None: ...
 
-global___CloudServiceMicrosoftT2s = CloudServiceMicrosoftT2s
+global___CloudServiceMicrosoftAzureT2s = CloudServiceMicrosoftAzureT2s
 
 @typing_extensions.final
 class Mel2Audio(google.protobuf.message.Message):
