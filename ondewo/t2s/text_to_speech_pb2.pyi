@@ -1176,9 +1176,12 @@ class T2sCloudServiceElevenLabs(google.protobuf.message.Message):
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    MODEL_ID_FIELD_NUMBER: builtins.int
     VOICE_ID_FIELD_NUMBER: builtins.int
     VOICE_SETTINGS_FIELD_NUMBER: builtins.int
     APPLY_TEXT_NORMALIZATION_FIELD_NUMBER: builtins.int
+    model_id: builtins.str
+    """Model ID indicating the name of the model"""
     voice_id: builtins.str
     """Voice ID indicating the speaker"""
     @property
@@ -1189,12 +1192,13 @@ class T2sCloudServiceElevenLabs(google.protobuf.message.Message):
     def __init__(
         self,
         *,
+        model_id: builtins.str = ...,
         voice_id: builtins.str = ...,
         voice_settings: global___VoiceSettings | None = ...,
         apply_text_normalization: builtins.str = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["voice_settings", b"voice_settings"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["apply_text_normalization", b"apply_text_normalization", "voice_id", b"voice_id", "voice_settings", b"voice_settings"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["apply_text_normalization", b"apply_text_normalization", "model_id", b"model_id", "voice_id", b"voice_id", "voice_settings", b"voice_settings"]) -> None: ...
 
 global___T2sCloudServiceElevenLabs = T2sCloudServiceElevenLabs
 
