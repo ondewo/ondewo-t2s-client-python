@@ -305,7 +305,7 @@ class T2sCloudProviderConfig(google.protobuf.message.Message):
 
     T2S_CLOUD_PROVIDER_CONFIG_ELEVEN_LABS_FIELD_NUMBER: builtins.int
     T2S_CLOUD_PROVIDER_CONFIG_GOOGLE_FIELD_NUMBER: builtins.int
-    T2S_CLOUD_PROVIDER_CONFIG_MICROSOFT_FIELD_NUMBER: builtins.int
+    T2S_CLOUD_PROVIDER_CONFIG_MICROSOFT_AZURE_FIELD_NUMBER: builtins.int
     @property
     def t2s_cloud_provider_config_eleven_labs(self) -> global___T2sCloudProviderConfigElevenLabs:
         """Configuration for Eleven Labs text-to-speech provider."""
@@ -313,17 +313,17 @@ class T2sCloudProviderConfig(google.protobuf.message.Message):
     def t2s_cloud_provider_config_google(self) -> global___T2sCloudProviderConfigGoogle:
         """Configuration for Google text-to-speech provider."""
     @property
-    def t2s_cloud_provider_config_microsoft(self) -> global___T2sCloudProviderConfigMicrosoft:
+    def t2s_cloud_provider_config_microsoft_azure(self) -> global___T2sCloudProviderConfigMicrosoftAzure:
         """Configuration for Microsoft Azure text-to-speech provider."""
     def __init__(
         self,
         *,
         t2s_cloud_provider_config_eleven_labs: global___T2sCloudProviderConfigElevenLabs | None = ...,
         t2s_cloud_provider_config_google: global___T2sCloudProviderConfigGoogle | None = ...,
-        t2s_cloud_provider_config_microsoft: global___T2sCloudProviderConfigMicrosoft | None = ...,
+        t2s_cloud_provider_config_microsoft_azure: global___T2sCloudProviderConfigMicrosoftAzure | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["t2s_cloud_provider_config_eleven_labs", b"t2s_cloud_provider_config_eleven_labs", "t2s_cloud_provider_config_google", b"t2s_cloud_provider_config_google", "t2s_cloud_provider_config_microsoft", b"t2s_cloud_provider_config_microsoft"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["t2s_cloud_provider_config_eleven_labs", b"t2s_cloud_provider_config_eleven_labs", "t2s_cloud_provider_config_google", b"t2s_cloud_provider_config_google", "t2s_cloud_provider_config_microsoft", b"t2s_cloud_provider_config_microsoft"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["t2s_cloud_provider_config_eleven_labs", b"t2s_cloud_provider_config_eleven_labs", "t2s_cloud_provider_config_google", b"t2s_cloud_provider_config_google", "t2s_cloud_provider_config_microsoft_azure", b"t2s_cloud_provider_config_microsoft_azure"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["t2s_cloud_provider_config_eleven_labs", b"t2s_cloud_provider_config_eleven_labs", "t2s_cloud_provider_config_google", b"t2s_cloud_provider_config_google", "t2s_cloud_provider_config_microsoft_azure", b"t2s_cloud_provider_config_microsoft_azure"]) -> None: ...
 
 global___T2sCloudProviderConfig = T2sCloudProviderConfig
 
@@ -362,7 +362,7 @@ class T2sCloudProviderConfigElevenLabs(google.protobuf.message.Message):
 global___T2sCloudProviderConfigElevenLabs = T2sCloudProviderConfigElevenLabs
 
 @typing_extensions.final
-class T2sCloudProviderConfigMicrosoft(google.protobuf.message.Message):
+class T2sCloudProviderConfigMicrosoftAzure(google.protobuf.message.Message):
     """Configuration details specific to the Microsoft Azure text-to-speech provider."""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -377,7 +377,7 @@ class T2sCloudProviderConfigMicrosoft(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["use_default_speaker", b"use_default_speaker"]) -> None: ...
 
-global___T2sCloudProviderConfigMicrosoft = T2sCloudProviderConfigMicrosoft
+global___T2sCloudProviderConfigMicrosoftAzure = T2sCloudProviderConfigMicrosoftAzure
 
 @typing_extensions.final
 class T2sCloudProviderConfigGoogle(google.protobuf.message.Message):
@@ -944,10 +944,10 @@ class Text2Audio(google.protobuf.message.Message):
     TYPE_FIELD_NUMBER: builtins.int
     VITS_FIELD_NUMBER: builtins.int
     VITS_TRITON_FIELD_NUMBER: builtins.int
-    CLOUD_SERVICE_ELEVEN_LABS_T2S_FIELD_NUMBER: builtins.int
-    CLOUD_SERVICE_AMAZON_AWS_T2S_FIELD_NUMBER: builtins.int
-    CLOUD_SERVICE_GOOGLE_T2S_FIELD_NUMBER: builtins.int
-    CLOUD_SERVICE_MICROSOFT_T2S_FIELD_NUMBER: builtins.int
+    T2S_CLOUD_SERVICE_ELEVEN_LABS_FIELD_NUMBER: builtins.int
+    T2S_CLOUD_SERVICE_AMAZON_AWS_FIELD_NUMBER: builtins.int
+    T2S_CLOUD_SERVICE_GOOGLE_FIELD_NUMBER: builtins.int
+    T2S_CLOUD_SERVICE_MICROSOFT_AZURE_FIELD_NUMBER: builtins.int
     type: builtins.str
     """The type of text-to-audio inference."""
     @property
@@ -957,30 +957,30 @@ class Text2Audio(google.protobuf.message.Message):
     def vits_triton(self) -> global___VitsTriton:
         """Vits Triton inference settings."""
     @property
-    def cloud_service_eleven_labs_t2s(self) -> global___CloudServiceElevenLabsT2s:
+    def t2s_cloud_service_eleven_labs(self) -> global___T2sCloudServiceElevenLabs:
         """ElevenLabs cloud service inference settings."""
     @property
-    def cloud_service_amazon_aws_t2s(self) -> global___CloudServiceAmazonAwsT2s:
+    def t2s_cloud_service_amazon_aws(self) -> global___T2sCloudServiceAmazonAws:
         """Amazon Aws cloud service inference settings."""
     @property
-    def cloud_service_google_t2s(self) -> global___CloudServiceGoogleT2s:
+    def t2s_cloud_service_google(self) -> global___T2sCloudServiceGoogle:
         """Google cloud service inference settings."""
     @property
-    def cloud_service_microsoft_t2s(self) -> global___CloudServiceMicrosoftAzureT2s:
-        """Microsoft cloud service inference settings."""
+    def t2s_cloud_service_microsoft_azure(self) -> global___T2sCloudServiceMicrosoftAzure:
+        """Microsoft Azure cloud service inference settings."""
     def __init__(
         self,
         *,
         type: builtins.str = ...,
         vits: global___Vits | None = ...,
         vits_triton: global___VitsTriton | None = ...,
-        cloud_service_eleven_labs_t2s: global___CloudServiceElevenLabsT2s | None = ...,
-        cloud_service_amazon_aws_t2s: global___CloudServiceAmazonAwsT2s | None = ...,
-        cloud_service_google_t2s: global___CloudServiceGoogleT2s | None = ...,
-        cloud_service_microsoft_t2s: global___CloudServiceMicrosoftAzureT2s | None = ...,
+        t2s_cloud_service_eleven_labs: global___T2sCloudServiceElevenLabs | None = ...,
+        t2s_cloud_service_amazon_aws: global___T2sCloudServiceAmazonAws | None = ...,
+        t2s_cloud_service_google: global___T2sCloudServiceGoogle | None = ...,
+        t2s_cloud_service_microsoft_azure: global___T2sCloudServiceMicrosoftAzure | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["cloud_service_amazon_aws_t2s", b"cloud_service_amazon_aws_t2s", "cloud_service_eleven_labs_t2s", b"cloud_service_eleven_labs_t2s", "cloud_service_google_t2s", b"cloud_service_google_t2s", "cloud_service_microsoft_t2s", b"cloud_service_microsoft_t2s", "vits", b"vits", "vits_triton", b"vits_triton"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["cloud_service_amazon_aws_t2s", b"cloud_service_amazon_aws_t2s", "cloud_service_eleven_labs_t2s", b"cloud_service_eleven_labs_t2s", "cloud_service_google_t2s", b"cloud_service_google_t2s", "cloud_service_microsoft_t2s", b"cloud_service_microsoft_t2s", "type", b"type", "vits", b"vits", "vits_triton", b"vits_triton"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["t2s_cloud_service_amazon_aws", b"t2s_cloud_service_amazon_aws", "t2s_cloud_service_eleven_labs", b"t2s_cloud_service_eleven_labs", "t2s_cloud_service_google", b"t2s_cloud_service_google", "t2s_cloud_service_microsoft_azure", b"t2s_cloud_service_microsoft_azure", "vits", b"vits", "vits_triton", b"vits_triton"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["t2s_cloud_service_amazon_aws", b"t2s_cloud_service_amazon_aws", "t2s_cloud_service_eleven_labs", b"t2s_cloud_service_eleven_labs", "t2s_cloud_service_google", b"t2s_cloud_service_google", "t2s_cloud_service_microsoft_azure", b"t2s_cloud_service_microsoft_azure", "type", b"type", "vits", b"vits", "vits_triton", b"vits_triton"]) -> None: ...
 
 global___Text2Audio = Text2Audio
 
@@ -1171,8 +1171,8 @@ class VitsTriton(google.protobuf.message.Message):
 global___VitsTriton = VitsTriton
 
 @typing_extensions.final
-class CloudServiceElevenLabsT2s(google.protobuf.message.Message):
-    """CloudServiceElevenLabsT2s message contains settings for the ElevenLabs Cloud service inference."""
+class T2sCloudServiceElevenLabs(google.protobuf.message.Message):
+    """T2sCloudServiceElevenLabs message contains settings for the ElevenLabs Cloud service inference."""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1196,7 +1196,7 @@ class CloudServiceElevenLabsT2s(google.protobuf.message.Message):
     def HasField(self, field_name: typing_extensions.Literal["voice_settings", b"voice_settings"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["apply_text_normalization", b"apply_text_normalization", "voice_id", b"voice_id", "voice_settings", b"voice_settings"]) -> None: ...
 
-global___CloudServiceElevenLabsT2s = CloudServiceElevenLabsT2s
+global___T2sCloudServiceElevenLabs = T2sCloudServiceElevenLabs
 
 @typing_extensions.final
 class VoiceSettings(google.protobuf.message.Message):
@@ -1229,8 +1229,8 @@ class VoiceSettings(google.protobuf.message.Message):
 global___VoiceSettings = VoiceSettings
 
 @typing_extensions.final
-class CloudServiceAmazonAwsT2s(google.protobuf.message.Message):
-    """CloudServiceAmazonAwsT2s message contains settings for the Amazon AWS Cloud service inference."""
+class T2sCloudServiceAmazonAws(google.protobuf.message.Message):
+    """T2sCloudServiceAmazonAws message contains settings for the Amazon AWS Cloud service inference."""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1248,11 +1248,11 @@ class CloudServiceAmazonAwsT2s(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["model_id", b"model_id", "voice_id", b"voice_id"]) -> None: ...
 
-global___CloudServiceAmazonAwsT2s = CloudServiceAmazonAwsT2s
+global___T2sCloudServiceAmazonAws = T2sCloudServiceAmazonAws
 
 @typing_extensions.final
-class CloudServiceGoogleT2s(google.protobuf.message.Message):
-    """CloudServiceGoogleT2s message contains settings for the Google Cloud service inference."""
+class T2sCloudServiceGoogle(google.protobuf.message.Message):
+    """T2sCloudServiceGoogle message contains settings for the Google Cloud service inference."""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1278,11 +1278,11 @@ class CloudServiceGoogleT2s(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["pitch", b"pitch", "speaking_rate", b"speaking_rate", "voice_id", b"voice_id", "volume_gain_db", b"volume_gain_db"]) -> None: ...
 
-global___CloudServiceGoogleT2s = CloudServiceGoogleT2s
+global___T2sCloudServiceGoogle = T2sCloudServiceGoogle
 
 @typing_extensions.final
-class CloudServiceMicrosoftAzureT2s(google.protobuf.message.Message):
-    """CloudServiceMicrosoftAzureT2s message contains settings for the Microsoft Azure Cloud service inference."""
+class T2sCloudServiceMicrosoftAzure(google.protobuf.message.Message):
+    """T2sCloudServiceMicrosoftAzure message contains settings for the Microsoft Azure Cloud service inference."""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1300,7 +1300,7 @@ class CloudServiceMicrosoftAzureT2s(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["use_default_speaker", b"use_default_speaker", "voice_id", b"voice_id"]) -> None: ...
 
-global___CloudServiceMicrosoftAzureT2s = CloudServiceMicrosoftAzureT2s
+global___T2sCloudServiceMicrosoftAzure = T2sCloudServiceMicrosoftAzure
 
 @typing_extensions.final
 class Mel2Audio(google.protobuf.message.Message):
