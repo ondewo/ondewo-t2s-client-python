@@ -13,15 +13,17 @@ from ondewo.t2s.text_to_speech_pb2 import (
 )
 
 
-def test_list_pipelines(client: Client):
+def test_list_pipelines(client: Client) -> None:
     pipelines: ListT2sPipelinesResponse = client.services.text_to_speech.list_t2s_pipelines(
-        request=ListT2sPipelinesRequest())
+        request=ListT2sPipelinesRequest()
+    )
     assert len(pipelines.pipelines) > 0
 
 
-def test_list_languages(client: Client):
+def test_list_languages(client: Client) -> None:
     response: ListT2sLanguagesResponse = client.services.text_to_speech.list_t2s_languages(
-        request=ListT2sLanguagesRequest())
+        request=ListT2sLanguagesRequest()
+    )
     assert response is not None
 
 
@@ -31,18 +33,16 @@ def test_list_languages(client: Client):
         ("I'm not here at the moment, so please leave a message and I'll call you back.", 0.7),
     ]
 )
-def test_synthesize_request(client: Client, text: str, length_scale: float):
+def test_synthesize_request(client: Client, text: str, length_scale: float) -> None:
     pipelines: ListT2sPipelinesResponse = client.services.text_to_speech.list_t2s_pipelines(
-        request=ListT2sPipelinesRequest())
+        request=ListT2sPipelinesRequest(),
+    )
     pipeline_id: str = pipelines.pipelines[0].id
     synthesize_pipeline: T2sPipelineId = T2sPipelineId(id=pipeline_id)
     config: RequestConfig = RequestConfig(
         t2s_pipeline_id=synthesize_pipeline.id,
         length_scale=length_scale,
     )
-    request: SynthesizeRequest = SynthesizeRequest(
-        text=text,
-        config=config,
-    )
+    request: SynthesizeRequest = SynthesizeRequest(text=text, config=config)
     response: SynthesizeResponse = client.services.text_to_speech.synthesize(request=request)
     assert response is not None

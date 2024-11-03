@@ -73,7 +73,6 @@ make setup_developer_environment_locally
 ├── ondewo-proto-compiler
 ├── ondewo-t2s-api
 ├── CONTRIBUTING.md
-├── Dockerfile.pypi
 ├── Dockerfile.utils
 ├── LICENSE
 ├── Makefile
