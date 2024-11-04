@@ -43,22 +43,22 @@ from ondewo.t2s.text_to_speech_pb2 import (
 # 6. Revert the update of the specified pipeline
 
 
-def synthesis_request(t2s_service: Text2Speech, **req_kwargs: Any):
-    request = text_to_speech_pb2.SynthesizeRequest(**req_kwargs)
-    response = t2s_service.synthesize(request=request)
+def synthesis_request(t2s_service: Text2Speech, **req_kwargs: Any) -> bytes:
+    request: text_to_speech_pb2.SynthesizeRequest = text_to_speech_pb2.SynthesizeRequest(**req_kwargs)
+    response: text_to_speech_pb2.SynthesizeResponse = t2s_service.synthesize(request=request)
 
     print(
         f"Length of the generated audio is {response.audio_length} sec.",
         f"Generation time is {response.generation_time} sec.",
     )
 
-    bio = io.BytesIO(response.audio)
-    audio = sf.read(bio)
+    bio: io.BytesIO = io.BytesIO(response.audio)
+    audio: bytes = sf.read(bio)
     return audio
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="API example.")
+    parser: argparse.ArgumentParser = argparse.ArgumentParser(description="API example.")
     parser.add_argument("--config", type=str, default="configs/insecure_grpc.json")
     parser.add_argument("--secure", default=False, action="store_true")
     args = parser.parse_args()

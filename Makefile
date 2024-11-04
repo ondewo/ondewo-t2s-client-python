@@ -1,5 +1,4 @@
 export
-
 # ---------------- BEFORE RELEASE ----------------
 # 1 - Update Version Number
 # 2 - Update RELEASE.md
@@ -20,7 +19,7 @@ export
 ONDEWO_T2S_VERSION = 5.4.0
 
 ONDEWO_T2S_API_GIT_BRANCH=master
-ONDEWO_PROTO_COMPILER_GIT_BRANCH=master
+ONDEWO_PROTO_COMPILER_GIT_BRANCH=tags/5.0.0
 PYPI_USERNAME?=ENTER_HERE_YOUR_PYPI_USERNAME
 PYPI_PASSWORD?=ENTER_HERE_YOUR_PYPI_PASSWORD
 
@@ -61,11 +60,19 @@ install_dependencies_locally: ## Install dependencies locally
 	pip install -r requirements-dev.txt
 	pip install -r requirements.txt
 
-flake8:
+flake8: ## Runs flake8
 	flake8 --config .flake8 .
 
 mypy: ## Run mypy static code checking
+	@echo "---------------------------------------------"
+	@echo "START: Run mypy in pre-commit hook ..."
 	pre-commit run mypy --all-files
+	@echo "DONE: Run mypy in pre-commit hook."
+	@echo "---------------------------------------------"
+	@echo "START: Run mypy directly ..."
+	mypy --config-file=mypy.ini .
+	@echo "DONE: Run mypy directly"
+	@echo "---------------------------------------------"
 
 help: ## Print usage info about help targets
 	# (first comment after target starting with double hashes ##)
@@ -106,21 +113,14 @@ update_setup: ## Update Version in setup.py
 
 build: clear_package_data init_submodules checkout_defined_submodule_versions build_compiler generate_ondewo_protos update_setup ## Build source code
 
-build_compiler:  ## Build proto compiler docker image
-	make -C ondewo-proto-compiler/python build
-
 clean_python_api:  ## Clear generated python files
 	find ./ondewo -name \*pb2.py -type f -exec rm -f {} \;
 	find ./ondewo -name \*pb2_grpc.py -type f -exec rm -f {} \;
 	find ./ondewo -name \*.pyi -type f -exec rm -f {} \;
 	rm -rf google
 
-build_utils_docker_image:  ## Build utils docker image
-	docker build -f Dockerfile.utils -t ${IMAGE_UTILS_NAME} .
-
-release_to_github_via_docker: build_utils_docker_image release_to_github_via_docker_image  ## Release automation for building and releasing on GitHub via a docker image
-
-push_to_pypi_via_docker: push_to_pypi_via_docker_image  ## Release automation for building and pushing to pypi via a docker image
+build_compiler:  ## Build proto compiler docker image
+	make -C ondewo-proto-compiler/python build
 
 generate_ondewo_protos:  ## Generate python code from proto files
 	make -f ondewo-proto-compiler/python/Makefile run \
@@ -131,15 +131,22 @@ generate_ondewo_protos:  ## Generate python code from proto files
 	-make precommit_hooks_run_all_files
 	make precommit_hooks_run_all_files
 
+push_to_pypi_via_docker: push_to_pypi_via_docker_image  ## Release automation for building and pushing to pypi via a docker image
+
+release_to_github_via_docker: build_utils_docker_image release_to_github_via_docker_image  ## Release automation for building and releasing on GitHub via a docker image
+
+build_utils_docker_image:  ## Build utils docker image
+	docker build -f Dockerfile.utils -t ${IMAGE_UTILS_NAME} .
+
 setup_conda_env: ## Checks for CONDA Environment
 	@echo "\n START SETTING UP CONDA ENV \n"
-	@conda env list | grep -q ondewo-nlu-client-python \
+	@conda env list | grep -q ondewo-t2s-client-python \
 	&& make release || ( echo "\n CONDA ENV FOR REPO DOESNT EXIST \n" \
 	&& make create_conda_env)
 
-create_conda_env: ##Creates CONDA Environment
-	conda create -y --name ondewo-nlu-client-python python=3.8
-	/bin/bash -c 'source `conda info --base`/bin/activate ondewo-nlu-client-python; make setup_developer_environment_locally && echo "\n PRECOMMIT INSTALLED \n"'
+create_conda_env: ## Creates CONDA Environment
+	conda create -y --name ondewo-t2s-client-python python=3.9
+	/bin/bash -c 'source `conda info --base`/bin/activate ondewo-t2s-client-python; make setup_developer_environment_locally && echo "\n PRECOMMIT INSTALLED \n"'
 	make release
 
 ########################################################
@@ -199,11 +206,11 @@ checkout_defined_submodule_versions:  ## Update submodule versions
 ########################################################
 #		PYPI
 
-build_package:
+build_package: ## Builds PYPI Package
 	python setup.py sdist bdist_wheel
 	chmod a+rw dist -R
 
-upload_package:
+upload_package: ## Uploads PYPI Package
 	twine upload --verbose -r pypi dist/* -u${PYPI_USERNAME} -p${PYPI_PASSWORD}
 
 clear_package_data: ## Clears PYPI Package
@@ -220,10 +227,10 @@ push_to_pypi_via_docker_image:  ## Push source code to pypi via docker
 		${IMAGE_UTILS_NAME} make push_to_pypi
 	rm -rf dist
 
-push_to_pypi: build_package upload_package clear_package_data
+push_to_pypi: build_package upload_package clear_package_data ## Builds -> Uploads -> Clears PYPI Package
 	@echo 'YAY - Pushed to pypi : )'
 
-show_pypi: build_package
+show_pypi: build_package ## Shows PYPI Package in Dockerimage
 	tar xvfz dist/ondewo-t2s-client-${ONDEWO_T2S_VERSION}.tar.gz
 	tree ondewo-t2s-client-${ONDEWO_T2S_VERSION}
 	cat ondewo-t2s-client-${ONDEWO_T2S_VERSION}/ondewo_t2s_client.egg-info/requires.txt
@@ -240,7 +247,7 @@ show_pypi_via_docker_image: build_utils_docker_image ## Push source code to pypi
 ########################################################
 #		GITHUB
 
-push_to_gh: login_to_gh build_gh_release
+push_to_gh: login_to_gh build_gh_release ## Logs into GitHub CLI and Releases
 	@echo 'Released to Github'
 
 release_to_github_via_docker_image:  ## Release to Github via docker
@@ -268,4 +275,4 @@ spc: ## Checks if the Release Branch, Tag and Pypi version already exist
 	$(eval setuppy_version:= $(shell cat setup.py | grep "version"))
 	@if test "$(filtered_branches)" != ""; then echo "-- Test 1: Branch exists!!" & exit 1; else echo "-- Test 1: Branch is fine";fi
 	@if test "$(filtered_tags)" != ""; then echo "-- Test 2: Tag exists!!" & exit 1; else echo "-- Test 2: Tag is fine";fi
-#	@if test "$(setuppy_version)" != "version='${ONDEWO_T2S_VERSION}',"; then echo "-- Test 3: Setup.py not updated!!" & exit 1; else echo "-- Test 3: Setup.py is fine";fi
+	#	@if test "$(setuppy_version)" != "version='${ONDEWO_T2S_VERSION}',"; then echo "-- Test 3: Setup.py not updated!!" & exit 1; else echo "-- Test 3: Setup.py is fine";fi
