@@ -22,6 +22,7 @@ import google.protobuf.descriptor
 import google.protobuf.internal.containers
 import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
+import google.protobuf.struct_pb2
 import sys
 import typing
 
@@ -218,6 +219,8 @@ class RequestConfig(google.protobuf.message.Message):
     AUDIO_FORMAT_FIELD_NUMBER: builtins.int
     USE_CACHE_FIELD_NUMBER: builtins.int
     NORMALIZER_FIELD_NUMBER: builtins.int
+    T2S_SERVICE_CONFIG_FIELD_NUMBER: builtins.int
+    T2S_CLOUD_PROVIDER_CONFIG_FIELD_NUMBER: builtins.int
     t2s_pipeline_id: builtins.str
     """Required. Represents the pipeline id of the model configuration that will be used."""
     length_scale: builtins.float
@@ -251,6 +254,18 @@ class RequestConfig(google.protobuf.message.Message):
     """Optional. Define what normalizer to synthesize the text with.
     The default value is the language of the pipeline.
     """
+    @property
+    def t2s_service_config(self) -> google.protobuf.struct_pb2.Struct:
+        """t2s_service_config provides the configuration of the service such as API key, bearer tokens, JWT,
+        and other header information as key value pairs, e.g., <pre><code>MY_API_KEY='LKJDIFe244LKJOI'</code></pre>
+        """
+
+    @property
+    def t2s_cloud_provider_config(self) -> global___T2sCloudProviderConfig:
+        """Optional. Defines the cloud provider's specific configuration for using text to speech cloud services
+        The default value is None.
+        """
+
     def __init__(
         self,
         *,
@@ -262,9 +277,13 @@ class RequestConfig(google.protobuf.message.Message):
         audio_format: global___AudioFormat.ValueType = ...,
         use_cache: builtins.bool = ...,
         normalizer: builtins.str = ...,
+        t2s_service_config: google.protobuf.struct_pb2.Struct | None = ...,
+        t2s_cloud_provider_config: global___T2sCloudProviderConfig | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "use_cache", b"use_cache"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_pipeline_id", b"t2s_pipeline_id", "use_cache", b"use_cache"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["_t2s_service_config", b"_t2s_service_config", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_cloud_provider_config", b"oneof_t2s_cloud_provider_config", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["_t2s_service_config", b"_t2s_service_config", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_cloud_provider_config", b"oneof_t2s_cloud_provider_config", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_pipeline_id", b"t2s_pipeline_id", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing.Literal["_t2s_service_config", b"_t2s_service_config"]) -> typing.Literal["t2s_service_config"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing.Literal["oneof_AudioFormat", b"oneof_AudioFormat"]) -> typing.Literal["audio_format"] | None: ...
     @typing.overload
@@ -278,9 +297,122 @@ class RequestConfig(google.protobuf.message.Message):
     @typing.overload
     def WhichOneof(self, oneof_group: typing.Literal["oneof_sample_rate", b"oneof_sample_rate"]) -> typing.Literal["sample_rate"] | None: ...
     @typing.overload
+    def WhichOneof(self, oneof_group: typing.Literal["oneof_t2s_cloud_provider_config", b"oneof_t2s_cloud_provider_config"]) -> typing.Literal["t2s_cloud_provider_config"] | None: ...
+    @typing.overload
     def WhichOneof(self, oneof_group: typing.Literal["oneof_use_cache", b"oneof_use_cache"]) -> typing.Literal["use_cache"] | None: ...
 
 global___RequestConfig = RequestConfig
+
+@typing.final
+class T2sCloudProviderConfig(google.protobuf.message.Message):
+    """Configuration for cloud provider settings for Text-to-Speech (T2S)."""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    T2S_CLOUD_PROVIDER_CONFIG_ELEVENLABS_FIELD_NUMBER: builtins.int
+    T2S_CLOUD_PROVIDER_CONFIG_GOOGLE_FIELD_NUMBER: builtins.int
+    T2S_CLOUD_PROVIDER_CONFIG_MICROSOFT_FIELD_NUMBER: builtins.int
+    @property
+    def t2s_cloud_provider_config_elevenlabs(self) -> global___T2sCloudProviderConfigElevenLabs:
+        """Configuration for Eleven Labs text-to-speech provider."""
+
+    @property
+    def t2s_cloud_provider_config_google(self) -> global___T2sCloudProviderConfigGoogle:
+        """Configuration for Google text-to-speech provider."""
+
+    @property
+    def t2s_cloud_provider_config_microsoft(self) -> global___T2sCloudProviderConfigMicrosoft:
+        """Configuration for Microsoft text-to-speech provider."""
+
+    def __init__(
+        self,
+        *,
+        t2s_cloud_provider_config_elevenlabs: global___T2sCloudProviderConfigElevenLabs | None = ...,
+        t2s_cloud_provider_config_google: global___T2sCloudProviderConfigGoogle | None = ...,
+        t2s_cloud_provider_config_microsoft: global___T2sCloudProviderConfigMicrosoft | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing.Literal["t2s_cloud_provider_config_elevenlabs", b"t2s_cloud_provider_config_elevenlabs", "t2s_cloud_provider_config_google", b"t2s_cloud_provider_config_google", "t2s_cloud_provider_config_microsoft", b"t2s_cloud_provider_config_microsoft"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["t2s_cloud_provider_config_elevenlabs", b"t2s_cloud_provider_config_elevenlabs", "t2s_cloud_provider_config_google", b"t2s_cloud_provider_config_google", "t2s_cloud_provider_config_microsoft", b"t2s_cloud_provider_config_microsoft"]) -> None: ...
+
+global___T2sCloudProviderConfig = T2sCloudProviderConfig
+
+@typing.final
+class T2sCloudProviderConfigElevenLabs(google.protobuf.message.Message):
+    """Configuration details specific to the Eleven Labs text-to-speech provider."""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    STABILITY_FIELD_NUMBER: builtins.int
+    SIMILARITY_BOOST_FIELD_NUMBER: builtins.int
+    STYLE_FIELD_NUMBER: builtins.int
+    USE_SPEAKER_BOOST_FIELD_NUMBER: builtins.int
+    APPLY_TEXT_NORMALIZATION_FIELD_NUMBER: builtins.int
+    stability: builtins.float
+    """Stability level for inference, influencing consistency of generated speech."""
+    similarity_boost: builtins.float
+    """Boost value for similarity to enhance the similarity of the generated voice to a target voice."""
+    style: builtins.float
+    """Style parameter to control the expression or emotion in speech."""
+    use_speaker_boost: builtins.bool
+    """Enables or disables speaker boost for emphasis on clarity and loudness."""
+    apply_text_normalization: builtins.str
+    """Specifies type of text normalization to apply during processing."""
+    def __init__(
+        self,
+        *,
+        stability: builtins.float = ...,
+        similarity_boost: builtins.float = ...,
+        style: builtins.float = ...,
+        use_speaker_boost: builtins.bool = ...,
+        apply_text_normalization: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["apply_text_normalization", b"apply_text_normalization", "similarity_boost", b"similarity_boost", "stability", b"stability", "style", b"style", "use_speaker_boost", b"use_speaker_boost"]) -> None: ...
+
+global___T2sCloudProviderConfigElevenLabs = T2sCloudProviderConfigElevenLabs
+
+@typing.final
+class T2sCloudProviderConfigMicrosoft(google.protobuf.message.Message):
+    """Configuration details specific to the Microsoft text-to-speech provider."""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    USE_DEFAULT_SPEAKER_FIELD_NUMBER: builtins.int
+    use_default_speaker: builtins.bool
+    """Determines whether to use the default speaker voice."""
+    def __init__(
+        self,
+        *,
+        use_default_speaker: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["use_default_speaker", b"use_default_speaker"]) -> None: ...
+
+global___T2sCloudProviderConfigMicrosoft = T2sCloudProviderConfigMicrosoft
+
+@typing.final
+class T2sCloudProviderConfigGoogle(google.protobuf.message.Message):
+    """Configuration details specific to the Google text-to-speech provider."""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    SPEAKING_RATE_FIELD_NUMBER: builtins.int
+    VOLUME_GAIN_DB_FIELD_NUMBER: builtins.int
+    PITCH_FIELD_NUMBER: builtins.int
+    speaking_rate: builtins.float
+    """Speaking rate for inference, controlling the speed of generated speech."""
+    volume_gain_db: builtins.float
+    """Volume gain in dB applied to the generated speech."""
+    pitch: builtins.float
+    """Pitch adjustment for inference, allowing control over voice pitch."""
+    def __init__(
+        self,
+        *,
+        speaking_rate: builtins.float = ...,
+        volume_gain_db: builtins.float = ...,
+        pitch: builtins.float = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["pitch", b"pitch", "speaking_rate", b"speaking_rate", "volume_gain_db", b"volume_gain_db"]) -> None: ...
+
+global___T2sCloudProviderConfigGoogle = T2sCloudProviderConfigGoogle
 
 @typing.final
 class SynthesizeResponse(google.protobuf.message.Message):
@@ -850,6 +982,10 @@ class Text2Audio(google.protobuf.message.Message):
     TYPE_FIELD_NUMBER: builtins.int
     VITS_FIELD_NUMBER: builtins.int
     VITS_TRITON_FIELD_NUMBER: builtins.int
+    T2S_CLOUD_SERVICE_ELEVENLABS_FIELD_NUMBER: builtins.int
+    T2S_CLOUD_SERVICE_AMAZON_FIELD_NUMBER: builtins.int
+    T2S_CLOUD_SERVICE_GOOGLE_FIELD_NUMBER: builtins.int
+    T2S_CLOUD_SERVICE_MICROSOFT_FIELD_NUMBER: builtins.int
     type: builtins.str
     """The type of text-to-audio inference."""
     @property
@@ -860,15 +996,35 @@ class Text2Audio(google.protobuf.message.Message):
     def vits_triton(self) -> global___VitsTriton:
         """Vits Triton inference settings."""
 
+    @property
+    def t2s_cloud_service_elevenlabs(self) -> global___T2sCloudServiceElevenLabs:
+        """ElevenLabs cloud service inference settings."""
+
+    @property
+    def t2s_cloud_service_amazon(self) -> global___T2sCloudServiceAmazon:
+        """Amazon cloud service inference settings."""
+
+    @property
+    def t2s_cloud_service_google(self) -> global___T2sCloudServiceGoogle:
+        """Google cloud service inference settings."""
+
+    @property
+    def t2s_cloud_service_microsoft(self) -> global___T2sCloudServiceMicrosoft:
+        """Microsoft cloud service inference settings."""
+
     def __init__(
         self,
         *,
         type: builtins.str = ...,
         vits: global___Vits | None = ...,
         vits_triton: global___VitsTriton | None = ...,
+        t2s_cloud_service_elevenlabs: global___T2sCloudServiceElevenLabs | None = ...,
+        t2s_cloud_service_amazon: global___T2sCloudServiceAmazon | None = ...,
+        t2s_cloud_service_google: global___T2sCloudServiceGoogle | None = ...,
+        t2s_cloud_service_microsoft: global___T2sCloudServiceMicrosoft | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["vits", b"vits", "vits_triton", b"vits_triton"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["type", b"type", "vits", b"vits", "vits_triton", b"vits_triton"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["t2s_cloud_service_amazon", b"t2s_cloud_service_amazon", "t2s_cloud_service_elevenlabs", b"t2s_cloud_service_elevenlabs", "t2s_cloud_service_google", b"t2s_cloud_service_google", "t2s_cloud_service_microsoft", b"t2s_cloud_service_microsoft", "vits", b"vits", "vits_triton", b"vits_triton"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["t2s_cloud_service_amazon", b"t2s_cloud_service_amazon", "t2s_cloud_service_elevenlabs", b"t2s_cloud_service_elevenlabs", "t2s_cloud_service_google", b"t2s_cloud_service_google", "t2s_cloud_service_microsoft", b"t2s_cloud_service_microsoft", "type", b"type", "vits", b"vits", "vits_triton", b"vits_triton"]) -> None: ...
 
 global___Text2Audio = Text2Audio
 
@@ -1061,6 +1217,143 @@ class VitsTriton(google.protobuf.message.Message):
     def ClearField(self, field_name: typing.Literal["batch_size", b"batch_size", "cleaners", b"cleaners", "length_scale", b"length_scale", "max_text_length", b"max_text_length", "noise_scale", b"noise_scale", "param_config_path", b"param_config_path", "triton_model_name", b"triton_model_name", "triton_server_host", b"triton_server_host", "triton_server_port", b"triton_server_port"]) -> None: ...
 
 global___VitsTriton = VitsTriton
+
+@typing.final
+class T2sCloudServiceElevenLabs(google.protobuf.message.Message):
+    """T2sCloudServiceElevenLabs message contains settings for the ElevenLabs Cloud service inference."""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    MODEL_ID_FIELD_NUMBER: builtins.int
+    VOICE_ID_FIELD_NUMBER: builtins.int
+    VOICE_SETTINGS_FIELD_NUMBER: builtins.int
+    APPLY_TEXT_NORMALIZATION_FIELD_NUMBER: builtins.int
+    model_id: builtins.str
+    """Model ID indicating the name of the model"""
+    voice_id: builtins.str
+    """Voice ID indicating the speaker"""
+    apply_text_normalization: builtins.str
+    """Flag to indicate applying text normalization"""
+    @property
+    def voice_settings(self) -> global___VoiceSettings:
+        """Voice setting of the inference"""
+
+    def __init__(
+        self,
+        *,
+        model_id: builtins.str = ...,
+        voice_id: builtins.str = ...,
+        voice_settings: global___VoiceSettings | None = ...,
+        apply_text_normalization: builtins.str = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing.Literal["voice_settings", b"voice_settings"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["apply_text_normalization", b"apply_text_normalization", "model_id", b"model_id", "voice_id", b"voice_id", "voice_settings", b"voice_settings"]) -> None: ...
+
+global___T2sCloudServiceElevenLabs = T2sCloudServiceElevenLabs
+
+@typing.final
+class VoiceSettings(google.protobuf.message.Message):
+    """VoiceSettings message contains settings for ElevenLabs inference."""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    STABILITY_FIELD_NUMBER: builtins.int
+    SIMILARITY_BOOST_FIELD_NUMBER: builtins.int
+    STYLE_FIELD_NUMBER: builtins.int
+    USE_SPEAKER_BOOST_FIELD_NUMBER: builtins.int
+    stability: builtins.float
+    """stability value for elevenlabs inference"""
+    similarity_boost: builtins.float
+    """similarity boost value for ElevenLabs inference."""
+    style: builtins.float
+    """style boost value for ElevenLabs inference."""
+    use_speaker_boost: builtins.bool
+    """Flag to indicate speaker boost"""
+    def __init__(
+        self,
+        *,
+        stability: builtins.float = ...,
+        similarity_boost: builtins.float = ...,
+        style: builtins.float = ...,
+        use_speaker_boost: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["similarity_boost", b"similarity_boost", "stability", b"stability", "style", b"style", "use_speaker_boost", b"use_speaker_boost"]) -> None: ...
+
+global___VoiceSettings = VoiceSettings
+
+@typing.final
+class T2sCloudServiceAmazon(google.protobuf.message.Message):
+    """T2sCloudServiceAmazon message contains settings for the Amazon Cloud service inference."""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    VOICE_ID_FIELD_NUMBER: builtins.int
+    MODEL_ID_FIELD_NUMBER: builtins.int
+    voice_id: builtins.str
+    """Voice ID indicating the speaker"""
+    model_id: builtins.str
+    """Model id for the inference server."""
+    def __init__(
+        self,
+        *,
+        voice_id: builtins.str = ...,
+        model_id: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["model_id", b"model_id", "voice_id", b"voice_id"]) -> None: ...
+
+global___T2sCloudServiceAmazon = T2sCloudServiceAmazon
+
+@typing.final
+class T2sCloudServiceGoogle(google.protobuf.message.Message):
+    """T2sCloudServiceGoogle message contains settings for the Google Cloud service inference."""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    VOICE_ID_FIELD_NUMBER: builtins.int
+    SPEAKING_RATE_FIELD_NUMBER: builtins.int
+    VOLUME_GAIN_DB_FIELD_NUMBER: builtins.int
+    PITCH_FIELD_NUMBER: builtins.int
+    voice_id: builtins.str
+    """Voice ID indicating the speaker"""
+    speaking_rate: builtins.float
+    """Speaking rate to control the speed of audio."""
+    volume_gain_db: builtins.float
+    """Volume gain in db to control volume of the audio."""
+    pitch: builtins.float
+    """pitch value of the audio"""
+    def __init__(
+        self,
+        *,
+        voice_id: builtins.str = ...,
+        speaking_rate: builtins.float = ...,
+        volume_gain_db: builtins.float = ...,
+        pitch: builtins.float = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["pitch", b"pitch", "speaking_rate", b"speaking_rate", "voice_id", b"voice_id", "volume_gain_db", b"volume_gain_db"]) -> None: ...
+
+global___T2sCloudServiceGoogle = T2sCloudServiceGoogle
+
+@typing.final
+class T2sCloudServiceMicrosoft(google.protobuf.message.Message):
+    """T2sCloudServiceMicrosoft message contains settings for the Microsoft Cloud service inference."""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    VOICE_ID_FIELD_NUMBER: builtins.int
+    USE_DEFAULT_SPEAKER_FIELD_NUMBER: builtins.int
+    voice_id: builtins.str
+    """Voice ID indicating the speaker."""
+    use_default_speaker: builtins.bool
+    """Flag to indicate using the default speaker."""
+    def __init__(
+        self,
+        *,
+        voice_id: builtins.str = ...,
+        use_default_speaker: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["use_default_speaker", b"use_default_speaker", "voice_id", b"voice_id"]) -> None: ...
+
+global___T2sCloudServiceMicrosoft = T2sCloudServiceMicrosoft
 
 @typing.final
 class Mel2Audio(google.protobuf.message.Message):
