@@ -1224,10 +1224,13 @@ class T2sCloudServiceElevenLabs(google.protobuf.message.Message):
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    LANGUAGE_CODE_FIELD_NUMBER: builtins.int
     MODEL_ID_FIELD_NUMBER: builtins.int
     VOICE_ID_FIELD_NUMBER: builtins.int
     VOICE_SETTINGS_FIELD_NUMBER: builtins.int
     APPLY_TEXT_NORMALIZATION_FIELD_NUMBER: builtins.int
+    language_code: builtins.str
+    """Language of the generated audio. It should be 4-Letter language code."""
     model_id: builtins.str
     """Model ID indicating the name of the model"""
     voice_id: builtins.str
@@ -1241,13 +1244,14 @@ class T2sCloudServiceElevenLabs(google.protobuf.message.Message):
     def __init__(
         self,
         *,
+        language_code: builtins.str = ...,
         model_id: builtins.str = ...,
         voice_id: builtins.str = ...,
         voice_settings: global___VoiceSettings | None = ...,
         apply_text_normalization: builtins.str = ...,
     ) -> None: ...
     def HasField(self, field_name: typing.Literal["voice_settings", b"voice_settings"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["apply_text_normalization", b"apply_text_normalization", "model_id", b"model_id", "voice_id", b"voice_id", "voice_settings", b"voice_settings"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["apply_text_normalization", b"apply_text_normalization", "language_code", b"language_code", "model_id", b"model_id", "voice_id", b"voice_id", "voice_settings", b"voice_settings"]) -> None: ...
 
 global___T2sCloudServiceElevenLabs = T2sCloudServiceElevenLabs
 
