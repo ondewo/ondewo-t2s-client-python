@@ -280,8 +280,10 @@ class RequestConfig(google.protobuf.message.Message):
         t2s_service_config: google.protobuf.struct_pb2.Struct | None = ...,
         t2s_cloud_provider_config: global___T2sCloudProviderConfig | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["_t2s_service_config", b"_t2s_service_config", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_cloud_provider_config", b"oneof_t2s_cloud_provider_config", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["_t2s_service_config", b"_t2s_service_config", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_cloud_provider_config", b"oneof_t2s_cloud_provider_config", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_pipeline_id", b"t2s_pipeline_id", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_pipeline_id", b"t2s_pipeline_id", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config"]) -> typing.Literal["t2s_cloud_provider_config"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing.Literal["_t2s_service_config", b"_t2s_service_config"]) -> typing.Literal["t2s_service_config"] | None: ...
     @typing.overload
@@ -296,8 +298,6 @@ class RequestConfig(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing.Literal["oneof_normalizer", b"oneof_normalizer"]) -> typing.Literal["normalizer"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing.Literal["oneof_sample_rate", b"oneof_sample_rate"]) -> typing.Literal["sample_rate"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing.Literal["oneof_t2s_cloud_provider_config", b"oneof_t2s_cloud_provider_config"]) -> typing.Literal["t2s_cloud_provider_config"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing.Literal["oneof_use_cache", b"oneof_use_cache"]) -> typing.Literal["use_cache"] | None: ...
 
@@ -1224,10 +1224,13 @@ class T2sCloudServiceElevenLabs(google.protobuf.message.Message):
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    LANGUAGE_CODE_FIELD_NUMBER: builtins.int
     MODEL_ID_FIELD_NUMBER: builtins.int
     VOICE_ID_FIELD_NUMBER: builtins.int
     VOICE_SETTINGS_FIELD_NUMBER: builtins.int
     APPLY_TEXT_NORMALIZATION_FIELD_NUMBER: builtins.int
+    language_code: builtins.str
+    """Language of the generated audio. It should be 4-Letter language code."""
     model_id: builtins.str
     """Model ID indicating the name of the model"""
     voice_id: builtins.str
@@ -1241,13 +1244,14 @@ class T2sCloudServiceElevenLabs(google.protobuf.message.Message):
     def __init__(
         self,
         *,
+        language_code: builtins.str = ...,
         model_id: builtins.str = ...,
         voice_id: builtins.str = ...,
         voice_settings: global___VoiceSettings | None = ...,
         apply_text_normalization: builtins.str = ...,
     ) -> None: ...
     def HasField(self, field_name: typing.Literal["voice_settings", b"voice_settings"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["apply_text_normalization", b"apply_text_normalization", "model_id", b"model_id", "voice_id", b"voice_id", "voice_settings", b"voice_settings"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["apply_text_normalization", b"apply_text_normalization", "language_code", b"language_code", "model_id", b"model_id", "voice_id", b"voice_id", "voice_settings", b"voice_settings"]) -> None: ...
 
 global___T2sCloudServiceElevenLabs = T2sCloudServiceElevenLabs
 
