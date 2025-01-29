@@ -219,6 +219,7 @@ class RequestConfig(google.protobuf.message.Message):
     AUDIO_FORMAT_FIELD_NUMBER: builtins.int
     USE_CACHE_FIELD_NUMBER: builtins.int
     NORMALIZER_FIELD_NUMBER: builtins.int
+    T2S_NORMALIZATION_FIELD_NUMBER: builtins.int
     T2S_SERVICE_CONFIG_FIELD_NUMBER: builtins.int
     T2S_CLOUD_PROVIDER_CONFIG_FIELD_NUMBER: builtins.int
     t2s_pipeline_id: builtins.str
@@ -255,9 +256,40 @@ class RequestConfig(google.protobuf.message.Message):
     The default value is the language of the pipeline.
     """
     @property
+    def t2s_normalization(self) -> global___T2SNormalization:
+        """Optional. Define t2s_normalization config parameters for this specific request.
+        The default values are set in the config file and the values set via RequestConfig are set just for
+        this specific request and will not update the pipeline.
+        """
+
+    @property
     def t2s_service_config(self) -> google.protobuf.struct_pb2.Struct:
-        """t2s_service_config provides the configuration of the service such as API key, bearer tokens, JWT,
+        """Optional. t2s_service_config provides the configuration of the service such as API key, bearer tokens, JWT,
         and other header information as key value pairs, e.g., <pre><code>MY_API_KEY='LKJDIFe244LKJOI'</code></pre>
+        A. For Amazon T2S service, the following arguments should be passed:
+          A1. aws_access_key_id (required) Access key id to access Amazon WEB Service.
+          A2. aws_secret_access_key (required) Secret access key to access Amazon WEB Service.
+          A3. region (required) Region name of Amazon Server.
+          Example:
+          t2s_config_service={'aws_access_key_id': 'YOUR_AWS_ACCESS_KEY_ID', 'aws_secret_access_key':
+         'YOUR_AWS_SECRET_ACCESS_KEY', 'region': 'YOUR_AMAZON_SERVER_REGION_NAME'}
+        B. For ElevenLabs T2s service, the following arguments should be passed:
+          B1. api_key (required) API key of ElevenLabs cloud provider to access its T2S service.
+          Example:
+          t2s_config_service={'api_key': 'YOUR_ELEVENLABS_API_KEY'}
+        C. For Google cloud T2S service, the following arguments should be passed:
+          C1. api_key (required) API key of Google cloud provider to access its T2S service.
+          C2. api_endpoint (optional) Regional API endpoint of Google cloud T2S service.
+            (Defaults to 'eu-texttospeech.googleapis.com')
+          Example:
+          t2s_config_service={'api_key': 'YOUR_GOOGLE_CLOUD_API_KEY', 'api_endpoint': 'YOUR_GOOGLE_CLOUD_API_ENDPOINT'}
+        D. For Microsoft Azure T2s service, the following arguments should be passed:
+          D1. subscription_key (required) Subscription key to access Microsoft Azure Service.
+          D2. region (required) Region name of Microsoft Azure Server.
+          Example:
+          t2s_config_service={'subscription_key': 'YOUR_MICROSOFT_AZURE_SUBSCRIPTION_KEY', 'region':
+          'YOUR_MICROSOFT_AZURE_SERVER_REGION_NAME'}
+        Note: ondewo-t2s will raise an error if you don't pass any of the required arguments above.
         """
 
     @property
@@ -277,11 +309,12 @@ class RequestConfig(google.protobuf.message.Message):
         audio_format: global___AudioFormat.ValueType = ...,
         use_cache: builtins.bool = ...,
         normalizer: builtins.str = ...,
+        t2s_normalization: global___T2SNormalization | None = ...,
         t2s_service_config: google.protobuf.struct_pb2.Struct | None = ...,
         t2s_cloud_provider_config: global___T2sCloudProviderConfig | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_pipeline_id", b"t2s_pipeline_id", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_pipeline_id", b"t2s_pipeline_id", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache"]) -> None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config"]) -> typing.Literal["t2s_cloud_provider_config"] | None: ...
     @typing.overload
@@ -298,6 +331,8 @@ class RequestConfig(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing.Literal["oneof_normalizer", b"oneof_normalizer"]) -> typing.Literal["normalizer"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing.Literal["oneof_sample_rate", b"oneof_sample_rate"]) -> typing.Literal["sample_rate"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing.Literal["oneof_t2s_normalization", b"oneof_t2s_normalization"]) -> typing.Literal["t2s_normalization"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing.Literal["oneof_use_cache", b"oneof_use_cache"]) -> typing.Literal["use_cache"] | None: ...
 
@@ -348,15 +383,17 @@ class T2sCloudProviderConfigElevenLabs(google.protobuf.message.Message):
     USE_SPEAKER_BOOST_FIELD_NUMBER: builtins.int
     APPLY_TEXT_NORMALIZATION_FIELD_NUMBER: builtins.int
     stability: builtins.float
-    """Stability level for inference, influencing consistency of generated speech."""
+    """Stability level for inference, influencing consistency of generated speech. It is in the range [0.0, 1.0]."""
     similarity_boost: builtins.float
-    """Boost value for similarity to enhance the similarity of the generated voice to a target voice."""
+    """Boost value for similarity to enhance the similarity of the generated voice to a target voice.
+    It is in the range [0.0, 1.0].
+    """
     style: builtins.float
-    """Style parameter to control the expression or emotion in speech."""
+    """Style parameter to control the expression or emotion in speech. It is in the range [0.0, 1.0]."""
     use_speaker_boost: builtins.bool
     """Enables or disables speaker boost for emphasis on clarity and loudness."""
     apply_text_normalization: builtins.str
-    """Specifies type of text normalization to apply during processing."""
+    """Specifies type of text normalization to apply during processing. Available options are 'auto', 'on', and 'off'."""
     def __init__(
         self,
         *,
@@ -398,11 +435,11 @@ class T2sCloudProviderConfigGoogle(google.protobuf.message.Message):
     VOLUME_GAIN_DB_FIELD_NUMBER: builtins.int
     PITCH_FIELD_NUMBER: builtins.int
     speaking_rate: builtins.float
-    """Speaking rate for inference, controlling the speed of generated speech."""
+    """Speaking rate for inference, controlling the speed of generated speech. It is in the range [0.25, 4.0]."""
     volume_gain_db: builtins.float
-    """Volume gain in dB applied to the generated speech."""
+    """Volume gain in dB applied to the generated speech. It is in the range [-96.0, 16.0]."""
     pitch: builtins.float
-    """Pitch adjustment for inference, allowing control over voice pitch."""
+    """Pitch adjustment for inference, allowing control over voice pitch. It is in the range in the range [-20.0, 20.0]."""
     def __init__(
         self,
         *,
