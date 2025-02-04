@@ -220,7 +220,7 @@ class RequestConfig(google.protobuf.message.Message):
     USE_CACHE_FIELD_NUMBER: builtins.int
     NORMALIZER_FIELD_NUMBER: builtins.int
     T2S_NORMALIZATION_FIELD_NUMBER: builtins.int
-    CHAR_MAPPING_FIELD_NUMBER: builtins.int
+    WORD_TO_PHONEME_MAPPING_FIELD_NUMBER: builtins.int
     T2S_SERVICE_CONFIG_FIELD_NUMBER: builtins.int
     T2S_CLOUD_PROVIDER_CONFIG_FIELD_NUMBER: builtins.int
     t2s_pipeline_id: builtins.str
@@ -264,7 +264,7 @@ class RequestConfig(google.protobuf.message.Message):
         """
 
     @property
-    def char_mapping(self) -> google.protobuf.struct_pb2.Struct:
+    def word_to_phoneme_mapping(self) -> google.protobuf.struct_pb2.Struct:
         """Optional. Define a dict which specifies the phonemes for a special word."""
 
     @property
@@ -315,18 +315,18 @@ class RequestConfig(google.protobuf.message.Message):
         use_cache: builtins.bool = ...,
         normalizer: builtins.str = ...,
         t2s_normalization: global___T2SNormalization | None = ...,
-        char_mapping: google.protobuf.struct_pb2.Struct | None = ...,
+        word_to_phoneme_mapping: google.protobuf.struct_pb2.Struct | None = ...,
         t2s_service_config: google.protobuf.struct_pb2.Struct | None = ...,
         t2s_cloud_provider_config: global___T2sCloudProviderConfig | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["_char_mapping", b"_char_mapping", "_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "audio_format", b"audio_format", "char_mapping", b"char_mapping", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["_char_mapping", b"_char_mapping", "_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "audio_format", b"audio_format", "char_mapping", b"char_mapping", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_pipeline_id", b"t2s_pipeline_id", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache"]) -> None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing.Literal["_char_mapping", b"_char_mapping"]) -> typing.Literal["char_mapping"] | None: ...
+    def HasField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "_word_to_phoneme_mapping", b"_word_to_phoneme_mapping", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache", "word_to_phoneme_mapping", b"word_to_phoneme_mapping"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "_word_to_phoneme_mapping", b"_word_to_phoneme_mapping", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_pipeline_id", b"t2s_pipeline_id", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache", "word_to_phoneme_mapping", b"word_to_phoneme_mapping"]) -> None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config"]) -> typing.Literal["t2s_cloud_provider_config"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing.Literal["_t2s_service_config", b"_t2s_service_config"]) -> typing.Literal["t2s_service_config"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing.Literal["_word_to_phoneme_mapping", b"_word_to_phoneme_mapping"]) -> typing.Literal["word_to_phoneme_mapping"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing.Literal["oneof_AudioFormat", b"oneof_AudioFormat"]) -> typing.Literal["audio_format"] | None: ...
     @typing.overload
