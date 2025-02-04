@@ -218,7 +218,6 @@ class RequestConfig(google.protobuf.message.Message):
     PCM_FIELD_NUMBER: builtins.int
     AUDIO_FORMAT_FIELD_NUMBER: builtins.int
     USE_CACHE_FIELD_NUMBER: builtins.int
-    NORMALIZER_FIELD_NUMBER: builtins.int
     T2S_NORMALIZATION_FIELD_NUMBER: builtins.int
     WORD_TO_PHONEME_MAPPING_FIELD_NUMBER: builtins.int
     T2S_SERVICE_CONFIG_FIELD_NUMBER: builtins.int
@@ -251,10 +250,6 @@ class RequestConfig(google.protobuf.message.Message):
     use_cache: builtins.bool
     """Optional. Define if cache should be used or not.
     The default value is False.
-    """
-    normalizer: builtins.str
-    """Optional. Define what normalizer to synthesize the text with.
-    The default value is the language of the pipeline.
     """
     @property
     def t2s_normalization(self) -> global___T2SNormalization:
@@ -313,14 +308,13 @@ class RequestConfig(google.protobuf.message.Message):
         pcm: global___Pcm.ValueType = ...,
         audio_format: global___AudioFormat.ValueType = ...,
         use_cache: builtins.bool = ...,
-        normalizer: builtins.str = ...,
         t2s_normalization: global___T2SNormalization | None = ...,
         word_to_phoneme_mapping: google.protobuf.struct_pb2.Struct | None = ...,
         t2s_service_config: google.protobuf.struct_pb2.Struct | None = ...,
         t2s_cloud_provider_config: global___T2sCloudProviderConfig | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "_word_to_phoneme_mapping", b"_word_to_phoneme_mapping", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache", "word_to_phoneme_mapping", b"word_to_phoneme_mapping"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "_word_to_phoneme_mapping", b"_word_to_phoneme_mapping", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "normalizer", b"normalizer", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_normalizer", b"oneof_normalizer", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_pipeline_id", b"t2s_pipeline_id", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache", "word_to_phoneme_mapping", b"word_to_phoneme_mapping"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "_word_to_phoneme_mapping", b"_word_to_phoneme_mapping", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache", "word_to_phoneme_mapping", b"word_to_phoneme_mapping"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "_word_to_phoneme_mapping", b"_word_to_phoneme_mapping", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_pipeline_id", b"t2s_pipeline_id", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache", "word_to_phoneme_mapping", b"word_to_phoneme_mapping"]) -> None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config"]) -> typing.Literal["t2s_cloud_provider_config"] | None: ...
     @typing.overload
@@ -335,8 +329,6 @@ class RequestConfig(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing.Literal["oneof_length_scale", b"oneof_length_scale"]) -> typing.Literal["length_scale"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing.Literal["oneof_noise_scale", b"oneof_noise_scale"]) -> typing.Literal["noise_scale"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing.Literal["oneof_normalizer", b"oneof_normalizer"]) -> typing.Literal["normalizer"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing.Literal["oneof_sample_rate", b"oneof_sample_rate"]) -> typing.Literal["sample_rate"] | None: ...
     @typing.overload
