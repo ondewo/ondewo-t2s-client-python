@@ -218,10 +218,10 @@ class RequestConfig(google.protobuf.message.Message):
     PCM_FIELD_NUMBER: builtins.int
     AUDIO_FORMAT_FIELD_NUMBER: builtins.int
     USE_CACHE_FIELD_NUMBER: builtins.int
-    T2S_NORMALIZATION_FIELD_NUMBER: builtins.int
-    WORD_TO_PHONEME_MAPPING_FIELD_NUMBER: builtins.int
     T2S_SERVICE_CONFIG_FIELD_NUMBER: builtins.int
     T2S_CLOUD_PROVIDER_CONFIG_FIELD_NUMBER: builtins.int
+    T2S_NORMALIZATION_FIELD_NUMBER: builtins.int
+    WORD_TO_PHONEME_MAPPING_FIELD_NUMBER: builtins.int
     t2s_pipeline_id: builtins.str
     """Required. Represents the pipeline id of the model configuration that will be used."""
     length_scale: builtins.float
@@ -251,17 +251,6 @@ class RequestConfig(google.protobuf.message.Message):
     """Optional. Define if cache should be used or not.
     The default value is False.
     """
-    @property
-    def t2s_normalization(self) -> global___T2SNormalization:
-        """Optional. Define t2s_normalization config parameters for this specific request.
-        The default values are set in the config file and the values set via RequestConfig are set just for
-        this specific request and will not update the pipeline.
-        """
-
-    @property
-    def word_to_phoneme_mapping(self) -> google.protobuf.struct_pb2.Struct:
-        """Optional. Define a dict which specifies the phonemes for a special word."""
-
     @property
     def t2s_service_config(self) -> google.protobuf.struct_pb2.Struct:
         """Optional. t2s_service_config provides the configuration of the service such as API key, bearer tokens, JWT,
@@ -298,6 +287,17 @@ class RequestConfig(google.protobuf.message.Message):
         The default value is None.
         """
 
+    @property
+    def t2s_normalization(self) -> global___T2SNormalization:
+        """Optional. Define t2s_normalization config parameters for this specific request.
+        The default values are set in the config file and the values set via RequestConfig are set just for
+        this specific request and will not update the pipeline.
+        """
+
+    @property
+    def word_to_phoneme_mapping(self) -> google.protobuf.struct_pb2.Struct:
+        """Optional. Define a dict which specifies the phonemes for a special word."""
+
     def __init__(
         self,
         *,
@@ -308,10 +308,10 @@ class RequestConfig(google.protobuf.message.Message):
         pcm: global___Pcm.ValueType = ...,
         audio_format: global___AudioFormat.ValueType = ...,
         use_cache: builtins.bool = ...,
-        t2s_normalization: global___T2SNormalization | None = ...,
-        word_to_phoneme_mapping: google.protobuf.struct_pb2.Struct | None = ...,
         t2s_service_config: google.protobuf.struct_pb2.Struct | None = ...,
         t2s_cloud_provider_config: global___T2sCloudProviderConfig | None = ...,
+        t2s_normalization: global___T2SNormalization | None = ...,
+        word_to_phoneme_mapping: google.protobuf.struct_pb2.Struct | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "_word_to_phoneme_mapping", b"_word_to_phoneme_mapping", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache", "word_to_phoneme_mapping", b"word_to_phoneme_mapping"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "_word_to_phoneme_mapping", b"_word_to_phoneme_mapping", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_pipeline_id", b"t2s_pipeline_id", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache", "word_to_phoneme_mapping", b"word_to_phoneme_mapping"]) -> None: ...
