@@ -186,33 +186,6 @@ class BatchSynthesizeRequest(google.protobuf.message.Message):
 global___BatchSynthesizeRequest = BatchSynthesizeRequest
 
 @typing.final
-class StreamingSynthesizeRequest(google.protobuf.message.Message):
-    """StreamingSynthesizeRequest is used to perform streaming synthesize."""
-
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    TEXT_FIELD_NUMBER: builtins.int
-    CONFIG_FIELD_NUMBER: builtins.int
-    text: builtins.str
-    """Required. Represents the text that will be transformed to speech.
-    All the properties according to the input text in SynthesizeRequest can be also applied here.
-    """
-    @property
-    def config(self) -> global___RequestConfig:
-        """Required. Represents the specifications needed to do the text to speech transformation."""
-
-    def __init__(
-        self,
-        *,
-        text: builtins.str = ...,
-        config: global___RequestConfig | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing.Literal["config", b"config"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["config", b"config", "text", b"text"]) -> None: ...
-
-global___StreamingSynthesizeRequest = StreamingSynthesizeRequest
-
-@typing.final
 class BatchSynthesizeResponse(google.protobuf.message.Message):
     """BatchSynthesizeResponse message is used to store the responses for a batch synthesis request."""
 
@@ -245,10 +218,10 @@ class RequestConfig(google.protobuf.message.Message):
     PCM_FIELD_NUMBER: builtins.int
     AUDIO_FORMAT_FIELD_NUMBER: builtins.int
     USE_CACHE_FIELD_NUMBER: builtins.int
-    T2S_SERVICE_CONFIG_FIELD_NUMBER: builtins.int
-    T2S_CLOUD_PROVIDER_CONFIG_FIELD_NUMBER: builtins.int
     T2S_NORMALIZATION_FIELD_NUMBER: builtins.int
     WORD_TO_PHONEME_MAPPING_FIELD_NUMBER: builtins.int
+    T2S_SERVICE_CONFIG_FIELD_NUMBER: builtins.int
+    T2S_CLOUD_PROVIDER_CONFIG_FIELD_NUMBER: builtins.int
     t2s_pipeline_id: builtins.str
     """Required. Represents the pipeline id of the model configuration that will be used."""
     length_scale: builtins.float
@@ -278,6 +251,17 @@ class RequestConfig(google.protobuf.message.Message):
     """Optional. Define if cache should be used or not.
     The default value is False.
     """
+    @property
+    def t2s_normalization(self) -> global___T2SNormalization:
+        """Optional. Define t2s_normalization config parameters for this specific request.
+        The default values are set in the config file and the values set via RequestConfig are set just for
+        this specific request and will not update the pipeline.
+        """
+
+    @property
+    def word_to_phoneme_mapping(self) -> google.protobuf.struct_pb2.Struct:
+        """Optional. Define a dict which specifies the phonemes for a special word."""
+
     @property
     def t2s_service_config(self) -> google.protobuf.struct_pb2.Struct:
         """Optional. t2s_service_config provides the configuration of the service such as API key, bearer tokens, JWT,
@@ -314,17 +298,6 @@ class RequestConfig(google.protobuf.message.Message):
         The default value is None.
         """
 
-    @property
-    def t2s_normalization(self) -> global___T2SNormalization:
-        """Optional. Define t2s_normalization config parameters for this specific request.
-        The default values are set in the config file and the values set via RequestConfig are set just for
-        this specific request and will not update the pipeline.
-        """
-
-    @property
-    def word_to_phoneme_mapping(self) -> google.protobuf.struct_pb2.Struct:
-        """Optional. Define a dict which specifies the phonemes for a special word."""
-
     def __init__(
         self,
         *,
@@ -335,10 +308,10 @@ class RequestConfig(google.protobuf.message.Message):
         pcm: global___Pcm.ValueType = ...,
         audio_format: global___AudioFormat.ValueType = ...,
         use_cache: builtins.bool = ...,
-        t2s_service_config: google.protobuf.struct_pb2.Struct | None = ...,
-        t2s_cloud_provider_config: global___T2sCloudProviderConfig | None = ...,
         t2s_normalization: global___T2SNormalization | None = ...,
         word_to_phoneme_mapping: google.protobuf.struct_pb2.Struct | None = ...,
+        t2s_service_config: google.protobuf.struct_pb2.Struct | None = ...,
+        t2s_cloud_provider_config: global___T2sCloudProviderConfig | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "_word_to_phoneme_mapping", b"_word_to_phoneme_mapping", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache", "word_to_phoneme_mapping", b"word_to_phoneme_mapping"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "_word_to_phoneme_mapping", b"_word_to_phoneme_mapping", "audio_format", b"audio_format", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_pipeline_id", b"t2s_pipeline_id", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache", "word_to_phoneme_mapping", b"word_to_phoneme_mapping"]) -> None: ...
@@ -481,7 +454,7 @@ global___T2sCloudProviderConfigGoogle = T2sCloudProviderConfigGoogle
 @typing.final
 class SynthesizeResponse(google.protobuf.message.Message):
     """Represents a Synthesize Response.
-    A Synthesize Response contains the generated audio, requested text and all other properties of this generated audio.
+    A Synthesize Request contains the converted text to audio and the requested configuration.
     """
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -524,54 +497,6 @@ class SynthesizeResponse(google.protobuf.message.Message):
     def ClearField(self, field_name: typing.Literal["audio", b"audio", "audio_length", b"audio_length", "audio_uuid", b"audio_uuid", "config", b"config", "generation_time", b"generation_time", "normalized_text", b"normalized_text", "text", b"text"]) -> None: ...
 
 global___SynthesizeResponse = SynthesizeResponse
-
-@typing.final
-class StreamingSynthesizeResponse(google.protobuf.message.Message):
-    """Represents a Streaming Synthesize Response.
-    A Streaming Synthesize Response contains the generated audio, requested text and and
-    all other properties of this generated audio.
-    """
-
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    AUDIO_UUID_FIELD_NUMBER: builtins.int
-    AUDIO_FIELD_NUMBER: builtins.int
-    GENERATION_TIME_FIELD_NUMBER: builtins.int
-    AUDIO_LENGTH_FIELD_NUMBER: builtins.int
-    TEXT_FIELD_NUMBER: builtins.int
-    CONFIG_FIELD_NUMBER: builtins.int
-    NORMALIZED_TEXT_FIELD_NUMBER: builtins.int
-    audio_uuid: builtins.str
-    """Required. Represents the pipeline id of the model configuration that will be used."""
-    audio: builtins.bytes
-    """Required. Generated file with the parameters described in request."""
-    generation_time: builtins.float
-    """Required. Time to generate audio."""
-    audio_length: builtins.float
-    """Required. Audio length."""
-    text: builtins.str
-    """Required. Text from which audio was generated."""
-    normalized_text: builtins.str
-    """Optional. Normalized text."""
-    @property
-    def config(self) -> global___RequestConfig:
-        """Required. Configuration from which audio was generated."""
-
-    def __init__(
-        self,
-        *,
-        audio_uuid: builtins.str = ...,
-        audio: builtins.bytes = ...,
-        generation_time: builtins.float = ...,
-        audio_length: builtins.float = ...,
-        text: builtins.str = ...,
-        config: global___RequestConfig | None = ...,
-        normalized_text: builtins.str = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing.Literal["config", b"config"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["audio", b"audio", "audio_length", b"audio_length", "audio_uuid", b"audio_uuid", "config", b"config", "generation_time", b"generation_time", "normalized_text", b"normalized_text", "text", b"text"]) -> None: ...
-
-global___StreamingSynthesizeResponse = StreamingSynthesizeResponse
 
 @typing.final
 class NormalizeTextRequest(google.protobuf.message.Message):
