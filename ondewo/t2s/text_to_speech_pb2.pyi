@@ -493,6 +493,7 @@ class SynthesizeResponse(google.protobuf.message.Message):
     TEXT_FIELD_NUMBER: builtins.int
     CONFIG_FIELD_NUMBER: builtins.int
     NORMALIZED_TEXT_FIELD_NUMBER: builtins.int
+    SAMPLE_RATE_FIELD_NUMBER: builtins.int
     audio_uuid: builtins.str
     """Required. Represents the pipeline id of the model configuration that will be used."""
     audio: builtins.bytes
@@ -505,6 +506,8 @@ class SynthesizeResponse(google.protobuf.message.Message):
     """Required. Text from which audio was generated."""
     normalized_text: builtins.str
     """Optional. Normalized text."""
+    sample_rate: builtins.float
+    """Optional. Value of sampling rate"""
     @property
     def config(self) -> global___RequestConfig:
         """Required. Configuration from which audio was generated."""
@@ -519,9 +522,10 @@ class SynthesizeResponse(google.protobuf.message.Message):
         text: builtins.str = ...,
         config: global___RequestConfig | None = ...,
         normalized_text: builtins.str = ...,
+        sample_rate: builtins.float = ...,
     ) -> None: ...
     def HasField(self, field_name: typing.Literal["config", b"config"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["audio", b"audio", "audio_length", b"audio_length", "audio_uuid", b"audio_uuid", "config", b"config", "generation_time", b"generation_time", "normalized_text", b"normalized_text", "text", b"text"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["audio", b"audio", "audio_length", b"audio_length", "audio_uuid", b"audio_uuid", "config", b"config", "generation_time", b"generation_time", "normalized_text", b"normalized_text", "sample_rate", b"sample_rate", "text", b"text"]) -> None: ...
 
 global___SynthesizeResponse = SynthesizeResponse
 
@@ -541,6 +545,7 @@ class StreamingSynthesizeResponse(google.protobuf.message.Message):
     TEXT_FIELD_NUMBER: builtins.int
     CONFIG_FIELD_NUMBER: builtins.int
     NORMALIZED_TEXT_FIELD_NUMBER: builtins.int
+    SAMPLE_RATE_FIELD_NUMBER: builtins.int
     audio_uuid: builtins.str
     """Required. Represents the pipeline id of the model configuration that will be used."""
     audio: builtins.bytes
@@ -553,6 +558,8 @@ class StreamingSynthesizeResponse(google.protobuf.message.Message):
     """Required. Text from which audio was generated."""
     normalized_text: builtins.str
     """Optional. Normalized text."""
+    sample_rate: builtins.float
+    """Optional. Value of sampling rate"""
     @property
     def config(self) -> global___RequestConfig:
         """Required. Configuration from which audio was generated."""
@@ -567,9 +574,10 @@ class StreamingSynthesizeResponse(google.protobuf.message.Message):
         text: builtins.str = ...,
         config: global___RequestConfig | None = ...,
         normalized_text: builtins.str = ...,
+        sample_rate: builtins.float = ...,
     ) -> None: ...
     def HasField(self, field_name: typing.Literal["config", b"config"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["audio", b"audio", "audio_length", b"audio_length", "audio_uuid", b"audio_uuid", "config", b"config", "generation_time", b"generation_time", "normalized_text", b"normalized_text", "text", b"text"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["audio", b"audio", "audio_length", b"audio_length", "audio_uuid", b"audio_uuid", "config", b"config", "generation_time", b"generation_time", "normalized_text", b"normalized_text", "sample_rate", b"sample_rate", "text", b"text"]) -> None: ...
 
 global___StreamingSynthesizeResponse = StreamingSynthesizeResponse
 
