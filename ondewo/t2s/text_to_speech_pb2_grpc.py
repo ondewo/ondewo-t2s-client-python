@@ -46,6 +46,11 @@ class Text2SpeechStub(object):
                 request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeRequest.SerializeToString,
                 response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeResponse.FromString,
                 _registered_method=True)
+        self.StreamingSynthesize = channel.stream_stream(
+                '/ondewo.t2s.Text2Speech/StreamingSynthesize',
+                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.StreamingSynthesizeRequest.SerializeToString,
+                response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.StreamingSynthesizeResponse.FromString,
+                _registered_method=True)
         self.NormalizeText = channel.unary_unary(
                 '/ondewo.t2s.Text2Speech/NormalizeText',
                 request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.NormalizeTextRequest.SerializeToString,
@@ -137,6 +142,13 @@ class Text2SpeechServicer(object):
 
         Performs batch synthesis by accepting a batch of synthesis requests and returning a batch response.
         This can be more efficient for generating predictions on the AI model in bulk.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def StreamingSynthesize(self, request_iterator, context):
+        """Performs streaming synthesis by accepting stream of input text and returning a stream of generated audio.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -283,6 +295,11 @@ def add_Text2SpeechServicer_to_server(servicer, server):
                     request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeRequest.FromString,
                     response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeResponse.SerializeToString,
             ),
+            'StreamingSynthesize': grpc.stream_stream_rpc_method_handler(
+                    servicer.StreamingSynthesize,
+                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.StreamingSynthesizeRequest.FromString,
+                    response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.StreamingSynthesizeResponse.SerializeToString,
+            ),
             'NormalizeText': grpc.unary_unary_rpc_method_handler(
                     servicer.NormalizeText,
                     request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.NormalizeTextRequest.FromString,
@@ -409,6 +426,33 @@ class Text2Speech(object):
             '/ondewo.t2s.Text2Speech/BatchSynthesize',
             ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeRequest.SerializeToString,
             ondewo_dot_t2s_dot_text__to__speech__pb2.BatchSynthesizeResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def StreamingSynthesize(request_iterator,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.stream_stream(
+            request_iterator,
+            target,
+            '/ondewo.t2s.Text2Speech/StreamingSynthesize',
+            ondewo_dot_t2s_dot_text__to__speech__pb2.StreamingSynthesizeRequest.SerializeToString,
+            ondewo_dot_t2s_dot_text__to__speech__pb2.StreamingSynthesizeResponse.FromString,
             options,
             channel_credentials,
             insecure,

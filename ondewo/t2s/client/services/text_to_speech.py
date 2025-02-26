@@ -30,6 +30,8 @@ from ondewo.t2s.text_to_speech_pb2 import (
     NormalizeTextRequest,
     NormalizeTextResponse,
     PhonemizerId,
+    StreamingSynthesizeRequest,
+    StreamingSynthesizeResponse,
     SynthesizeRequest,
     SynthesizeResponse,
     T2SGetServiceInfoResponse,
@@ -58,6 +60,10 @@ class Text2Speech(BaseServicesInterface):
 
     def batch_synthesize(self, request: BatchSynthesizeRequest) -> BatchSynthesizeResponse:
         response: BatchSynthesizeResponse = self.stub.BatchSynthesize(request)
+        return response
+
+    def streaming_synthesize(self, request: StreamingSynthesizeRequest) -> StreamingSynthesizeResponse:
+        response: StreamingSynthesizeResponse = self.stub.StreamingSynthesize(request)
         return response
 
     def normalize_text(self, request: NormalizeTextRequest) -> NormalizeTextResponse:
