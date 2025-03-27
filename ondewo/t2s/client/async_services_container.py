@@ -11,13 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 from dataclasses import dataclass
 
-from dataclasses_json import dataclass_json
-from ondewo.utils.base_client_config import BaseClientConfig
+from ondewo.utils.base_service_container import BaseServicesContainer
+
+from ondewo.t2s.client.services.async_text_to_speech import Text2Speech
 
 
-@dataclass_json
-@dataclass(frozen=True)
-class ClientConfig(BaseClientConfig):
-    """ Config for ONDEWO T2S client. """
+@dataclass
+class AsyncServicesContainer(BaseServicesContainer):
+    text_to_speech: Text2Speech
