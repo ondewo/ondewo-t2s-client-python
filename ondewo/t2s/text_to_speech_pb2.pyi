@@ -875,17 +875,15 @@ class ListT2sNormalizationPipelinesRequest(google.protobuf.message.Message):
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    LANGUAGES_FIELD_NUMBER: builtins.int
-    @property
-    def languages(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
-        """Optional. Define the language/ languages."""
-
+    LANGUAGE_FIELD_NUMBER: builtins.int
+    language: builtins.str
+    """Optional. Define the language."""
     def __init__(
         self,
         *,
-        languages: collections.abc.Iterable[builtins.str] | None = ...,
+        language: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["languages", b"languages"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["language", b"language"]) -> None: ...
 
 global___ListT2sNormalizationPipelinesRequest = ListT2sNormalizationPipelinesRequest
 
