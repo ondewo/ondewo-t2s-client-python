@@ -91,6 +91,11 @@ class Text2SpeechStub(object):
                 request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsRequest.SerializeToString,
                 response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsResponse.FromString,
                 _registered_method=True)
+        self.ListT2sNormalizationPipelines = channel.unary_unary(
+                '/ondewo.t2s.Text2Speech/ListT2sNormalizationPipelines',
+                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sNormalizationPipelinesRequest.SerializeToString,
+                response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sNormalizationPipelinesResponse.FromString,
+                _registered_method=True)
         self.GetServiceInfo = channel.unary_unary(
                 '/ondewo.t2s.Text2Speech/GetServiceInfo',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -226,6 +231,15 @@ class Text2SpeechServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ListT2sNormalizationPipelines(self, request, context):
+        """ListT2sNormalizationPipelines RPC
+
+        Retrieves a list of normalization pipelines based on specific requirements.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetServiceInfo(self, request, context):
         """GetServiceInfo RPC
 
@@ -339,6 +353,11 @@ def add_Text2SpeechServicer_to_server(servicer, server):
                     servicer.ListT2sDomains,
                     request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsRequest.FromString,
                     response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsResponse.SerializeToString,
+            ),
+            'ListT2sNormalizationPipelines': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListT2sNormalizationPipelines,
+                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sNormalizationPipelinesRequest.FromString,
+                    response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sNormalizationPipelinesResponse.SerializeToString,
             ),
             'GetServiceInfo': grpc.unary_unary_rpc_method_handler(
                     servicer.GetServiceInfo,
@@ -669,6 +688,33 @@ class Text2Speech(object):
             '/ondewo.t2s.Text2Speech/ListT2sDomains',
             ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsRequest.SerializeToString,
             ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sDomainsResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListT2sNormalizationPipelines(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/ondewo.t2s.Text2Speech/ListT2sNormalizationPipelines',
+            ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sNormalizationPipelinesRequest.SerializeToString,
+            ondewo_dot_t2s_dot_text__to__speech__pb2.ListT2sNormalizationPipelinesResponse.FromString,
             options,
             channel_credentials,
             insecure,

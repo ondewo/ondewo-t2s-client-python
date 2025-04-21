@@ -864,6 +864,57 @@ class ListT2sDomainsResponse(google.protobuf.message.Message):
 global___ListT2sDomainsResponse = ListT2sDomainsResponse
 
 @typing.final
+class ListT2sNormalizationPipelinesRequest(google.protobuf.message.Message):
+    """//////////////////////
+    LIST T2S NORMALIZATION PIPELINES //
+    //////////////////////
+
+    The request message for ListT2sNormalizationPipelines.
+    Filter pipelines by attributed in request.
+    """
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    LANGUAGES_FIELD_NUMBER: builtins.int
+    @property
+    def languages(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+        """Optional. Define the language/ languages."""
+
+    def __init__(
+        self,
+        *,
+        languages: collections.abc.Iterable[builtins.str] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["languages", b"languages"]) -> None: ...
+
+global___ListT2sNormalizationPipelinesRequest = ListT2sNormalizationPipelinesRequest
+
+@typing.final
+class ListT2sNormalizationPipelinesResponse(google.protobuf.message.Message):
+    """Pipeline Response representation.
+    The response message for ListT2sNormalizationPipelines.
+    """
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    T2S_NORMALIZATION_PIPELINES_FIELD_NUMBER: builtins.int
+    @property
+    def t2s_normalization_pipelines(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+        """Required. Representation of a list of normalization pipelines configurations.
+        Retrieved by ListT2sNormalizationPipelines, containing the configurations of
+        normalization pipelines with the specifications received in the ListT2sNormalizationPipelinesRequest.
+        """
+
+    def __init__(
+        self,
+        *,
+        t2s_normalization_pipelines: collections.abc.Iterable[builtins.str] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["t2s_normalization_pipelines", b"t2s_normalization_pipelines"]) -> None: ...
+
+global___ListT2sNormalizationPipelinesResponse = ListT2sNormalizationPipelinesResponse
+
+@typing.final
 class T2sPipelineId(google.protobuf.message.Message):
     """///////////////////////
     UPDATE T2S PIPELINE //
