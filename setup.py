@@ -11,7 +11,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="ondewo-t2s-client",
-    version='6.0.0',
+    version='6.1.0',
     author="ONDEWO GmbH",
     author_email="office@ondewo.com",
     description="ONDEWO Text 2 Speech (T2S) Client library for Python",
