@@ -27,6 +27,8 @@ from ondewo.t2s.text_to_speech_pb2 import (
     ListT2sLanguagesResponse,
     ListT2sPipelinesRequest,
     ListT2sPipelinesResponse,
+    ListT2sNormalizationPipelinesRequest,
+    ListT2sNormalizationPipelinesResponse,
     NormalizeTextRequest,
     NormalizeTextResponse,
     PhonemizerId,
@@ -94,6 +96,13 @@ class Text2Speech(AsyncBaseServicesInterface):
 
     async def list_t2s_domains(self, request: ListT2sDomainsRequest) -> ListT2sDomainsResponse:
         response: ListT2sDomainsResponse = await self.stub.ListT2sDomains(request)
+        return response
+
+    async def list_t2s_normalization_pipelines(
+        self,
+        request: ListT2sNormalizationPipelinesRequest,
+    ) -> ListT2sNormalizationPipelinesResponse:
+        response: ListT2sNormalizationPipelinesResponse = await self.stub.ListT2sNormalizationPipelines(request)
         return response
 
     # region phonemizer

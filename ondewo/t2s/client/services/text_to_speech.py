@@ -27,9 +27,13 @@ from ondewo.t2s.text_to_speech_pb2 import (
     ListT2sLanguagesResponse,
     ListT2sPipelinesRequest,
     ListT2sPipelinesResponse,
+    ListT2sNormalizationPipelinesRequest,
+    ListT2sNormalizationPipelinesResponse,
     NormalizeTextRequest,
     NormalizeTextResponse,
     PhonemizerId,
+    StreamingSynthesizeRequest,
+    StreamingSynthesizeResponse,
     SynthesizeRequest,
     SynthesizeResponse,
     T2SGetServiceInfoResponse,
@@ -58,6 +62,10 @@ class Text2Speech(BaseServicesInterface):
 
     def batch_synthesize(self, request: BatchSynthesizeRequest) -> BatchSynthesizeResponse:
         response: BatchSynthesizeResponse = self.stub.BatchSynthesize(request)
+        return response
+
+    def streaming_synthesize(self, request: StreamingSynthesizeRequest) -> StreamingSynthesizeResponse:
+        response: StreamingSynthesizeResponse = self.stub.StreamingSynthesize(request)
         return response
 
     def normalize_text(self, request: NormalizeTextRequest) -> NormalizeTextResponse:
@@ -94,6 +102,13 @@ class Text2Speech(BaseServicesInterface):
 
     def list_t2s_domains(self, request: ListT2sDomainsRequest) -> ListT2sDomainsResponse:
         response: ListT2sDomainsResponse = self.stub.ListT2sDomains(request)
+        return response
+
+    def list_t2s_normalization_pipelines(
+        self,
+        request: ListT2sNormalizationPipelinesRequest,
+    ) -> ListT2sNormalizationPipelinesResponse:
+        response: ListT2sNormalizationPipelinesResponse = self.stub.ListT2sNormalizationPipelines(request)
         return response
 
     # region phonemizer
