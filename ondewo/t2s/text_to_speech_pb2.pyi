@@ -1164,7 +1164,8 @@ class Text2Audio(google.protobuf.message.Message):
     T2S_CLOUD_SERVICE_AMAZON_FIELD_NUMBER: builtins.int
     T2S_CLOUD_SERVICE_GOOGLE_FIELD_NUMBER: builtins.int
     T2S_CLOUD_SERVICE_MICROSOFT_FIELD_NUMBER: builtins.int
-    QWEN3_TTS_FIELD_NUMBER: builtins.int
+    QWEN3_TTS_CUSTOM_VOICE_FIELD_NUMBER: builtins.int
+    QWEN3_TTS_BASE_FIELD_NUMBER: builtins.int
     type: builtins.str
     """The type of text-to-audio inference."""
     @property
@@ -1192,8 +1193,12 @@ class Text2Audio(google.protobuf.message.Message):
         """Microsoft cloud service inference settings."""
 
     @property
-    def qwen3_tts(self) -> global___Qwen3Tts:
-        """Qwen3-TTS inference settings."""
+    def qwen3_tts_custom_voice(self) -> global___Qwen3TtsCustomVoice:
+        """Qwen3-TTS-custom-voice inference settings."""
+
+    @property
+    def qwen3_tts_base(self) -> global___Qwen3TtsBase:
+        """Qwen3-TTS-base inference settings for voice cloning."""
 
     def __init__(
         self,
@@ -1205,10 +1210,11 @@ class Text2Audio(google.protobuf.message.Message):
         t2s_cloud_service_amazon: global___T2sCloudServiceAmazon | None = ...,
         t2s_cloud_service_google: global___T2sCloudServiceGoogle | None = ...,
         t2s_cloud_service_microsoft: global___T2sCloudServiceMicrosoft | None = ...,
-        qwen3_tts: global___Qwen3Tts | None = ...,
+        qwen3_tts_custom_voice: global___Qwen3TtsCustomVoice | None = ...,
+        qwen3_tts_base: global___Qwen3TtsBase | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["qwen3_tts", b"qwen3_tts", "t2s_cloud_service_amazon", b"t2s_cloud_service_amazon", "t2s_cloud_service_elevenlabs", b"t2s_cloud_service_elevenlabs", "t2s_cloud_service_google", b"t2s_cloud_service_google", "t2s_cloud_service_microsoft", b"t2s_cloud_service_microsoft", "vits", b"vits", "vits_triton", b"vits_triton"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["qwen3_tts", b"qwen3_tts", "t2s_cloud_service_amazon", b"t2s_cloud_service_amazon", "t2s_cloud_service_elevenlabs", b"t2s_cloud_service_elevenlabs", "t2s_cloud_service_google", b"t2s_cloud_service_google", "t2s_cloud_service_microsoft", b"t2s_cloud_service_microsoft", "type", b"type", "vits", b"vits", "vits_triton", b"vits_triton"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["qwen3_tts_base", b"qwen3_tts_base", "qwen3_tts_custom_voice", b"qwen3_tts_custom_voice", "t2s_cloud_service_amazon", b"t2s_cloud_service_amazon", "t2s_cloud_service_elevenlabs", b"t2s_cloud_service_elevenlabs", "t2s_cloud_service_google", b"t2s_cloud_service_google", "t2s_cloud_service_microsoft", b"t2s_cloud_service_microsoft", "vits", b"vits", "vits_triton", b"vits_triton"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["qwen3_tts_base", b"qwen3_tts_base", "qwen3_tts_custom_voice", b"qwen3_tts_custom_voice", "t2s_cloud_service_amazon", b"t2s_cloud_service_amazon", "t2s_cloud_service_elevenlabs", b"t2s_cloud_service_elevenlabs", "t2s_cloud_service_google", b"t2s_cloud_service_google", "t2s_cloud_service_microsoft", b"t2s_cloud_service_microsoft", "type", b"type", "vits", b"vits", "vits_triton", b"vits_triton"]) -> None: ...
 
 global___Text2Audio = Text2Audio
 
@@ -1546,8 +1552,8 @@ class T2sCloudServiceMicrosoft(google.protobuf.message.Message):
 global___T2sCloudServiceMicrosoft = T2sCloudServiceMicrosoft
 
 @typing.final
-class Qwen3Tts(google.protobuf.message.Message):
-    """<p>Qwen3Tts message contains settings for inference of qwen3-TTS model.</p>"""
+class Qwen3TtsCustomVoice(google.protobuf.message.Message):
+    """<p>Qwen3TtsCustomVoice message contains settings for inference of qwen3-TTS-CustomVoice model.</p>"""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -1581,7 +1587,45 @@ class Qwen3Tts(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(self, field_name: typing.Literal["language", b"language", "model_name", b"model_name", "qwen3_tts_server_host", b"qwen3_tts_server_host", "qwen3_tts_server_key", b"qwen3_tts_server_key", "qwen3_tts_server_port", b"qwen3_tts_server_port", "voice_name", b"voice_name"]) -> None: ...
 
-global___Qwen3Tts = Qwen3Tts
+global___Qwen3TtsCustomVoice = Qwen3TtsCustomVoice
+
+@typing.final
+class Qwen3TtsBase(google.protobuf.message.Message):
+    """<p>Qwen3TtsBase message contains settings for inference of qwen3-TTS-Base model.</p>"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    VOICE_NAME_FIELD_NUMBER: builtins.int
+    MODEL_NAME_FIELD_NUMBER: builtins.int
+    LANGUAGE_FIELD_NUMBER: builtins.int
+    QWEN3_TTS_SERVER_HOST_FIELD_NUMBER: builtins.int
+    QWEN3_TTS_SERVER_PORT_FIELD_NUMBER: builtins.int
+    QWEN3_TTS_SERVER_KEY_FIELD_NUMBER: builtins.int
+    voice_name: builtins.str
+    """Voice name indicating the speaker"""
+    model_name: builtins.str
+    """Model name for the inference server."""
+    language: builtins.str
+    """Language for inference server"""
+    qwen3_tts_server_host: builtins.str
+    """Host name for the inference server"""
+    qwen3_tts_server_port: builtins.str
+    """Port of the inference server"""
+    qwen3_tts_server_key: builtins.str
+    """Authorization key for the inference server"""
+    def __init__(
+        self,
+        *,
+        voice_name: builtins.str = ...,
+        model_name: builtins.str = ...,
+        language: builtins.str = ...,
+        qwen3_tts_server_host: builtins.str = ...,
+        qwen3_tts_server_port: builtins.str = ...,
+        qwen3_tts_server_key: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["language", b"language", "model_name", b"model_name", "qwen3_tts_server_host", b"qwen3_tts_server_host", "qwen3_tts_server_key", b"qwen3_tts_server_key", "qwen3_tts_server_port", b"qwen3_tts_server_port", "voice_name", b"voice_name"]) -> None: ...
+
+global___Qwen3TtsBase = Qwen3TtsBase
 
 @typing.final
 class Mel2Audio(google.protobuf.message.Message):
