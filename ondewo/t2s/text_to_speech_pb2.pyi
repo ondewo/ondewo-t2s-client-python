@@ -1562,7 +1562,6 @@ class Qwen3TtsCustomVoice(google.protobuf.message.Message):
     LANGUAGE_FIELD_NUMBER: builtins.int
     QWEN3_TTS_SERVER_HOST_FIELD_NUMBER: builtins.int
     QWEN3_TTS_SERVER_PORT_FIELD_NUMBER: builtins.int
-    QWEN3_TTS_SERVER_HEADERS_FIELD_NUMBER: builtins.int
     voice_name: builtins.str
     """Voice name indicating the speaker"""
     model_name: builtins.str
@@ -1573,10 +1572,6 @@ class Qwen3TtsCustomVoice(google.protobuf.message.Message):
     """Host name for the inference server"""
     qwen3_tts_server_port: builtins.str
     """Port of the inference server"""
-    @property
-    def qwen3_tts_server_headers(self) -> google.protobuf.struct_pb2.Struct:
-        """Authorization headers for the inference server"""
-
     def __init__(
         self,
         *,
@@ -1585,11 +1580,8 @@ class Qwen3TtsCustomVoice(google.protobuf.message.Message):
         language: builtins.str = ...,
         qwen3_tts_server_host: builtins.str = ...,
         qwen3_tts_server_port: builtins.str = ...,
-        qwen3_tts_server_headers: google.protobuf.struct_pb2.Struct | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["_qwen3_tts_server_headers", b"_qwen3_tts_server_headers", "qwen3_tts_server_headers", b"qwen3_tts_server_headers"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["_qwen3_tts_server_headers", b"_qwen3_tts_server_headers", "language", b"language", "model_name", b"model_name", "qwen3_tts_server_headers", b"qwen3_tts_server_headers", "qwen3_tts_server_host", b"qwen3_tts_server_host", "qwen3_tts_server_port", b"qwen3_tts_server_port", "voice_name", b"voice_name"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing.Literal["_qwen3_tts_server_headers", b"_qwen3_tts_server_headers"]) -> typing.Literal["qwen3_tts_server_headers"] | None: ...
+    def ClearField(self, field_name: typing.Literal["language", b"language", "model_name", b"model_name", "qwen3_tts_server_host", b"qwen3_tts_server_host", "qwen3_tts_server_port", b"qwen3_tts_server_port", "voice_name", b"voice_name"]) -> None: ...
 
 global___Qwen3TtsCustomVoice = Qwen3TtsCustomVoice
 
@@ -1604,7 +1596,6 @@ class Qwen3TtsBase(google.protobuf.message.Message):
     LANGUAGE_FIELD_NUMBER: builtins.int
     QWEN3_TTS_SERVER_HOST_FIELD_NUMBER: builtins.int
     QWEN3_TTS_SERVER_PORT_FIELD_NUMBER: builtins.int
-    QWEN3_TTS_SERVER_KEY_FIELD_NUMBER: builtins.int
     voice_name: builtins.str
     """Voice name indicating the speaker"""
     model_name: builtins.str
@@ -1615,8 +1606,6 @@ class Qwen3TtsBase(google.protobuf.message.Message):
     """Host name for the inference server"""
     qwen3_tts_server_port: builtins.str
     """Port of the inference server"""
-    qwen3_tts_server_key: builtins.str
-    """Authorization key for the inference server"""
     def __init__(
         self,
         *,
@@ -1625,9 +1614,8 @@ class Qwen3TtsBase(google.protobuf.message.Message):
         language: builtins.str = ...,
         qwen3_tts_server_host: builtins.str = ...,
         qwen3_tts_server_port: builtins.str = ...,
-        qwen3_tts_server_key: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["language", b"language", "model_name", b"model_name", "qwen3_tts_server_host", b"qwen3_tts_server_host", "qwen3_tts_server_key", b"qwen3_tts_server_key", "qwen3_tts_server_port", b"qwen3_tts_server_port", "voice_name", b"voice_name"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["language", b"language", "model_name", b"model_name", "qwen3_tts_server_host", b"qwen3_tts_server_host", "qwen3_tts_server_port", b"qwen3_tts_server_port", "voice_name", b"voice_name"]) -> None: ...
 
 global___Qwen3TtsBase = Qwen3TtsBase
 
