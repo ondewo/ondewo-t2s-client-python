@@ -1591,13 +1591,10 @@ class Qwen3TtsBase(google.protobuf.message.Message):
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    VOICE_ID_FIELD_NUMBER: builtins.int
     MODEL_NAME_FIELD_NUMBER: builtins.int
     LANGUAGE_FIELD_NUMBER: builtins.int
     QWEN3_TTS_SERVER_HOST_FIELD_NUMBER: builtins.int
     QWEN3_TTS_SERVER_PORT_FIELD_NUMBER: builtins.int
-    voice_id: builtins.str
-    """Voice id indicating the speaker name"""
     model_name: builtins.str
     """Model name for the inference server."""
     language: builtins.str
@@ -1609,13 +1606,12 @@ class Qwen3TtsBase(google.protobuf.message.Message):
     def __init__(
         self,
         *,
-        voice_id: builtins.str = ...,
         model_name: builtins.str = ...,
         language: builtins.str = ...,
         qwen3_tts_server_host: builtins.str = ...,
         qwen3_tts_server_port: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["language", b"language", "model_name", b"model_name", "qwen3_tts_server_host", b"qwen3_tts_server_host", "qwen3_tts_server_port", b"qwen3_tts_server_port", "voice_id", b"voice_id"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["language", b"language", "model_name", b"model_name", "qwen3_tts_server_host", b"qwen3_tts_server_host", "qwen3_tts_server_port", b"qwen3_tts_server_port"]) -> None: ...
 
 global___Qwen3TtsBase = Qwen3TtsBase
 
