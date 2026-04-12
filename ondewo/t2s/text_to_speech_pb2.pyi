@@ -1593,12 +1593,15 @@ class Qwen3TtsBase(google.protobuf.message.Message):
 
     MODEL_NAME_FIELD_NUMBER: builtins.int
     LANGUAGE_FIELD_NUMBER: builtins.int
+    EMBEDDING_PATH_FIELD_NUMBER: builtins.int
     QWEN3_TTS_SERVER_HOST_FIELD_NUMBER: builtins.int
     QWEN3_TTS_SERVER_PORT_FIELD_NUMBER: builtins.int
     model_name: builtins.str
     """Model name for the inference server."""
     language: builtins.str
     """Language for inference server"""
+    embedding_path: builtins.str
+    """Path of the embedding file"""
     qwen3_tts_server_host: builtins.str
     """Host name for the inference server"""
     qwen3_tts_server_port: builtins.str
@@ -1608,10 +1611,11 @@ class Qwen3TtsBase(google.protobuf.message.Message):
         *,
         model_name: builtins.str = ...,
         language: builtins.str = ...,
+        embedding_path: builtins.str = ...,
         qwen3_tts_server_host: builtins.str = ...,
         qwen3_tts_server_port: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["language", b"language", "model_name", b"model_name", "qwen3_tts_server_host", b"qwen3_tts_server_host", "qwen3_tts_server_port", b"qwen3_tts_server_port"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["embedding_path", b"embedding_path", "language", b"language", "model_name", b"model_name", "qwen3_tts_server_host", b"qwen3_tts_server_host", "qwen3_tts_server_port", b"qwen3_tts_server_port"]) -> None: ...
 
 global___Qwen3TtsBase = Qwen3TtsBase
 
