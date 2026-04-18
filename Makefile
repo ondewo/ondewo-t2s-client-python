@@ -111,7 +111,7 @@ update_setup: ## Update Version in setup.py
 	@sed -i "s/version='[0-9]*.[0-9]*.[0-9]*'/version='${ONDEWO_T2S_VERSION}'/g" setup.py
 	@sed -i "s/version=\"[0-9]*.[0-9]*.[0-9]*\"/version='${ONDEWO_T2S_VERSION}'/g" setup.py
 
-build: clear_package_data init_submodules checkout_defined_submodule_versions build_compiler generate_ondewo_protos create_async_services update_setup ## Build source code
+build: clear_package_data init_submodules checkout_defined_submodule_versions build_compiler generate_ondewo_protos generate_services update_setup ## Build source code
 
 clean_python_api:  ## Clear generated python files
 	find ./ondewo -name \*pb2.py -type f -exec rm -f {} \;
@@ -128,6 +128,13 @@ generate_ondewo_protos:  ## Generate python code from proto files
 		EXTRA_PROTO_DIR=${GOOGLE_PROTOS_DIR} \
 		TARGET_DIR='ondewo' \
 		OUTPUT_DIR=${OUTPUT_DIR}
+	-make precommit_hooks_run_all_files
+	make precommit_hooks_run_all_files
+
+generate_services: ## Generate service wrapper files from proto definitions
+	python3 ondewo/t2s/scripts/generate_services.py \
+		${ONDEWO_T2S_API_DIR}/ondewo/t2s \
+		ondewo/t2s/client/services
 	-make precommit_hooks_run_all_files
 	make precommit_hooks_run_all_files
 
