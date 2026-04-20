@@ -71,7 +71,7 @@ mypy: ## Run mypy static code checking
 	@echo "DONE: Run mypy in pre-commit hook."
 	@echo "---------------------------------------------"
 	@echo "START: Run mypy directly ..."
-	python -m mypy --config-file=mypy.ini .
+	python -m mypy --config-file=mypy.ini ondewo/ test/
 	@echo "DONE: Run mypy directly"
 	@echo "---------------------------------------------"
 
@@ -233,14 +233,14 @@ checkout_defined_submodule_versions:  ## Update submodule versions
 
 build_package: ## Builds PYPI Package
 	python setup.py sdist bdist_wheel
-	chmod a+rw dist -R
+	chmod -R a+rw dist
 
 upload_package: ## Uploads PYPI Package
 	twine upload --verbose -r pypi dist/* -u${PYPI_USERNAME} -p${PYPI_PASSWORD}
 
 clear_package_data: ## Clears PYPI Package
 	echo "Waiting 5s so directory for removal is not busy anymore"
-	sleep 5s
+	sleep 5
 	-rm -rf build dist/* ondewo_t2s_client.egg-info
 
 push_to_pypi_via_docker_image:  ## Push source code to pypi via docker
