@@ -16,7 +16,7 @@ export
 
 # MUST BE THE SAME AS API in Mayor and Minor Version Number
 # example: API 2.9.0 --> Client 2.9.X
-ONDEWO_T2S_VERSION = 6.1.1
+ONDEWO_T2S_VERSION = 6.1.2
 
 ONDEWO_T2S_API_GIT_BRANCH=feature/OND232-823-add-qwen3-tts-as-new-llm-base
 ONDEWO_PROTO_COMPILER_GIT_BRANCH=tags/5.9.0
@@ -40,6 +40,7 @@ GOOGLE_PROTOS_DIR=${GOOGLE_APIS_DIR}/google/
 OUTPUT_DIR=.
 IMAGE_UTILS_NAME=ondewo-t2s-client-utils-python:${ONDEWO_T2S_VERSION}
 .DEFAULT_GOAL := help
+.PHONY: test test_unit
 
 ########################################################
 #       ONDEWO Standard Make Targets
@@ -49,7 +50,7 @@ setup_developer_environment_locally: install_precommit_hooks install_dependencie
 
 install_precommit_hooks: ## Installs pre-commit hooks and sets them up for the ondewo-csi-client repo
 	-pip install pre-commit
-	-conda -y install pre-commit
+	-conda install  -y pre-commit
 	pre-commit install
 	pre-commit install --hook-type commit-msg
 
@@ -61,7 +62,7 @@ install_dependencies_locally: ## Install dependencies locally
 	pip install -r requirements.txt
 
 flake8: ## Runs flake8
-	flake8 --config .flake8 .
+	python -m flake8 --config .flake8 .
 
 mypy: ## Run mypy static code checking
 	@echo "---------------------------------------------"
@@ -70,7 +71,7 @@ mypy: ## Run mypy static code checking
 	@echo "DONE: Run mypy in pre-commit hook."
 	@echo "---------------------------------------------"
 	@echo "START: Run mypy directly ..."
-	mypy --config-file=mypy.ini .
+	python -m mypy --config-file=mypy.ini .
 	@echo "DONE: Run mypy directly"
 	@echo "---------------------------------------------"
 
@@ -94,11 +95,11 @@ check_build: ## Checks if all built proto-code is there
 		echo $${proto} | cut -d "/" -f 4 | cut -d "." -f 1 >> build_check.txt; \
 	done
 	@echo "`sort build_check.txt | uniq`" > build_check.txt
-	@sed -i "s/\-/\_/g" build_check.txt
+	@perl -i -pe 's/-/_/g' build_check.txt
 	@for file in `cat build_check.txt`;\
 	do \
 		find ondewo -iname "*pb*" | grep -q $${file}; \
-		if test $$? != 0; then  echo "No Proto-Code for $${file}" & exit 1;fi \
+		if test $$? != 0; then echo "No Proto-Code for $${file}"; exit 1; fi \
 	done
 	@rm -rf build_check.txt
 
@@ -108,8 +109,8 @@ check_build: ## Checks if all built proto-code is there
 #		Build
 
 update_setup: ## Update Version in setup.py
-	@sed -i "s/version='[0-9]*.[0-9]*.[0-9]*'/version='${ONDEWO_T2S_VERSION}'/g" setup.py
-	@sed -i "s/version=\"[0-9]*.[0-9]*.[0-9]*\"/version='${ONDEWO_T2S_VERSION}'/g" setup.py
+	@perl -i -pe "s/version='[0-9]*\.[0-9]*\.[0-9]*'/version='${ONDEWO_T2S_VERSION}'/g" setup.py
+	@perl -i -pe "s/version=\"[0-9]*\.[0-9]*\.[0-9]*\"/version='${ONDEWO_T2S_VERSION}'/g" setup.py
 
 build: clear_package_data init_submodules checkout_defined_submodule_versions build_compiler generate_ondewo_protos generate_services update_setup ## Build source code
 
@@ -152,7 +153,7 @@ setup_conda_env: ## Checks for CONDA Environment
 	&& make create_conda_env)
 
 create_conda_env: ## Creates CONDA Environment
-	conda create -y --name ondewo-t2s-client-python python=3.9
+	conda create -y --name ondewo-t2s-client-python python=3.10
 	/bin/bash -c 'source `conda info --base`/bin/activate ondewo-t2s-client-python; make setup_developer_environment_locally && echo "\n PRECOMMIT INSTALLED \n"'
 	make release
 
@@ -166,12 +167,7 @@ create_async_services: ## Create async services for all synchronous services
 	        cp "$$file" "$$dir/async_$$filename"; \
 	    done; \
 	    for file in "$$dir"/async_*.py; do \
-	        sed -i -E \
-	            -e '/def stub/b' -e 's/^([[:space:]]*)def /\1async def /g' \
-	            -e 's/self\.stub/await self.stub/g' \
-	            -e 's/\(BaseServicesInterface\)/\(AsyncBaseServicesInterface\)/g' \
-	            -e 's/base_services_interface/async_base_services_interface/g' \
-	            -e 's/import BaseServicesInterface/import AsyncBaseServicesInterface/g' \
+	        perl -i -pe 'next if /def stub/; s/^([ \t]*)def /\1async def /g; s/self\.stub/await self.stub/g; s/\(BaseServicesInterface\)/\(AsyncBaseServicesInterface\)/g; s/base_services_interface/async_base_services_interface/g; s/import BaseServicesInterface/import AsyncBaseServicesInterface/g' \
 	            "$$file"; \
 	    done; \
 	done
@@ -295,13 +291,26 @@ clone_devops_accounts: ## Clones devops-accounts repo
 	git clone git@bitbucket.org:ondewo/${DEVOPS_ACCOUNT_GIT}.git
 
 run_release_with_devops: ## Gets Credentials from devops-repo and run release command with them
-	$(eval info:= $(shell cat ${DEVOPS_ACCOUNT_DIR}/account_github.env | grep GITHUB_GH & cat ${DEVOPS_ACCOUNT_DIR}/account_pypi.env | grep PYPI_USERNAME & cat ${DEVOPS_ACCOUNT_DIR}/account_pypi.env | grep PYPI_PASSWORD))
+	$(eval info:= $(shell cat ${DEVOPS_ACCOUNT_DIR}/account_github.env | grep GITHUB_GH; cat ${DEVOPS_ACCOUNT_DIR}/account_pypi.env | grep PYPI_USERNAME; cat ${DEVOPS_ACCOUNT_DIR}/account_pypi.env | grep PYPI_PASSWORD))
 	@echo ${CONDA_PREFIX} | grep -q t2s-client-python && make release $(info) || (make setup_conda_env $(info))
 
 spc: ## Checks if the Release Branch, Tag and Pypi version already exist
 	$(eval filtered_branches:= $(shell git branch --all | grep "release/${ONDEWO_T2S_VERSION}"))
 	$(eval filtered_tags:= $(shell git tag --list | grep "${ONDEWO_T2S_VERSION}"))
 	$(eval setuppy_version:= $(shell cat setup.py | grep "version"))
-	@if test "$(filtered_branches)" != ""; then echo "-- Test 1: Branch exists!!" & exit 1; else echo "-- Test 1: Branch is fine";fi
-	@if test "$(filtered_tags)" != ""; then echo "-- Test 2: Tag exists!!" & exit 1; else echo "-- Test 2: Tag is fine";fi
-	#	@if test "$(setuppy_version)" != "version='${ONDEWO_T2S_VERSION}',"; then echo "-- Test 3: Setup.py not updated!!" & exit 1; else echo "-- Test 3: Setup.py is fine";fi
+	@if test "$(filtered_branches)" != ""; then echo "-- Test 1: Branch exists!!"; exit 1; else echo "-- Test 1: Branch is fine";fi
+	@if test "$(filtered_tags)" != ""; then echo "-- Test 2: Tag exists!!"; exit 1; else echo "-- Test 2: Tag is fine";fi
+	# @if test "$(setuppy_version)" != "version='${ONDEWO_T2S_VERSION}',"; then echo "-- Test 3: Setup.py not updated!!"; exit 1; else echo "-- Test 3: Setup.py is fine";fi
+########################################################
+#       Test
+########################################################
+
+test: ## Run unit tests with terminal + HTML coverage report
+	python -m pytest test/unit \
+		--cov=ondewo/t2s/client \
+		--cov-report=term-missing \
+		--cov-report=html:htmlcov \
+		-v
+
+test_unit: ## Run unit tests without coverage
+	python -m pytest test/unit -v

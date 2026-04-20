@@ -332,53 +332,51 @@ def _emit_method(
     resp = f'{iterator_str}[{annot_resp}]' if rpc.server_streaming else annot_resp
 
     # Detect the Empty-request pattern (non-streaming only).
-    empty_request = (annot_req == 'Empty' and not rpc.client_streaming)
+    # empty_request = (annot_req == 'Empty' and not rpc.client_streaming)
 
-    if empty_request:
-        sig_single = f'    {async_prefix}def {method}(self) -> {resp}:'
-        # , metadata=self.metadata)'
-        body_single = f'        response: {resp} = {await_prefix}self.stub.{rpc.name}(Empty())'
-    else:
-        req: str = f'{iterator_str}[{annot_req}]' if rpc.client_streaming else annot_req
-        req_name: str = 'request'
-        sig_single = f'    {async_prefix}def {method}(self, {req_name}: {req}) -> {resp}:'
-        # , metadata=self.metadata)'
-        body_single = f'        response: {resp} = {await_prefix}self.stub.{rpc.name}({req_name})'
+    # if empty_request:
+    #     sig_single = f'    {async_prefix}def {method}(self) -> {resp}:'
+    #     body_single = f'        response: {resp} = {await_prefix}self.stub.{rpc.name}(Empty())'
+    # else:
+    req: str = f'{iterator_str}[{annot_req}]' if rpc.client_streaming else annot_req
+    req_name: str = 'request_iterator' if rpc.client_streaming else 'request'
+    sig_single = f'    {async_prefix}def {method}(self, {req_name}: {req}) -> {resp}:'
+    body_single = f'        response: {resp} = {await_prefix}self.stub.{rpc.name}({req_name})'
 
     out: List[str] = ['']
 
     if len(sig_single) <= _MAX_LINE_LENGTH:
         out.append(sig_single)
     else:
-        if empty_request:
-            out += [
-                f'    {async_prefix}def {method}(',
-                '        self,',
-                f'    ) -> {resp}:',
-            ]
-        else:
-            out += [
-                f'    {async_prefix}def {method}(',
-                '        self,',
-                f'        {req_name}: {req},',
-                f'    ) -> {resp}:',
-            ]
+        # if empty_request:
+        #     out += [
+        #         f'    {async_prefix}def {method}(',
+        #         '        self,',
+        #         f'    ) -> {resp}:',
+        #     ]
+        # else:
+        out += [
+            f'    {async_prefix}def {method}(',
+            '        self,',
+            f'        {req_name}: {req},',
+            f'    ) -> {resp}:',
+        ]
 
     if len(body_single) <= _MAX_LINE_LENGTH:
         out.append(body_single)
     else:
         # Use a backslash continuation so the long type annotation lives on its own line
         # and the call expression on the next line stays under 120 chars.
-        if empty_request:
-            out += [
-                f'        response: {resp} = \\',
-                f'            {await_prefix}self.stub.{rpc.name}(Empty())'  # , metadata=self.metadata)',
-            ]
-        else:
-            out += [
-                f'        response: {resp} = \\',
-                f'            {await_prefix}self.stub.{rpc.name}({req_name})'  # , metadata=self.metadata)',
-            ]
+        # if empty_request:
+        #     out += [
+        #         f'        response: {resp} = \\',
+        #         f'            {await_prefix}self.stub.{rpc.name}(Empty())'  #, metadata=self.metadata)',
+        #     ]
+        # else:
+        out += [
+            f'        response: {resp} = \\',
+            f'            {await_prefix}self.stub.{rpc.name}({req_name})'
+        ]
 
     out.append('        return response')
     return out
@@ -503,14 +501,15 @@ def _build_client_content(services: List[Tuple[str, str]], for_async: bool = Fal
         '',
     ]
     for field_name, class_name in services:
-        lines.append(f'from ondewo.t2s.client.services.{field_name} import {class_name}')
+        service_module = f'async_{field_name}' if for_async else field_name
+        lines.append(f'from ondewo.t2s.client.services.{service_module} import {class_name}')
     lines += [
         f'from ondewo.t2s.client.{async_prefix.lower()}services_container import {async_prefix[:-1]}ServicesContainer',
         '',
         '',
         f'class {async_prefix[:-1]}Client({async_prefix[:-1]}BaseClient):',
         '    """',
-        f'    The core {async_prefix[:-1].lower()} python client for interacting with ONDEWO T2S services.',
+        f'    The core {"async " if for_async else ""}python client for interacting with ONDEWO T2S services.',
         '    """',
         '',
         '    def _initialize_services(',
@@ -521,7 +520,7 @@ def _build_client_content(services: List[Tuple[str, str]], for_async: bool = Fal
         '    ) -> None:',
         '        """',
         '',
-        f'        Initialize the {async_prefix[:-1].lower()} service clients and login with the current config'
+        f'        Initialize the {"async " if for_async else ""}service clients and login with the current config'
         ' and set up the services in self.services',
         '',
         '        Args:',
