@@ -272,7 +272,7 @@ class RequestConfig(google.protobuf.message.Message):
     The default value is False.
     """
     instruction: builtins.str
-    """Optional. Define a dict which specifies the phonemes for a special word."""
+    """Optional. Define an instruction or prompt to be passed to the TTS/LLM backend for this request."""
     @property
     def t2s_service_config(self) -> google.protobuf.struct_pb2.Struct:
         """Optional. t2s_service_config provides the configuration of the service such as API key, bearer tokens, JWT,
@@ -1571,7 +1571,7 @@ class Qwen3TtsCustomVoice(google.protobuf.message.Message):
     """Language for inference server"""
     qwen3_tts_server_host: builtins.str
     """Host name for the inference server"""
-    qwen3_tts_server_port: builtins.str
+    qwen3_tts_server_port: builtins.int
     """Port of the inference server"""
     @property
     def qwen3_tts_server_header(self) -> google.protobuf.struct_pb2.Struct:
@@ -1584,7 +1584,7 @@ class Qwen3TtsCustomVoice(google.protobuf.message.Message):
         model_name: builtins.str = ...,
         language: builtins.str = ...,
         qwen3_tts_server_host: builtins.str = ...,
-        qwen3_tts_server_port: builtins.str = ...,
+        qwen3_tts_server_port: builtins.int = ...,
         qwen3_tts_server_header: google.protobuf.struct_pb2.Struct | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing.Literal["_qwen3_tts_server_header", b"_qwen3_tts_server_header", "qwen3_tts_server_header", b"qwen3_tts_server_header"]) -> builtins.bool: ...
@@ -1613,11 +1613,11 @@ class Qwen3TtsBase(google.protobuf.message.Message):
     """Path of the embedding file"""
     qwen3_tts_server_host: builtins.str
     """Host name for the inference server"""
-    qwen3_tts_server_port: builtins.str
+    qwen3_tts_server_port: builtins.int
     """Port of the inference server"""
     @property
     def qwen3_tts_server_header(self) -> google.protobuf.struct_pb2.Struct:
-        """Authorization key for the inference server"""
+        """Authorization headers for the inference server"""
 
     def __init__(
         self,
@@ -1626,7 +1626,7 @@ class Qwen3TtsBase(google.protobuf.message.Message):
         language: builtins.str = ...,
         embedding_path: builtins.str = ...,
         qwen3_tts_server_host: builtins.str = ...,
-        qwen3_tts_server_port: builtins.str = ...,
+        qwen3_tts_server_port: builtins.int = ...,
         qwen3_tts_server_header: google.protobuf.struct_pb2.Struct | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing.Literal["_qwen3_tts_server_header", b"_qwen3_tts_server_header", "qwen3_tts_server_header", b"qwen3_tts_server_header"]) -> builtins.bool: ...
