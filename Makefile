@@ -40,7 +40,7 @@ GOOGLE_PROTOS_DIR=${GOOGLE_APIS_DIR}/google/
 OUTPUT_DIR=.
 IMAGE_UTILS_NAME=ondewo-t2s-client-utils-python:${ONDEWO_T2S_VERSION}
 .DEFAULT_GOAL := help
-.PHONY: test test_unit
+.PHONY: test test_unit test_unit_client test_unit_async_client test_e2e test_all
 
 ########################################################
 #       ONDEWO Standard Make Targets
@@ -301,16 +301,31 @@ spc: ## Checks if the Release Branch, Tag and Pypi version already exist
 	@if test "$(filtered_branches)" != ""; then echo "-- Test 1: Branch exists!!"; exit 1; else echo "-- Test 1: Branch is fine";fi
 	@if test "$(filtered_tags)" != ""; then echo "-- Test 2: Tag exists!!"; exit 1; else echo "-- Test 2: Tag is fine";fi
 	# @if test "$(setuppy_version)" != "version='${ONDEWO_T2S_VERSION}',"; then echo "-- Test 3: Setup.py not updated!!"; exit 1; else echo "-- Test 3: Setup.py is fine";fi
+
 ########################################################
 #       Test
 ########################################################
 
-test: ## Run unit tests with terminal + HTML coverage report
-	python -m pytest test/unit \
+test: test_unit ## Alias for test_unit
+
+test_unit: ## Run unit tests for sync and async clients
+	python -m pytest tests/unit -v
+
+test_unit_client: ## Run unit tests for the synchronous Client only
+	python -m pytest tests/unit/test_client.py -v
+
+test_unit_async_client: ## Run unit tests for the AsyncClient only
+	python -m pytest tests/unit/test_async_client.py -v
+
+test_unit_coverage: ## Run unit tests with terminal + HTML coverage report
+	python -m pytest tests/unit \
 		--cov=ondewo/t2s/client \
 		--cov-report=term-missing \
 		--cov-report=html:htmlcov \
 		-v
 
-test_unit: ## Run unit tests without coverage
-	python -m pytest test/unit -v
+test_e2e: ## Run end-to-end tests (requires a running ONDEWO T2S server)
+	python -m pytest tests/e2e -v
+
+test_all: ## Run unit and end-to-end tests
+	python -m pytest tests -v
