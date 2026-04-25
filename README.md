@@ -53,23 +53,37 @@ make setup_developer_environment_locally
 │   ├── example_api.py
 │   ├── __init__.py
 │   ├── ondewo_t2s_with_certificate.ipynb
-│   ├── requirements.txt
-│   └── setup.py
+│   └── requirements.txt
 ├── ondewo
 │   ├── t2s
 │   │   ├── client
 │   │   │   ├── services
 │   │   │   │   ├── __init__.py
+│   │   │   │   ├── async_text_to_speech.py
 │   │   │   │   └── text_to_speech.py
+│   │   │   ├── async_client.py
+│   │   │   ├── async_services_container.py
 │   │   │   ├── client_config.py
 │   │   │   ├── client.py
 │   │   │   ├── __init__.py
 │   │   │   └── services_container.py
+│   │   ├── scripts
+│   │   │   └── generate_services.py
 │   │   ├── __init__.py
 │   │   ├── text_to_speech_pb2_grpc.py
 │   │   ├── text_to_speech_pb2.py
 │   │   └── text_to_speech_pb2.pyi
 │   └── __init__.py
+├── tests
+│   ├── e2e
+│   │   ├── __init__.py
+│   │   └── test_synthesize_request.py
+│   ├── unit
+│   │   ├── __init__.py
+│   │   ├── test_async_client.py
+│   │   └── test_client.py
+│   ├── __init__.py
+│   └── conftest.py
 ├── ondewo-proto-compiler
 ├── ondewo-t2s-api
 ├── CONTRIBUTING.md
@@ -83,8 +97,7 @@ make setup_developer_environment_locally
 ├── requirements-dev.txt
 ├── requirements.txt
 ├── setup.cfg
-├── setup.py
-└── temp.txt
+└── setup.py
 ```
 
 ## Build
