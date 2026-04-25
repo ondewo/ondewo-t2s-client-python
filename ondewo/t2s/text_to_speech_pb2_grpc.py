@@ -27,7 +27,7 @@ if _version_not_supported:
 
 
 class Text2SpeechStub(object):
-    """Text2Speech service provides endpoints for text-to-speech generation.
+    """<p>Text2Speech service provides endpoints for text-to-speech generation.</p>
     """
 
     def __init__(self, channel):
@@ -129,168 +129,134 @@ class Text2SpeechStub(object):
 
 
 class Text2SpeechServicer(object):
-    """Text2Speech service provides endpoints for text-to-speech generation.
+    """<p>Text2Speech service provides endpoints for text-to-speech generation.</p>
     """
 
     def Synthesize(self, request, context):
-        """Synthesize RPC
-
-        Synthesizes a specific text sent in the request with the provided configuration requirements
-        and retrieves a response that includes the synthesized text as audio and the requested configuration.
+        """<p>Synthesizes a specific text sent in the request with the provided configuration requirements
+        and retrieves a response that includes the synthesized text as audio and the requested configuration.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def BatchSynthesize(self, request, context):
-        """BatchSynthesize RPC
-
-        Performs batch synthesis by accepting a batch of synthesis requests and returning a batch response.
-        This can be more efficient for generating predictions on the AI model in bulk.
+        """<p>Performs batch synthesis by accepting a batch of synthesis requests and returning a batch response.
+        This can be more efficient for generating predictions on the AI model in bulk.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def StreamingSynthesize(self, request_iterator, context):
-        """Performs streaming synthesis by accepting stream of input text and returning a stream of generated audio.
+        """<p>Performs streaming synthesis by accepting stream of input text and returning a stream of generated audio.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def NormalizeText(self, request, context):
-        """NormalizeText RPC
-
-        Normalizes a text according to the specific pipeline's normalization rules.
+        """<p>Normalizes a text according to the specific pipeline&apos;s normalization rules.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetT2sPipeline(self, request, context):
-        """GetT2sPipeline RPC
-
-        Retrieves the configuration of the specified text-to-speech pipeline.
+        """<p>Retrieves the configuration of the specified text-to-speech pipeline.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def CreateT2sPipeline(self, request, context):
-        """CreateT2sPipeline RPC
-
-        Creates a new text-to-speech pipeline with the provided configuration and returns its pipeline ID.
+        """<p>Creates a new text-to-speech pipeline with the provided configuration and returns its pipeline ID.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def DeleteT2sPipeline(self, request, context):
-        """DeleteT2sPipeline RPC
-
-        Deletes the specified text-to-speech pipeline.
+        """<p>Deletes the specified text-to-speech pipeline.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def UpdateT2sPipeline(self, request, context):
-        """UpdateT2sPipeline RPC
-
-        Updates the specified text-to-speech pipeline with the given configuration.
+        """<p>Updates the specified text-to-speech pipeline with the given configuration.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ListT2sPipelines(self, request, context):
-        """ListT2sPipelines RPC
-
-        Retrieves a list of text-to-speech pipelines based on specific requirements.
+        """<p>Retrieves a list of text-to-speech pipelines based on specific requirements.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ListT2sLanguages(self, request, context):
-        """ListT2sLanguages RPC
-
-        Retrieves a list of languages available based on specific configuration requirements.
+        """<p>Retrieves a list of languages available based on specific configuration requirements.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ListT2sDomains(self, request, context):
-        """ListT2sDomains RPC
-
-        Retrieves a list of domains available based on specific configuration requirements.
+        """<p>Retrieves a list of domains available based on specific configuration requirements.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ListT2sNormalizationPipelines(self, request, context):
-        """ListT2sNormalizationPipelines RPC
-
-        Retrieves a list of normalization pipelines based on specific requirements.
+        """<p>Retrieves a list of normalization pipelines based on specific requirements.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetServiceInfo(self, request, context):
-        """GetServiceInfo RPC
-
-        Retrieves the version information of the running text-to-speech server.
+        """<p>Retrieves the version information of the running text-to-speech server.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetCustomPhonemizer(self, request, context):
-        """GetCustomPhonemizer RPC
-
-        Retrieves a custom phonemizer based on the provided PhonemizerId.
+        """<p>Retrieves a custom phonemizer based on the provided PhonemizerId.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def CreateCustomPhonemizer(self, request, context):
-        """CreateCustomPhonemizer RPC
-
-        Creates a custom phonemizer based on the provided CreateCustomPhonemizerRequest.
-        Returns the PhonemizerId associated with the created custom phonemizer.
+        """<p>Creates a custom phonemizer based on the provided CreateCustomPhonemizerRequest.
+        Returns the PhonemizerId associated with the created custom phonemizer.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def DeleteCustomPhonemizer(self, request, context):
-        """DeleteCustomPhonemizer RPC
-
-        Deletes a custom phonemizer based on the provided PhonemizerId.
-        Returns an Empty response upon successful deletion.
+        """<p>Deletes a custom phonemizer based on the provided PhonemizerId.
+        Returns an Empty response upon successful deletion.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def UpdateCustomPhonemizer(self, request, context):
-        """UpdateCustomPhonemizer RPC
-
-        Updates the specified custom phonemizer with the provided configuration.
+        """<p>Updates the specified custom phonemizer with the provided configuration.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ListCustomPhonemizer(self, request, context):
-        """ListCustomPhonemizer RPC
-
-        Retrieves a list of custom phonemizers based on specific requirements.
+        """<p>Retrieves a list of custom phonemizers based on specific requirements.</p>
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -398,7 +364,7 @@ def add_Text2SpeechServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class Text2Speech(object):
-    """Text2Speech service provides endpoints for text-to-speech generation.
+    """<p>Text2Speech service provides endpoints for text-to-speech generation.</p>
     """
 
     @staticmethod
