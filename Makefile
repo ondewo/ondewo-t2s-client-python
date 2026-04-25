@@ -16,7 +16,7 @@ export
 
 # MUST BE THE SAME AS API in Mayor and Minor Version Number
 # example: API 2.9.0 --> Client 2.9.X
-ONDEWO_T2S_VERSION = 6.1.2
+ONDEWO_T2S_VERSION = 6.2.0
 
 ONDEWO_T2S_API_GIT_BRANCH=tags/6.2.0
 ONDEWO_PROTO_COMPILER_GIT_BRANCH=tags/5.9.0
