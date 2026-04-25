@@ -1,4 +1,4 @@
-# Copyright 2021-2025 ONDEWO GmbH
+# Copyright 2021-2026 ONDEWO GmbH
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,4 +20,4 @@ from ondewo.utils.base_client_config import BaseClientConfig
 @dataclass_json
 @dataclass(frozen=True)
 class ClientConfig(BaseClientConfig):
-    """ Config for ONDEWO T2S client. """
+    """Config for ONDEWO T2S client."""
