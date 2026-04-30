@@ -6,3 +6,4 @@ mypy-protobuf>=3.6.0
 # pre-commit # Do not add this here
 pytest
 types-protobuf>=5.27.0.20240626
+typing_extensions
