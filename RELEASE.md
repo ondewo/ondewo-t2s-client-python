@@ -1,11 +1,22 @@
 # Release History
 
 *****************
+
+## Release ONDEWO T2S Python Client 6.2.1
+
+### Bug Fixes
+
+* [OND232-826](https://ondewo.atlassian.net/browse/OND232-826) Resolve the issue with English voices of Google Cloud
+  provider.
+
+*****************
+
 ## Release ONDEWO T2S Python Client 6.2.0
 
 ### Improvements
- * Tracking API Version [6.2.0](https://github.com/ondewo/ondewo-t2s-api/releases/tag/6.2.0) ( [Documentation](https://ondewo.github.io/ondewo-t2s-api/) )
 
+* Tracking API
+  Version [6.2.0](https://github.com/ondewo/ondewo-t2s-api/releases/tag/6.2.0) ( [Documentation](https://ondewo.github.io/ondewo-t2s-api/) )
 
 *****************
 
