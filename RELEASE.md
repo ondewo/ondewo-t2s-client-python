@@ -2,7 +2,7 @@
 
 *****************
 
-## Release ONDEWO T2S Python Client 6.2.1
+## Release ONDEWO T2S Python Client 6.3.0
 
 ### Bug Fixes
 
