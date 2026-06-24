@@ -644,3 +644,40 @@ def test_async_default_transport_delegates_to_requests_transport(monkeypatch: py
         assert captured[0][1]["scope"] == "offline_access"
 
     _run(_body)
+
+
+def test_async_refresh_response_without_refresh_token_keeps_previous() -> None:
+    async def _body() -> None:
+        # Keycloak may omit refresh_token on a refresh response; the provider must then keep the offline token
+        # acquired at login (the `if refresh_token:` false branch in _store_token_response). Login returns an
+        # offline token; the subsequent (forced) refresh returns only a new access token.
+        clock: FakeClock = FakeClock()
+        responses: List[Dict[str, Any]] = [
+            {"access_token": "access-1", "refresh_token": "offline-1", "expires_in": ACCESS_TTL_S},
+            {"access_token": "access-2", "expires_in": ACCESS_TTL_S},  # no refresh_token rotated
+            {"access_token": "access-3", "expires_in": ACCESS_TTL_S},  # still no rotation
+        ]
+        calls: List[Tuple[str, Dict[str, str]]] = []
+
+        async def scripted_transport(url: str, fields: Dict[str, str]) -> Dict[str, Any]:
+            calls.append((url, dict(fields)))
+            return responses[len(calls) - 1]
+
+        provider: AsyncKeycloakTokenProvider = AsyncKeycloakTokenProvider(
+            token_url=TOKEN_URL,
+            client_id=CLIENT_ID,
+            username=USERNAME,
+            password=PASSWORD,
+            transport=scripted_transport,
+            time_func=clock,
+        )
+        assert await provider.access_token() == "access-1"
+        # Forced refresh consumes the second (refresh_token-less) response …
+        assert await provider.access_token(force_refresh=True) == "access-2"
+        # … and the offline token from login is retained, so the next forced refresh reuses it.
+        assert await provider.access_token(force_refresh=True) == "access-3"
+        assert calls[1][1]["grant_type"] == "refresh_token"
+        assert calls[1][1]["refresh_token"] == "offline-1"
+        assert calls[2][1]["refresh_token"] == "offline-1"
+
+    _run(_body)
