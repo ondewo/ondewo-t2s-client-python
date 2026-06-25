@@ -11,261 +11,353 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Headless Keycloak offline-token authentication for the ONDEWO T2S client (D18).
-
-The provider performs a Resource-Owner-Password-Credentials (ROPC) grant with ``scope=offline_access`` against a
-**public** Keycloak client (no ``client_secret`` — Q1) to obtain a long-lived *offline* refresh token, then
-auto-refreshes the short-lived access token (``grant_type=refresh_token``) and exposes it as the
-``Authorization: Bearer`` gRPC metadata tuple. The refresh loop stops once ``token_expiration_in_s`` has elapsed
-since login.
-
-The HTTP call to the Keycloak token endpoint is injectable (``transport``) so unit tests can run fully hermetic
-without any network.
 """
+Headless SDK authentication against Keycloak (D18 offline-token flow).
+
+This module implements the headless offline-token authentication described in the
+keycloak migration plan (D18) for the *public* SDK client `ondewo-nlu-cai-sdk-public`
+(no client secret, Q1):
+
+1. A one-time ROPC login (``grant_type=password`` + ``scope=offline_access``) against
+   the public Keycloak client returns a short-lived ``access_token`` and a long-lived
+   *offline* ``refresh_token``.
+2. The provider auto-refreshes the access token (``grant_type=refresh_token``) before
+   it expires and attaches it as the standard ``Authorization: Bearer`` metadata.
+3. The auto-refresh loop stops once ``token_expiration_in_s`` has elapsed since login
+   (omit it to keep refreshing until the offline session itself expires).
+
+No 2FA is involved: the account is a 2FA-exempt technical user and ROPC bypasses the
+browser flow (D14). The client is public, so no ``client_secret`` is sent.
+"""
+import threading
 import time
 from typing import (
     Any,
-    Callable,
     Dict,
+    List,
     Optional,
+    Protocol,
     Tuple,
 )
+from weakref import WeakValueDictionary
 
 import requests
 
-# A transport posts the (url, form-encoded fields) to the Keycloak token endpoint and returns the parsed JSON body.
-HttpTransport = Callable[[str, Dict[str, str]], Dict[str, Any]]
+from ondewo.t2s.client.client_config import ClientConfig
 
-# Refresh the access token once it is within this many seconds of its expiry, so a call never races ``exp``.
-_REFRESH_LEEWAY_S: int = 30
+# Standard OIDC token endpoint path under a Keycloak realm.
+_TOKEN_ENDPOINT_TEMPLATE: str = '{keycloak_url}/realms/{realm}/protocol/openid-connect/token'
+
+# Refresh the access token this many seconds *before* it actually expires so that an
+# in-flight call never travels with a token that lapses mid-request.
+_EXPIRY_LEEWAY_S: float = 30.0
+
+# HTTP timeout for the (single, fast) token-endpoint calls.
+_HTTP_TIMEOUT_S: float = 30.0
+
+
+class TokenEndpoint(Protocol):
+    """
+    Minimal HTTP transport contract for the Keycloak token endpoint.
+
+    `requests.Session`/`requests` satisfy this Protocol; unit tests pass a fake
+    transport so the offline-token flow can be exercised without any network.
+    """
+
+    def post(
+        self,
+        url: str,
+        data: Dict[str, str],
+        timeout: float,
+    ) -> 'TokenResponse':
+        """Send an ``application/x-www-form-urlencoded`` POST and return the response."""
+        ...  # pragma: no cover - abstract Protocol method, never executed
+
+
+class TokenResponse(Protocol):
+    """Minimal response contract: the bits of `requests.Response` the provider reads."""
+
+    status_code: int
+
+    def json(self) -> Dict[str, Any]:
+        """Return the parsed JSON body."""
+        ...  # pragma: no cover - abstract Protocol method, never executed
+
+    @property
+    def text(self) -> str:
+        """Return the raw response body (used for error messages)."""
+        ...  # pragma: no cover - abstract Protocol property, never executed
+
+
+class _RequestsTransport:
+    """Default :class:`TokenEndpoint` backed by :func:`requests.post`."""
+
+    def post(self, url: str, data: Dict[str, str], timeout: float) -> requests.Response:
+        """Send a form-encoded POST to the Keycloak token endpoint."""
+        return requests.post(url, data=data, timeout=timeout)
 
 
 class KeycloakAuthenticationError(Exception):
-    """Raised when the Keycloak token endpoint rejects a grant or returns an unusable response."""
-
-
-def _requests_transport(url: str, fields: Dict[str, str]) -> Dict[str, Any]:
-    """Default transport backed by :mod:`requests`.
-
-    Args:
-        url (str):
-            The Keycloak token endpoint URL.
-        fields (Dict[str, str]):
-            The ``application/x-www-form-urlencoded`` body fields.
-
-    Returns:
-        Dict[str, Any]:
-            The parsed JSON response body.
-
-    Raises:
-        KeycloakAuthenticationError:
-            If the request fails or the endpoint returns a non-2xx status.
-    """
-    try:
-        response: requests.Response = requests.post(url, data=fields, timeout=30)
-    except requests.RequestException as exc:
-        raise KeycloakAuthenticationError(f"Keycloak token request to {url!r} failed: {exc}") from exc
-
-    if response.status_code >= 400:
-        raise KeycloakAuthenticationError(
-            f"Keycloak token endpoint {url!r} returned status {response.status_code}: {response.text}"
-        )
-
-    body: Dict[str, Any] = response.json()
-    return body
-
-
-def build_token_url(keycloak_url: str, realm: str) -> str:
-    """Build the OIDC token endpoint URL for a realm.
-
-    Args:
-        keycloak_url (str):
-            Base Keycloak URL (e.g. ``"https://host/auth"``); a trailing slash is tolerated.
-        realm (str):
-            Realm name (e.g. ``"ondewo-ccai-platform"``).
-
-    Returns:
-        str:
-            The full ``.../realms/<realm>/protocol/openid-connect/token`` URL.
-    """
-    base: str = keycloak_url.rstrip("/")
-    return f"{base}/realms/{realm}/protocol/openid-connect/token"
+    """Raised when the Keycloak token endpoint rejects a login or refresh request."""
 
 
 class KeycloakTokenProvider:
-    """Acquires and auto-refreshes a Keycloak access token via the ROPC offline-token flow (D18).
+    """
+    Acquire and auto-refresh a Keycloak access token for the headless SDK (D18).
 
-    The provider logs in once with ``grant_type=password`` + ``scope=offline_access`` against a public client,
-    keeps the resulting offline refresh token, and exchanges it for a fresh access token whenever the current one
-    is about to expire. After ``token_expiration_in_s`` seconds (measured from login) the refresh loop stops and
-    further calls to :meth:`access_token` raise :class:`KeycloakAuthenticationError`.
+    The provider performs a one-time ROPC login with ``scope=offline_access`` against a
+    public Keycloak client and then refreshes the access token on demand from the offline
+    refresh token. Reading :meth:`authorization_metadata` (or :meth:`bearer_metadata`) lazily
+    refreshes the token whenever it is within :data:`_EXPIRY_LEEWAY_S` of expiry, so every
+    outgoing gRPC call carries a fresh ``Authorization: Bearer`` value without a background
+    thread. Once ``token_expiration_in_s`` has elapsed since login the refresh stops and the
+    access token is allowed to lapse (re-login required).
+
+    Attributes:
+        keycloak_url (str):
+            Base URL of the Keycloak server, e.g. ``https://host/auth``.
+        realm (str):
+            Keycloak realm name, e.g. ``ondewo-ccai-platform``.
+        client_id (str):
+            The public SDK client id, e.g. ``ondewo-nlu-cai-sdk-public`` (no secret).
+        username (str):
+            Technical-user email/username for the ROPC grant.
+        password (str):
+            Technical-user password for the ROPC grant.
+        token_expiration_in_s (Optional[int]):
+            Upper bound (in seconds since login) on how long auto-refresh runs. ``None``
+            keeps refreshing until the offline session itself expires.
     """
 
     def __init__(
         self,
-        token_url: str,
+        keycloak_url: str,
+        realm: str,
         client_id: str,
         username: str,
         password: str,
         token_expiration_in_s: Optional[int] = None,
-        transport: Optional[HttpTransport] = None,
-        time_func: Callable[[], float] = time.monotonic,
+        transport: Optional[TokenEndpoint] = None,
     ) -> None:
-        """Initialize the provider.
+        """
+        Initialize the provider and acquire the offline token immediately.
 
         Args:
-            token_url (str):
-                The Keycloak OIDC token endpoint URL.
+            keycloak_url (str):
+                Base URL of the Keycloak server (the part before ``/realms/<realm>``).
+            realm (str):
+                Keycloak realm name.
             client_id (str):
-                Public client id used for the ROPC grant (no secret).
+                The public SDK client id (no ``client_secret`` is ever sent, Q1).
             username (str):
-                Keycloak user name for the ROPC grant.
+                Technical-user email/username for the ROPC grant.
             password (str):
-                Password for the ROPC grant.
+                Technical-user password for the ROPC grant.
             token_expiration_in_s (Optional[int]):
-                Upper bound on how long auto-refresh runs, measured from login. ``None`` means run until the
-                offline session expires.
-            transport (Optional[HttpTransport]):
-                HTTP transport to call the token endpoint. Defaults to a :mod:`requests`-backed transport.
-            time_func (Callable[[], float]):
-                Monotonic clock used for expiry bookkeeping. Injectable for tests.
-        """
-        self._token_url: str = token_url
-        self._client_id: str = client_id
-        self._username: str = username
-        self._password: str = password
-        self._token_expiration_in_s: Optional[int] = token_expiration_in_s
-        self._transport: HttpTransport = transport if transport is not None else _requests_transport
-        self._time: Callable[[], float] = time_func
+                Bounds how long the auto-refresh runs (seconds since login). ``None`` =
+                until the offline session expires.
+            transport (Optional[TokenEndpoint]):
+                HTTP transport for the token endpoint. Defaults to :mod:`requests`. Unit
+                tests inject a fake transport so no network is required.
 
-        self._access_token: Optional[str] = None
-        self._refresh_token: Optional[str] = None
+        Raises:
+            KeycloakAuthenticationError:
+                If the initial ROPC login is rejected by Keycloak.
+        """
+        self.keycloak_url: str = keycloak_url.rstrip('/')
+        self.realm: str = realm
+        self.client_id: str = client_id
+        self.username: str = username
+        self.password: str = password
+        self.token_expiration_in_s: Optional[int] = token_expiration_in_s
+        self._transport: TokenEndpoint = transport if transport is not None else _RequestsTransport()
+
+        self._token_endpoint: str = _TOKEN_ENDPOINT_TEMPLATE.format(
+            keycloak_url=self.keycloak_url,
+            realm=self.realm,
+        )
+
+        self._access_token: str = ''
+        self._refresh_token: str = ''
         self._access_token_expires_at: float = 0.0
-        self._login_time: Optional[float] = None
+        self._login_deadline: Optional[float] = None
 
-    def login(self) -> None:
-        """Perform the one-time ROPC offline-token login.
+        self._login()
 
-        Calls the token endpoint with ``grant_type=password``, the public ``client_id``, ``username``,
-        ``password`` and ``scope=offline_access``, then stores the access + offline refresh tokens.
-
-        Raises:
-            KeycloakAuthenticationError:
-                If the grant is rejected or the response lacks an access/refresh token.
-        """
-        fields: Dict[str, str] = {
-            "grant_type": "password",
-            "client_id": self._client_id,
-            "username": self._username,
-            "password": self._password,
-            "scope": "offline_access",
-        }
-        self._login_time = self._time()
-        self._store_token_response(self._transport(self._token_url, fields))
-
-    def _refresh(self) -> None:
-        """Exchange the offline refresh token for a fresh access token.
-
-        Raises:
-            KeycloakAuthenticationError:
-                If no offline refresh token is available or the refresh grant is rejected.
-        """
-        if not self._refresh_token:
-            raise KeycloakAuthenticationError("Cannot refresh: no offline refresh token; call login() first.")
-
-        fields: Dict[str, str] = {
-            "grant_type": "refresh_token",
-            "client_id": self._client_id,
-            "refresh_token": self._refresh_token,
-        }
-        self._store_token_response(self._transport(self._token_url, fields))
-
-    def _store_token_response(self, body: Dict[str, Any]) -> None:
-        """Persist tokens + expiry from a token-endpoint response body.
-
-        Args:
-            body (Dict[str, Any]):
-                Parsed JSON body containing at least ``access_token``.
-
-        Raises:
-            KeycloakAuthenticationError:
-                If the body carries no ``access_token``.
-        """
-        access_token: Optional[str] = body.get("access_token")
-        if not access_token:
-            raise KeycloakAuthenticationError(f"Keycloak response has no access_token: {body}")
-
-        self._access_token = access_token
-        # Keycloak rotates the refresh token; keep the previous one if the response omits it.
-        refresh_token: Optional[str] = body.get("refresh_token")
-        if refresh_token:
-            self._refresh_token = refresh_token
-
-        expires_in: int = int(body.get("expires_in", 0))
-        self._access_token_expires_at = self._time() + expires_in
-
-    def _refresh_window_elapsed(self) -> bool:
-        """Whether ``token_expiration_in_s`` has elapsed since login.
-
-        Returns:
-            bool:
-                ``True`` if the bounded refresh window has passed (no further refresh allowed).
-        """
-        if self._token_expiration_in_s is None or self._login_time is None:
-            return False
-        return (self._time() - self._login_time) >= self._token_expiration_in_s
-
-    def access_token(self, force_refresh: bool = False) -> str:
-        """Return a currently-valid access token, refreshing it if needed.
-
-        Logs in on first use, refreshes when the access token is within the leeway of its expiry, and refreshes
-        unconditionally when ``force_refresh`` is set (used to recover from ``UNAUTHENTICATED``). Once the bounded
-        refresh window has elapsed the current token is returned only while still valid; otherwise an error is
-        raised.
-
-        Args:
-            force_refresh (bool):
-                Force a refresh regardless of the current token's remaining lifetime.
-
-        Returns:
-            str:
-                A valid access token.
-
-        Raises:
-            KeycloakAuthenticationError:
-                If no valid token can be produced (e.g. the bounded refresh window elapsed and the token expired).
-        """
-        if self._access_token is None:
-            self.login()
-            assert self._access_token is not None  # noqa: S101 - login() guarantees a token or raises
-            return self._access_token
-
-        needs_refresh: bool = force_refresh or self._time() >= (self._access_token_expires_at - _REFRESH_LEEWAY_S)
-        if not needs_refresh:
-            return self._access_token
-
-        if self._refresh_window_elapsed():
-            # Refresh is no longer permitted; only the still-valid current token may be served.
-            if not force_refresh and self._time() < self._access_token_expires_at:
-                return self._access_token
-            raise KeycloakAuthenticationError(
-                "Keycloak token expired and the bounded refresh window "
-                f"(token_expiration_in_s={self._token_expiration_in_s}) has elapsed; re-login required."
-            )
-
-        self._refresh()
-        assert self._access_token is not None  # noqa: S101 - _refresh() guarantees a token or raises
+    @property
+    def access_token(self) -> str:
+        """The most recently issued access token (refreshed lazily on metadata reads)."""
         return self._access_token
 
-    def authorization_metadata(self, force_refresh: bool = False) -> Tuple[str, str]:
-        """Return the gRPC ``Authorization: Bearer`` metadata tuple for the current access token.
-
-        Args:
-            force_refresh (bool):
-                Force a token refresh before building the metadata.
+    def authorization_metadata(self) -> Tuple[str, str]:
+        """
+        Return the ``Authorization: Bearer`` gRPC metadata tuple, refreshing if needed.
 
         Returns:
             Tuple[str, str]:
-                ``("authorization", "Bearer <access_token>")``.
+                ``('authorization', 'Bearer <access_token>')`` with a token that is valid
+                for at least :data:`_EXPIRY_LEEWAY_S` more seconds (when within the
+                ``token_expiration_in_s`` window).
         """
-        return ("authorization", f"Bearer {self.access_token(force_refresh=force_refresh)}")
+        self._ensure_fresh_access_token()
+        return ('authorization', f'Bearer {self._access_token}')
+
+    def bearer_metadata(self) -> List[Tuple[str, str]]:
+        """
+        Return the full gRPC metadata list carrying the bearer token.
+
+        Returns:
+            List[Tuple[str, str]]:
+                A single-element list with the ``Authorization: Bearer`` tuple, matching
+                the shape the services interfaces expect.
+        """
+        return [self.authorization_metadata()]
+
+    def _ensure_fresh_access_token(self) -> None:
+        """
+        Refresh the access token if it is near expiry and refresh is still permitted.
+
+        Does nothing once ``token_expiration_in_s`` has elapsed since login (the access
+        token is then allowed to lapse). Within the window, refreshes via the offline
+        refresh token whenever the current access token is within the leeway of its ``exp``.
+        """
+        now: float = time.monotonic()
+        if self._login_deadline is not None and now >= self._login_deadline:
+            # The auto-refresh window has closed: stop renewing and let the token lapse.
+            return
+        if now < self._access_token_expires_at - _EXPIRY_LEEWAY_S:
+            # Current access token is still comfortably valid.
+            return
+        self._refresh()
+
+    def _login(self) -> None:
+        """
+        Perform the one-time ROPC login (``grant_type=password`` + ``offline_access``).
+
+        Raises:
+            KeycloakAuthenticationError:
+                If Keycloak rejects the credentials.
+        """
+        data: Dict[str, str] = {
+            'grant_type': 'password',
+            'client_id': self.client_id,
+            'username': self.username,
+            'password': self.password,
+            'scope': 'offline_access',
+        }
+        payload: Dict[str, Any] = self._post_token_request(data=data, action='login')
+        self._store_tokens(payload=payload)
+        if self.token_expiration_in_s is not None:
+            self._login_deadline = time.monotonic() + self.token_expiration_in_s
+
+    def _refresh(self) -> None:
+        """
+        Exchange the offline refresh token for a fresh access token.
+
+        Raises:
+            KeycloakAuthenticationError:
+                If Keycloak rejects the refresh token.
+        """
+        data: Dict[str, str] = {
+            'grant_type': 'refresh_token',
+            'client_id': self.client_id,
+            'refresh_token': self._refresh_token,
+        }
+        payload: Dict[str, Any] = self._post_token_request(data=data, action='refresh')
+        self._store_tokens(payload=payload)
+
+    def _post_token_request(self, data: Dict[str, str], action: str) -> Dict[str, Any]:
+        """
+        POST a form-encoded request to the token endpoint and return the parsed body.
+
+        Args:
+            data (Dict[str, str]):
+                The ``application/x-www-form-urlencoded`` form parameters.
+            action (str):
+                Human-readable action name (``'login'`` / ``'refresh'``) for error messages.
+
+        Returns:
+            Dict[str, Any]:
+                The parsed JSON token response.
+
+        Raises:
+            KeycloakAuthenticationError:
+                On a non-2xx status or an unparseable body.
+        """
+        response: TokenResponse = self._transport.post(
+            self._token_endpoint,
+            data=data,
+            timeout=_HTTP_TIMEOUT_S,
+        )
+        if response.status_code < 200 or response.status_code >= 300:
+            raise KeycloakAuthenticationError(
+                f'Keycloak token {action} failed with status {response.status_code}: {response.text}'
+            )
+        body: Dict[str, Any] = response.json()
+        return body
+
+    def _store_tokens(self, payload: Dict[str, Any]) -> None:
+        """
+        Store the access token, refresh token, and the computed expiry from a token response.
+
+        Args:
+            payload (Dict[str, Any]):
+                The parsed token endpoint response.
+
+        Raises:
+            KeycloakAuthenticationError:
+                If the response carries no ``access_token``.
+        """
+        access_token: str = payload.get('access_token', '')
+        if not access_token:
+            raise KeycloakAuthenticationError(
+                f'Keycloak token response did not contain an access_token: {payload!r}'
+            )
+        self._access_token = access_token
+        # Keycloak always re-issues the refresh token; keep the previous one if absent so a
+        # response that omits it (e.g. a same-token refresh) does not blank out the offline token.
+        refresh_token: str = payload.get('refresh_token', '')
+        if refresh_token:
+            self._refresh_token = refresh_token
+
+        expires_in: int = int(payload.get('expires_in', 0))
+        self._access_token_expires_at = time.monotonic() + expires_in
+
+
+# One shared provider per ClientConfig so the ROPC offline-token login happens once for all
+# of a client's service stubs (they all read the same auto-refreshed access token). The weak
+# reference lets the provider be collected once the config is gone.
+_PROVIDER_REGISTRY: 'WeakValueDictionary[int, KeycloakTokenProvider]' = WeakValueDictionary()
+_PROVIDER_REGISTRY_LOCK: threading.Lock = threading.Lock()
+
+
+def get_keycloak_token_provider(config: ClientConfig) -> KeycloakTokenProvider:
+    """
+    Return the shared :class:`KeycloakTokenProvider` for a client config, creating it once.
+
+    All service stubs built from the same `ClientConfig` share a single provider, so the
+    one-time ROPC offline-token login runs once and every stub reads the same auto-refreshed
+    access token.
+
+    Args:
+        config (ClientConfig):
+            A config with the Keycloak headless-auth fields set (`config.use_keycloak`).
+
+    Returns:
+        KeycloakTokenProvider:
+            The provider bound to this config (created on first call).
+    """
+    key: int = id(config)
+    with _PROVIDER_REGISTRY_LOCK:
+        provider: Optional[KeycloakTokenProvider] = _PROVIDER_REGISTRY.get(key)
+        if provider is None:
+            provider = KeycloakTokenProvider(
+                keycloak_url=config.keycloak_url,
+                realm=config.realm,
+                client_id=config.client_id,
+                username=config.resolved_username,
+                password=config.password,
+                token_expiration_in_s=config.token_expiration_in_s,
+            )
+            _PROVIDER_REGISTRY[key] = provider
+        return provider

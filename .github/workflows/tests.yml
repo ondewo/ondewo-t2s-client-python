@@ -30,7 +30,6 @@ jobs:
         run: |
           pytest tests/unit -q \
             --cov=ondewo.t2s.client.utils.keycloak \
-            --cov=ondewo.t2s.client.utils.async_keycloak \
             --cov=ondewo.t2s.client.client_config \
             --cov-report=term-missing \
             --cov-report=xml \
