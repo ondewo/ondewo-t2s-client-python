@@ -43,9 +43,20 @@ from ondewo.t2s.text_to_speech_pb2 import (
 # 6. Revert the update of the specified pipeline
 
 
-def synthesis_request(t2s_service: Text2Speech, **req_kwargs: Any) -> bytes:
-    request: text_to_speech_pb2.SynthesizeRequest = (
-        text_to_speech_pb2.SynthesizeRequest(**req_kwargs)
+def synthesis_request(
+    t2s_service: Text2Speech,
+    text: str,
+    t2s_pipeline_id: str,
+    length_scale: float = 1.0,
+) -> bytes:
+    # In the current API the pipeline id and the modulation parameters live on the nested
+    # RequestConfig, not directly on SynthesizeRequest (which only carries `text` + `config`).
+    request: text_to_speech_pb2.SynthesizeRequest = text_to_speech_pb2.SynthesizeRequest(
+        text=text,
+        config=text_to_speech_pb2.RequestConfig(
+            t2s_pipeline_id=t2s_pipeline_id,
+            length_scale=length_scale,
+        ),
     )
     response: text_to_speech_pb2.SynthesizeResponse = t2s_service.synthesize(
         request=request
