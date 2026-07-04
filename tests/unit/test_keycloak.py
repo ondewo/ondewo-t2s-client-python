@@ -1093,23 +1093,20 @@ class TestBackgroundRefresh:
 
 
 # --------------------------------------------------------------------------- #
-# ClientConfig validation (dual-mode + D18) — keeps client_config.py fully covered
+# ClientConfig validation (bearer-only D18) — keeps client_config.py fully covered
 # --------------------------------------------------------------------------- #
 class TestClientConfig:
-    """Validation of the dual-mode `ClientConfig` (legacy ROPC + D18 Keycloak)."""
+    """Validation of the bearer-only `ClientConfig` (unauthenticated host/port + D18 Keycloak)."""
 
-    def test_legacy_minimal_is_valid(self) -> None:
+    def test_minimal_is_valid(self) -> None:
         """A minimal host/port-only config is valid and reports no Keycloak flow (backward compatible)."""
-        # Backward-compatible: no http_token, no keycloak fields — just host/port (legacy cai-token path).
+        # Backward-compatible: no keycloak fields — just host/port (unauthenticated / ingress-injected auth).
         config: ClientConfig = ClientConfig(host="localhost", port="50555")
         assert config.use_keycloak is False
-        assert config.http_token == ""
 
-    def test_http_token_no_longer_required(self) -> None:
-        """A legacy ROPC config validates without an `http_token` (D5 — Envoy validates the bearer JWT)."""
-        # D5: http_token must not be mandatory anymore.
-        config: ClientConfig = ClientConfig(host="localhost", port="50555", user_name="u@x.com", password="pw")
-        assert config.http_token == ""
+    def test_no_http_token_field(self) -> None:
+        """The legacy `http_token` field must be gone (D5 — Envoy validates the bearer JWT)."""
+        assert not hasattr(ClientConfig(host="localhost", port="50555"), "http_token")
 
     def test_keycloak_full_is_valid_and_resolves_username(self) -> None:
         """A fully-specified Keycloak config validates, reports `use_keycloak` and resolves the username."""

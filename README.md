@@ -119,13 +119,12 @@ The `/examples` folder provides a possible implementation of this library. To ru
 - port `// Port of the Server - e.g. 6600`
 - user_name `// Username - same as you would use in AIM`
 - password `// Password of the user`
-- http_token `// Legacy Authorization: Basic token (D5 - no longer required; kept for backward compatibility)`
 - grpc_cert `// gRPC Certificate of the server`
 
 ### Keycloak bearer auth (D18)
 
 The ONDEWO CCAI platform authenticates SDK calls with a Keycloak-issued JWT (D18). Configure the
-client with the Keycloak fields instead of (or alongside) the legacy credentials:
+client with the Keycloak fields:
 
 ```python
 from ondewo.t2s.client.client import Client
@@ -151,8 +150,7 @@ client secret), auto-refreshes the short-lived access token in the background, a
 every gRPC call as the `Authorization: Bearer <jwt>` header. When the client is built from a
 Keycloak config the generated convenience methods
 (`client.services.text_to_speech.synthesize(...)`, `list_t2s_pipelines(...)`, ...) attach the
-bearer token automatically. The legacy `http_token` (`Authorization: Basic`) is no longer required
-(D5 - Envoy validates the bearer JWT). See
+bearer token automatically; Envoy validates the bearer JWT (D5). See
 [`examples/synthesize_with_keycloak.py`](examples/synthesize_with_keycloak.py) for a full working
 example.
 

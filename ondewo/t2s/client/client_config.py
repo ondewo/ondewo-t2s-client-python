@@ -26,24 +26,23 @@ class ClientConfig(BaseClientConfig):
     In addition to the host/port/cert inherited from ``BaseClientConfig`` this config carries the
     credentials for the headless Keycloak offline-token auth flow (D18) used by the ONDEWO CCAI platform.
 
-    Two authentication shapes are supported:
+    The SDK authenticates against a **public** Keycloak client (no ``client_secret`` — Q1/D18) using the
+    Resource-Owner-Password-Credentials (ROPC) grant with ``scope=offline_access``: set ``keycloak_url``,
+    ``realm``, ``client_id``, ``username`` and ``password``. The SDK then auto-refreshes the short-lived
+    access token in the background and attaches it to every gRPC call as the ``Authorization: Bearer``
+    metadata header. ``token_expiration_in_s`` optionally bounds how long the refresh loop runs.
 
-    * **Keycloak headless offline-token (D18, preferred).** Set ``keycloak_url``, ``realm``, ``client_id``,
-      ``username`` and ``password``. The SDK performs a Resource-Owner-Password-Credentials (ROPC) grant with
-      ``scope=offline_access`` against the **public** SDK client (``ondewo-nlu-cai-sdk-public`` — there is **no**
-      ``client_secret``, Q1), then auto-refreshes the short-lived access token and attaches it as the
-      ``Authorization: Bearer`` metadata. ``token_expiration_in_s`` optionally bounds how long the refresh loop runs.
-    * **Legacy ROPC (``user_name``/``password``).** Kept working for backward compatibility / dual-mode. ``http_token``
-      (the Envoy HTTP-Basic header) is **no longer required** — Envoy now validates the bearer JWT (D5).
+    Backward compatibility: every field defaults to empty/``None`` so a bare ``ClientConfig(host=..., port=...)``
+    (e.g. against a plaintext server or an Envoy ingress that injects auth) stays valid. When any Keycloak
+    field is set, the full ROPC set (``keycloak_url``, ``realm``, ``client_id``, a username and ``password``)
+    is required.
 
     Attributes:
-        http_token (str):
-            Legacy ``Authorization: Basic`` token for proxies/Envoy. Optional now (D5) — kept for backward
-            compatibility; new deployments should leave it empty.
         user_name (str):
-            User name / email used for the legacy ROPC ``Login`` path (e.g. ``"testuser@ondewo.com"``).
+            Backward-compatible alias for ``username``; used as the Keycloak ROPC user name when
+            ``username`` is empty (e.g. ``"testuser@ondewo.com"``).
         password (str):
-            Password associated with ``user_name`` (also used as the Keycloak ROPC password).
+            Password of the (2FA-exempt) technical user used for the Keycloak ROPC grant.
         keycloak_url (Optional[str]):
             Base URL of the Keycloak server (e.g. ``"https://host/auth"``). When set together with ``realm``,
             ``client_id``, ``username`` and ``password``, the SDK uses the D18 offline-token flow.
@@ -59,7 +58,6 @@ class ClientConfig(BaseClientConfig):
             means refresh until the offline session itself expires.
     """
 
-    http_token: str = ""
     user_name: str = ""
     password: str = ""
     keycloak_url: Optional[str] = None
@@ -71,8 +69,8 @@ class ClientConfig(BaseClientConfig):
     def __post_init__(self) -> None:
         """Validate the config after initialization.
 
-        ``http_token`` is intentionally **not** required (D5 — Envoy validates the bearer JWT). When any Keycloak
-        field is provided, the full set required for the ROPC offline-token grant must be present.
+        When any Keycloak field is provided, the full set required for the ROPC offline-token grant must be
+        present. A bare host/port config stays valid so unauthenticated usage keeps working.
 
         Raises:
             ValueError:

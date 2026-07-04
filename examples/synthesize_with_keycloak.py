@@ -17,8 +17,7 @@ Minimal end-to-end example: authenticate against Keycloak, then synthesize speec
 This mirrors the current ONDEWO CCAI auth model (D18): the SDK performs a headless
 Resource-Owner-Password-Credentials (ROPC) login with ``scope=offline_access`` against the
 *public* Keycloak client and auto-refreshes a short-lived access token, which is attached to
-each gRPC call as ``Authorization: Bearer`` metadata. There is no ``cai-token`` / HTTP-Basic
-credential anymore.
+each gRPC call as ``Authorization: Bearer`` metadata. The bearer JWT is the only credential.
 
 The high-level ``Client`` owns the gRPC channel and stub; the ``KeycloakTokenProvider`` owns
 the bearer token. The generated service wrappers now forward this metadata automatically when
