@@ -58,7 +58,7 @@ USERNAME: str = "tech-user@example.com"
 PASSWORD: str = "s3cr3t"
 PIPELINE_ID: str = "pipeline-en-1"
 TEXT: str = "Hello, this is ONDEWO Text-to-Speech."
-BEARER_METADATA: List[Tuple[str, str]] = [("Authorization", "Bearer acc-1")]
+BEARER_METADATA: List[Tuple[str, str]] = [("authorization", "Bearer acc-1")]
 
 
 def _pipelines_response(*pipeline_ids: str) -> ListT2sPipelinesResponse:

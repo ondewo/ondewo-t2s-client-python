@@ -45,7 +45,7 @@ CLIENT_ID: str = "ondewo-nlu-cai-sdk-public"
 USERNAME: str = "tech-user@example.com"
 PASSWORD: str = "s3cr3t"
 ACCESS_TOKEN: str = "acc-1"
-EXPECTED_BEARER_METADATA: List[Tuple[str, str]] = [("Authorization", f"Bearer {ACCESS_TOKEN}")]
+EXPECTED_BEARER_METADATA: List[Tuple[str, str]] = [("authorization", f"Bearer {ACCESS_TOKEN}")]
 
 
 class _FakeResponse:
