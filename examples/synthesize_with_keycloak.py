@@ -21,8 +21,9 @@ each gRPC call as ``Authorization: Bearer`` metadata. There is no ``cai-token`` 
 credential anymore.
 
 The high-level ``Client`` owns the gRPC channel and stub; the ``KeycloakTokenProvider`` owns
-the bearer token. Because the generated service wrappers do not forward per-call metadata, an
-authenticated request is issued through the stub with ``metadata=provider.bearer_metadata()``.
+the bearer token. The generated service wrappers now forward this metadata automatically when
+the client is built from a Keycloak config, but this example issues requests directly through
+the stub with ``metadata=provider.bearer_metadata()`` to show the explicit low-level transport.
 
 Run it against a real server by exporting the ``ONDEWO_*`` environment variables below, then::
 

@@ -1,4 +1,5 @@
 cffi
+dataclasses-json
 google-api-core>=2.19.1
 googleapis-common-protos>=1.63.2
 grpcio-reflection>=1.65.5
@@ -9,3 +10,4 @@ ondewo-client-utils>=3.1.0
 polling>=0.3.2
 protobuf>=5.27.3
 regex>=2022.6.2
+requests
