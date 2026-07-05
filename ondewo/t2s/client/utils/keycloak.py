@@ -529,6 +529,9 @@ def get_keycloak_token_provider(config: ClientConfig) -> KeycloakTokenProvider:
     with _PROVIDER_REGISTRY_LOCK:
         provider: Optional[KeycloakTokenProvider] = _PROVIDER_REGISTRY.get(key)
         if provider is None:
+            assert config.keycloak_url is not None
+            assert config.realm is not None
+            assert config.client_id is not None
             provider = KeycloakTokenProvider(
                 keycloak_url=config.keycloak_url,
                 realm=config.realm,

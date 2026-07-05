@@ -80,8 +80,9 @@ class Text2Speech(AsyncServicesInterface):
         self,
         request_iterator: AsyncIterator[StreamingSynthesizeRequest],
     ) -> AsyncIterator[StreamingSynthesizeResponse]:
-        response: AsyncIterator[StreamingSynthesizeResponse] = \
-            await self.stub.StreamingSynthesize(request_iterator, metadata=self.metadata)
+        response: AsyncIterator[StreamingSynthesizeResponse] = await self.stub.StreamingSynthesize(
+            request_iterator, metadata=self.metadata
+        )
         return response
 
     async def normalize_text(self, request: NormalizeTextRequest) -> NormalizeTextResponse:
@@ -120,8 +121,9 @@ class Text2Speech(AsyncServicesInterface):
         self,
         request: ListT2sNormalizationPipelinesRequest,
     ) -> ListT2sNormalizationPipelinesResponse:
-        response: ListT2sNormalizationPipelinesResponse = \
-            await self.stub.ListT2sNormalizationPipelines(request, metadata=self.metadata)
+        response: ListT2sNormalizationPipelinesResponse = await self.stub.ListT2sNormalizationPipelines(
+            request, metadata=self.metadata
+        )
         return response
 
     async def get_service_info(self, request: Empty) -> T2SGetServiceInfoResponse:
