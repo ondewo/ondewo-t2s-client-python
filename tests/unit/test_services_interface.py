@@ -134,7 +134,7 @@ class TestSyncServicesInterface:
             monkeypatch (pytest.MonkeyPatch):
                 Fixture used to replace ``requests.post`` so the ROPC login hits no network.
         """
-        monkeypatch.setattr(keycloak_module.requests, "post", lambda url, data, timeout: _FakeResponse())
+        monkeypatch.setattr(keycloak_module.requests, "post", lambda url, data, timeout, verify=True: _FakeResponse())
 
         service: Text2Speech = Text2Speech(config=_keycloak_config(), use_secure_channel=False)
         try:
@@ -180,7 +180,7 @@ class TestAsyncServicesInterface:
             monkeypatch (pytest.MonkeyPatch):
                 Fixture used to replace ``requests.post`` so the ROPC login hits no network.
         """
-        monkeypatch.setattr(keycloak_module.requests, "post", lambda url, data, timeout: _FakeResponse())
+        monkeypatch.setattr(keycloak_module.requests, "post", lambda url, data, timeout, verify=True: _FakeResponse())
 
         async def _body() -> None:
             service: AsyncText2Speech = AsyncText2Speech(config=_keycloak_config(), use_secure_channel=False)
