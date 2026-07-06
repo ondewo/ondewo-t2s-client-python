@@ -24,16 +24,22 @@ the bearer token. The generated service wrappers now forward this metadata autom
 the client is built from a Keycloak config, but this example issues requests directly through
 the stub with ``metadata=provider.bearer_metadata()`` to show the explicit low-level transport.
 
-Run it against a real server by exporting the ``ONDEWO_*`` environment variables below, then::
+Configure it by filling in ``examples/environment.env`` (loaded automatically), then::
 
     python examples/synthesize_with_keycloak.py
 """
 import os
+import sys
+from pathlib import Path
 from typing import (
     List,
     Optional,
     Tuple,
 )
+
+import grpc
+from dotenv import load_dotenv
+from loguru import logger as log
 
 from ondewo.t2s.client.client import Client
 from ondewo.t2s.client.client_config import ClientConfig
@@ -50,8 +56,28 @@ from ondewo.t2s.text_to_speech_pb2 import (
     SynthesizeResponse,
 )
 
+# Load the example configuration (connection + Keycloak credentials) from environment.env sitting
+# next to this script, so the example works regardless of the current working directory.
+load_dotenv(Path(__file__).with_name("environment.env"))
+
 # gRPC metadata is a flat sequence of (key, value) string tuples.
 Metadata = List[Tuple[str, str]]
+
+
+def _env(name: str, default: str = "") -> str:
+    """Read an environment variable, treating a blank value as unset.
+
+    Args:
+        name (str):
+            The environment variable name.
+        default (str):
+            The value to fall back to when the variable is unset or blank.
+
+    Returns:
+        str:
+            The variable's value, or ``default`` when it is unset/blank.
+    """
+    return os.getenv(name) or default
 
 
 def build_keycloak_config(
@@ -64,6 +90,7 @@ def build_keycloak_config(
     password: str,
     grpc_cert: Optional[str] = None,
     token_expiration_in_s: Optional[int] = None,
+    keycloak_verify_ssl: bool = True,
 ) -> ClientConfig:
     """Build a ``ClientConfig`` wired for the D18 Keycloak offline-token flow.
 
@@ -86,6 +113,8 @@ def build_keycloak_config(
             PEM certificate for a secure channel; ``None`` uses an insecure channel.
         token_expiration_in_s (Optional[int]):
             Optional upper bound (seconds since login) on how long auto-refresh runs.
+        keycloak_verify_ssl (bool):
+            Whether to verify the Keycloak server's TLS certificate on the token-endpoint call.
 
     Returns:
         ClientConfig:
@@ -101,6 +130,7 @@ def build_keycloak_config(
         username=username,
         password=password,
         token_expiration_in_s=token_expiration_in_s,
+        keycloak_verify_ssl=keycloak_verify_ssl,
     )
 
 
@@ -144,12 +174,23 @@ def list_pipeline_ids(service: Text2Speech, metadata: Metadata) -> List[str]:
     Returns:
         List[str]:
             The pipeline ids returned by ``ListT2sPipelines``.
+
+    Raises:
+        grpc.RpcError:
+            If the ``ListT2sPipelines`` RPC fails.
     """
-    response: ListT2sPipelinesResponse = service.stub.ListT2sPipelines(
-        ListT2sPipelinesRequest(),
-        metadata=metadata,
-    )
-    return [pipeline.id for pipeline in response.pipelines]
+    log.info("START: list_pipeline_ids")
+    try:
+        response: ListT2sPipelinesResponse = service.stub.ListT2sPipelines(
+            ListT2sPipelinesRequest(),
+            metadata=metadata,
+        )
+    except grpc.RpcError as rpc_error:
+        log.error(f"ListT2sPipelines RPC failed: code={rpc_error.code()} details={rpc_error.details()}")
+        raise
+    pipeline_ids: List[str] = [pipeline.id for pipeline in response.pipelines]
+    log.info(f"DONE: list_pipeline_ids: found {len(pipeline_ids)} pipeline(s)")
+    return pipeline_ids
 
 
 def synthesize(
@@ -176,13 +217,26 @@ def synthesize(
     Returns:
         SynthesizeResponse:
             The generated audio plus its metadata (length, generation time, uuid).
+
+    Raises:
+        grpc.RpcError:
+            If the ``Synthesize`` RPC fails.
     """
+    log.info(f"START: synthesize: pipeline_id={pipeline_id} length_scale={length_scale}")
     request: SynthesizeRequest = build_synthesize_request(
         pipeline_id=pipeline_id,
         text=text,
         length_scale=length_scale,
     )
-    response: SynthesizeResponse = service.stub.Synthesize(request, metadata=metadata)
+    try:
+        response: SynthesizeResponse = service.stub.Synthesize(request, metadata=metadata)
+    except grpc.RpcError as rpc_error:
+        log.error(
+            f"Synthesize RPC failed for pipeline {pipeline_id}: "
+            f"code={rpc_error.code()} details={rpc_error.details()}"
+        )
+        raise
+    log.info("DONE: synthesize")
     return response
 
 
@@ -218,7 +272,7 @@ def run(client: Client, provider: KeycloakTokenProvider, text: str) -> Synthesiz
         pipeline_id=pipeline_ids[0],
         text=text,
     )
-    print(
+    log.info(
         f"Synthesized {response.audio_length:.2f}s of audio "
         f"({len(response.audio)} bytes) in {response.generation_time:.2f}s "
         f"[uuid={response.audio_uuid}]."
@@ -228,26 +282,47 @@ def run(client: Client, provider: KeycloakTokenProvider, text: str) -> Synthesiz
 
 def main() -> None:
     """Authenticate against Keycloak and synthesize a short greeting on the first pipeline."""
+    log.info("START: synthesize_with_keycloak: main")
+
+    use_secure_channel: bool = _env("ONDEWO_USE_SECURE_CHANNEL", "false").strip().lower() == "true"
+    grpc_cert: Optional[str] = None
+    cert_path: str = _env("ONDEWO_GRPC_CERT").strip()
+    if use_secure_channel and cert_path:
+        grpc_cert = Path(cert_path).read_text()
+
     config: ClientConfig = build_keycloak_config(
-        host=os.getenv("ONDEWO_T2S_HOST", "localhost"),
-        port=os.getenv("ONDEWO_T2S_PORT", "50555"),
-        keycloak_url=os.getenv("ONDEWO_KEYCLOAK_URL", "https://keycloak.example.com/auth"),
-        realm=os.getenv("ONDEWO_KEYCLOAK_REALM", "ondewo-ccai-platform"),
-        client_id=os.getenv("ONDEWO_KEYCLOAK_CLIENT_ID", "ondewo-nlu-cai-sdk-public"),
-        username=os.getenv("ONDEWO_KEYCLOAK_USERNAME", "technical-user@ondewo.com"),
-        password=os.getenv("ONDEWO_KEYCLOAK_PASSWORD", ""),
-        grpc_cert=os.getenv("ONDEWO_T2S_GRPC_CERT") or None,
+        host=_env("ONDEWO_HOST", "localhost"),
+        port=_env("ONDEWO_PORT", "50555"),
+        keycloak_url=_env("KEYCLOAK_URL", "https://keycloak.example.com/auth"),
+        realm=_env("KEYCLOAK_REALM", "ondewo-ccai-platform"),
+        client_id=_env("KEYCLOAK_CLIENT_ID", "ondewo-nlu-cai-sdk-public"),
+        username=_env("KEYCLOAK_USER_NAME", "technical-user@ondewo.com"),
+        password=_env("KEYCLOAK_PASSWORD"),
+        grpc_cert=grpc_cert,
+        keycloak_verify_ssl=_env("KEYCLOAK_VERIFY_SSL", "true").strip().lower() == "true",
     )
+    log.info(f"Connecting to ONDEWO T2S at {config.host}:{config.port} (secure={use_secure_channel})")
 
     # One shared provider performs the ROPC offline-token login once and auto-refreshes it.
     provider: KeycloakTokenProvider = get_keycloak_token_provider(config)
-    client: Client = Client(config=config, use_secure_channel=bool(config.grpc_cert))
+    client: Client = Client(config=config, use_secure_channel=use_secure_channel)
     try:
         run(client=client, provider=provider, text="Hello, this is ONDEWO Text-to-Speech.")
     finally:
         provider.stop()
         client.disconnect()
+    log.info("DONE: synthesize_with_keycloak: main")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except grpc.RpcError as rpc_error:
+        log.exception(
+            f"Keycloak T2S example failed with a gRPC error: "
+            f"code={rpc_error.code()} details={rpc_error.details()}"
+        )
+        sys.exit(1)
+    except Exception:
+        log.exception("Keycloak T2S example failed with an unexpected error.")
+        sys.exit(1)

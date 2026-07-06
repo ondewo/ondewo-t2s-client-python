@@ -286,7 +286,7 @@ class TestMain:
                 Fixture used to supply the Keycloak password via the environment.
         """
         # build_keycloak_config requires a non-empty password for the Keycloak flow.
-        monkeypatch.setenv("ONDEWO_KEYCLOAK_PASSWORD", PASSWORD)
+        monkeypatch.setenv("KEYCLOAK_PASSWORD", PASSWORD)
 
         service: MagicMock = _service_mock(
             pipelines=_pipelines_response(PIPELINE_ID),
