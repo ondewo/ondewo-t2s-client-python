@@ -27,7 +27,7 @@ PYPI_PASSWORD?=ENTER_HERE_YOUR_PYPI_PASSWORD
 GITHUB_GH_TOKEN?=ENTER_YOUR_TOKEN_HERE
 
 CURRENT_RELEASE_NOTES=`cat RELEASE.md \
-	| sed -n '/Release ONDEWO T2S Python Client ${ONDEWO_T2S_VERSION}/,/\*\*/p'`
+	| perl -ne 'print if /Release ONDEWO T2S Python Client ${ONDEWO_T2S_VERSION}/../\*\*/'`
 
 GH_REPO="https://github.com/ondewo/ondewo-t2s-client-python"
 DEVOPS_ACCOUNT_GIT="ondewo-devops-accounts"
