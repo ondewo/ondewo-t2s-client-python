@@ -11,17 +11,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import argparse
 import io
 import json
+import os
+import sys
+from pathlib import Path
 from typing import (
     Any,
+    Optional,
     Set,
     Tuple,
 )
 
 import grpc
 import soundfile as sf
+from dotenv import load_dotenv
+from loguru import logger as log
 
 from ondewo.t2s import text_to_speech_pb2
 from ondewo.t2s.client.client import Client
@@ -32,28 +37,91 @@ from ondewo.t2s.text_to_speech_pb2 import (
     Text2SpeechConfig,
 )
 
+# Load the example configuration (host/port/secure channel) from environment.env sitting next to
+# this script, so the example works regardless of the current working directory.
+load_dotenv(Path(__file__).with_name("environment.env"))
+
 
 # DESCRIPTION:
 # In this example we do the following:
 # 1. Create a stub which is used to connect to the server
-# 2. List all available pipelines and filter on english language ones
+# 2. List all available pipelines and filter on german language ones
 # 3. Send a synthesis request to the specified pipeline
 # 4. Update the specified pipeline
 # 5. Send a synthesis request to the updated pipeline
 # 6. Revert the update of the specified pipeline
 
 
-def synthesis_request(t2s_service: Text2Speech, **req_kwargs: Any) -> bytes:
-    request: text_to_speech_pb2.SynthesizeRequest = (
-        text_to_speech_pb2.SynthesizeRequest(**req_kwargs)
-    )
-    response: text_to_speech_pb2.SynthesizeResponse = t2s_service.synthesize(
-        request=request
-    )
+def load_config() -> Tuple[ClientConfig, bool]:
+    """Build the client config and secure-channel flag from the canonical environment variables.
 
-    print(
-        f"Length of the generated audio is {response.audio_length} sec.",
-        f"Generation time is {response.generation_time} sec.",
+    Returns:
+        Tuple[ClientConfig, bool]:
+            The populated ``ClientConfig`` and whether a secure (TLS) channel should be used.
+    """
+    use_secure_channel: bool = os.getenv("ONDEWO_USE_SECURE_CHANNEL", "false").strip().lower() == "true"
+
+    grpc_cert: Optional[str] = None
+    cert_path: str = os.getenv("ONDEWO_GRPC_CERT", "").strip()
+    if use_secure_channel and cert_path:
+        grpc_cert = Path(cert_path).read_text()
+
+    config: ClientConfig = ClientConfig(
+        host=os.environ["ONDEWO_HOST"],
+        port=os.environ["ONDEWO_PORT"],
+        grpc_cert=grpc_cert,
+    )
+    return config, use_secure_channel
+
+
+def synthesis_request(
+    t2s_service: Text2Speech,
+    text: str,
+    t2s_pipeline_id: str,
+    length_scale: float = 1.0,
+) -> bytes:
+    """Synthesize ``text`` on the given pipeline and return the decoded audio.
+
+    Args:
+        t2s_service (Text2Speech):
+            The T2S service wrapper bound to the client's channel.
+        text (str):
+            The text to convert to speech.
+        t2s_pipeline_id (str):
+            Id of the T2S pipeline that should synthesize the text.
+        length_scale (float):
+            Time-stretch factor (``1.0`` is natural speed; lower is faster).
+
+    Returns:
+        bytes:
+            The decoded audio samples.
+
+    Raises:
+        grpc.RpcError:
+            If the ``Synthesize`` RPC fails.
+    """
+    log.info(f"START: synthesis_request: t2s_pipeline_id={t2s_pipeline_id} length_scale={length_scale}")
+    # In the current API the pipeline id and the modulation parameters live on the nested
+    # RequestConfig, not directly on SynthesizeRequest (which only carries `text` + `config`).
+    request: text_to_speech_pb2.SynthesizeRequest = text_to_speech_pb2.SynthesizeRequest(
+        text=text,
+        config=text_to_speech_pb2.RequestConfig(
+            t2s_pipeline_id=t2s_pipeline_id,
+            length_scale=length_scale,
+        ),
+    )
+    try:
+        response: text_to_speech_pb2.SynthesizeResponse = t2s_service.synthesize(request=request)
+    except grpc.RpcError as rpc_error:
+        log.error(
+            f"Synthesize RPC failed for pipeline {t2s_pipeline_id}: "
+            f"code={rpc_error.code()} details={rpc_error.details()}"
+        )
+        raise
+
+    log.info(
+        f"DONE: synthesis_request: audio_length={response.audio_length}s "
+        f"generation_time={response.generation_time}s"
     )
 
     bio: io.BytesIO = io.BytesIO(response.audio)
@@ -62,15 +130,10 @@ def synthesis_request(t2s_service: Text2Speech, **req_kwargs: Any) -> bytes:
 
 
 def main() -> None:
-    parser: argparse.ArgumentParser = argparse.ArgumentParser(
-        description="API example."
-    )
-    parser.add_argument("--config", type=str, default="configs/insecure_grpc.json")
-    parser.add_argument("--secure", default=False, action="store_true")
-    args = parser.parse_args()
-
-    with open(args.config) as f:
-        config: ClientConfig = ClientConfig.from_json(f.read())
+    """Run the end-to-end T2S API example against the configured server."""
+    log.info("START: example_api: main")
+    config, use_secure_channel = load_config()
+    log.info(f"Connecting to ONDEWO T2S at {config.host}:{config.port} (secure={use_secure_channel})")
 
     # https://github.com/grpc/grpc-proto/blob/master/grpc/service_config/service_config.proto
     service_config_json: str = json.dumps(
@@ -124,22 +187,26 @@ def main() -> None:
     }
 
     client: Client = Client(
-        config=config, use_secure_channel=args.secure, options=options
+        config=config, use_secure_channel=use_secure_channel, options=options
     )
     t2s_service: Text2Speech = client.services.text_to_speech
 
-    # 2. List all available pipelines and filter on english language ones
+    # 2. List all available pipelines and filter on german language ones
     # List all t2s pipelines present on the server
+    log.info("Listing all available T2S pipelines")
     for pipeline in t2s_service.list_t2s_pipelines(
         request=ListT2sPipelinesRequest()
     ).pipelines:
-        print(pipeline)
+        log.info(f"Pipeline: {pipeline.id}")
 
     # List pipelines based on conditions
     german_pipelines = t2s_service.list_t2s_pipelines(
         request=ListT2sPipelinesRequest(languages=["de"])
     ).pipelines
+    if not german_pipelines:
+        raise RuntimeError("No German (de) T2S pipelines are available on the server.")
     german_pipeline: Text2SpeechConfig = german_pipelines[0]
+    log.info(f"Using German pipeline {german_pipeline.id}")
 
     # 3. Send a synthesis request to the specified pipeline
     # Make synthesize request to the server to get audio for given text
@@ -158,6 +225,7 @@ def main() -> None:
 
     # 4. Update a specified pipeline
     # Change parameter in the pipeline config. For example default length scale
+    log.info(f"Updating pipeline {german_pipeline.id}: length_scale=2")
     german_pipeline.inference.composite_inference.text2mel.glow_tts.length_scale = 2
 
     # Update pipeline
@@ -172,9 +240,20 @@ def main() -> None:
 
     # 6. Revert the update of the specified pipeline
     # Change parameter back to previous (length_scale = 1.0)
+    log.info(f"Reverting pipeline {german_pipeline.id}: length_scale=1.0")
     german_pipeline.inference.composite_inference.text2mel.glow_tts.length_scale = 1.0
     t2s_service.update_t2s_pipeline(request=german_pipeline)
+    log.info("DONE: example_api: main")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except grpc.RpcError as rpc_error:
+        log.exception(
+            f"T2S example failed with a gRPC error: code={rpc_error.code()} details={rpc_error.details()}"
+        )
+        sys.exit(1)
+    except Exception:
+        log.exception("T2S example failed with an unexpected error.")
+        sys.exit(1)

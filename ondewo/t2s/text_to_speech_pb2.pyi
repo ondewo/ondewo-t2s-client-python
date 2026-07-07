@@ -1509,6 +1509,7 @@ class T2sCloudServiceGoogle(google.protobuf.message.Message):
     SPEAKING_RATE_FIELD_NUMBER: builtins.int
     VOLUME_GAIN_DB_FIELD_NUMBER: builtins.int
     PITCH_FIELD_NUMBER: builtins.int
+    SPEAKER_LANGUAGE_FIELD_NUMBER: builtins.int
     voice_id: builtins.str
     """Voice ID indicating the speaker"""
     speaking_rate: builtins.float
@@ -1517,6 +1518,8 @@ class T2sCloudServiceGoogle(google.protobuf.message.Message):
     """Volume gain in db to control volume of the audio."""
     pitch: builtins.float
     """pitch value of the audio"""
+    speaker_language: builtins.str
+    """speaker_language indicating the speaker language code"""
     def __init__(
         self,
         *,
@@ -1524,8 +1527,9 @@ class T2sCloudServiceGoogle(google.protobuf.message.Message):
         speaking_rate: builtins.float = ...,
         volume_gain_db: builtins.float = ...,
         pitch: builtins.float = ...,
+        speaker_language: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["pitch", b"pitch", "speaking_rate", b"speaking_rate", "voice_id", b"voice_id", "volume_gain_db", b"volume_gain_db"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["pitch", b"pitch", "speaker_language", b"speaker_language", "speaking_rate", b"speaking_rate", "voice_id", b"voice_id", "volume_gain_db", b"volume_gain_db"]) -> None: ...
 
 global___T2sCloudServiceGoogle = T2sCloudServiceGoogle
 

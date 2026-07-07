@@ -25,7 +25,7 @@ from typing import AsyncIterator
 
 from google.protobuf.empty_pb2 import Empty
 
-from ondewo.utils.async_base_services_interface import AsyncBaseServicesInterface
+from ondewo.t2s.client.core.async_services_interface import AsyncServicesInterface
 from ondewo.t2s.text_to_speech_pb2 import (
     BatchSynthesizeRequest,
     BatchSynthesizeResponse,
@@ -56,7 +56,7 @@ from ondewo.t2s.text_to_speech_pb2 import (
 from ondewo.t2s.text_to_speech_pb2_grpc import Text2SpeechStub
 
 
-class Text2Speech(AsyncBaseServicesInterface):
+class Text2Speech(AsyncServicesInterface):
     """
     Exposes the Text2Speech-related endpoints of ONDEWO T2S services in a user-friendly way.
 
@@ -69,79 +69,83 @@ class Text2Speech(AsyncBaseServicesInterface):
         return stub
 
     async def synthesize(self, request: SynthesizeRequest) -> SynthesizeResponse:
-        response: SynthesizeResponse = await self.stub.Synthesize(request)
+        response: SynthesizeResponse = await self.stub.Synthesize(request, metadata=self.metadata)
         return response
 
     async def batch_synthesize(self, request: BatchSynthesizeRequest) -> BatchSynthesizeResponse:
-        response: BatchSynthesizeResponse = await self.stub.BatchSynthesize(request)
+        response: BatchSynthesizeResponse = await self.stub.BatchSynthesize(request, metadata=self.metadata)
         return response
 
     async def streaming_synthesize(
         self,
         request_iterator: AsyncIterator[StreamingSynthesizeRequest],
     ) -> AsyncIterator[StreamingSynthesizeResponse]:
-        response: AsyncIterator[StreamingSynthesizeResponse] = await self.stub.StreamingSynthesize(request_iterator)
+        response: AsyncIterator[StreamingSynthesizeResponse] = await self.stub.StreamingSynthesize(
+            request_iterator, metadata=self.metadata
+        )
         return response
 
     async def normalize_text(self, request: NormalizeTextRequest) -> NormalizeTextResponse:
-        response: NormalizeTextResponse = await self.stub.NormalizeText(request)
+        response: NormalizeTextResponse = await self.stub.NormalizeText(request, metadata=self.metadata)
         return response
 
     async def get_t2s_pipeline(self, request: T2sPipelineId) -> Text2SpeechConfig:
-        response: Text2SpeechConfig = await self.stub.GetT2sPipeline(request)
+        response: Text2SpeechConfig = await self.stub.GetT2sPipeline(request, metadata=self.metadata)
         return response
 
     async def create_t2s_pipeline(self, request: Text2SpeechConfig) -> T2sPipelineId:
-        response: T2sPipelineId = await self.stub.CreateT2sPipeline(request)
+        response: T2sPipelineId = await self.stub.CreateT2sPipeline(request, metadata=self.metadata)
         return response
 
     async def delete_t2s_pipeline(self, request: T2sPipelineId) -> Empty:
-        response: Empty = await self.stub.DeleteT2sPipeline(request)
+        response: Empty = await self.stub.DeleteT2sPipeline(request, metadata=self.metadata)
         return response
 
     async def update_t2s_pipeline(self, request: Text2SpeechConfig) -> Empty:
-        response: Empty = await self.stub.UpdateT2sPipeline(request)
+        response: Empty = await self.stub.UpdateT2sPipeline(request, metadata=self.metadata)
         return response
 
     async def list_t2s_pipelines(self, request: ListT2sPipelinesRequest) -> ListT2sPipelinesResponse:
-        response: ListT2sPipelinesResponse = await self.stub.ListT2sPipelines(request)
+        response: ListT2sPipelinesResponse = await self.stub.ListT2sPipelines(request, metadata=self.metadata)
         return response
 
     async def list_t2s_languages(self, request: ListT2sLanguagesRequest) -> ListT2sLanguagesResponse:
-        response: ListT2sLanguagesResponse = await self.stub.ListT2sLanguages(request)
+        response: ListT2sLanguagesResponse = await self.stub.ListT2sLanguages(request, metadata=self.metadata)
         return response
 
     async def list_t2s_domains(self, request: ListT2sDomainsRequest) -> ListT2sDomainsResponse:
-        response: ListT2sDomainsResponse = await self.stub.ListT2sDomains(request)
+        response: ListT2sDomainsResponse = await self.stub.ListT2sDomains(request, metadata=self.metadata)
         return response
 
     async def list_t2s_normalization_pipelines(
         self,
         request: ListT2sNormalizationPipelinesRequest,
     ) -> ListT2sNormalizationPipelinesResponse:
-        response: ListT2sNormalizationPipelinesResponse = await self.stub.ListT2sNormalizationPipelines(request)
+        response: ListT2sNormalizationPipelinesResponse = await self.stub.ListT2sNormalizationPipelines(
+            request, metadata=self.metadata
+        )
         return response
 
     async def get_service_info(self, request: Empty) -> T2SGetServiceInfoResponse:
-        response: T2SGetServiceInfoResponse = await self.stub.GetServiceInfo(request)
+        response: T2SGetServiceInfoResponse = await self.stub.GetServiceInfo(request, metadata=self.metadata)
         return response
 
     async def get_custom_phonemizer(self, request: PhonemizerId) -> CustomPhonemizerProto:
-        response: CustomPhonemizerProto = await self.stub.GetCustomPhonemizer(request)
+        response: CustomPhonemizerProto = await self.stub.GetCustomPhonemizer(request, metadata=self.metadata)
         return response
 
     async def create_custom_phonemizer(self, request: CreateCustomPhonemizerRequest) -> PhonemizerId:
-        response: PhonemizerId = await self.stub.CreateCustomPhonemizer(request)
+        response: PhonemizerId = await self.stub.CreateCustomPhonemizer(request, metadata=self.metadata)
         return response
 
     async def delete_custom_phonemizer(self, request: PhonemizerId) -> Empty:
-        response: Empty = await self.stub.DeleteCustomPhonemizer(request)
+        response: Empty = await self.stub.DeleteCustomPhonemizer(request, metadata=self.metadata)
         return response
 
     async def update_custom_phonemizer(self, request: UpdateCustomPhonemizerRequest) -> CustomPhonemizerProto:
-        response: CustomPhonemizerProto = await self.stub.UpdateCustomPhonemizer(request)
+        response: CustomPhonemizerProto = await self.stub.UpdateCustomPhonemizer(request, metadata=self.metadata)
         return response
 
     async def list_custom_phonemizer(self, request: ListCustomPhonemizerRequest) -> ListCustomPhonemizerResponse:
-        response: ListCustomPhonemizerResponse = await self.stub.ListCustomPhonemizer(request)
+        response: ListCustomPhonemizerResponse = await self.stub.ListCustomPhonemizer(request, metadata=self.metadata)
         return response

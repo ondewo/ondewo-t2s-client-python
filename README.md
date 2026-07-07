@@ -119,8 +119,40 @@ The `/examples` folder provides a possible implementation of this library. To ru
 - port `// Port of the Server - e.g. 6600`
 - user_name `// Username - same as you would use in AIM`
 - password `// Password of the user`
-- http_token `// Token to allow access through`
 - grpc_cert `// gRPC Certificate of the server`
+
+### Keycloak bearer auth (D18)
+
+The ONDEWO CCAI platform authenticates SDK calls with a Keycloak-issued JWT (D18). Configure the
+client with the Keycloak fields:
+
+```python
+from ondewo.t2s.client.client import Client
+from ondewo.t2s.client.client_config import ClientConfig
+from ondewo.t2s.text_to_speech_pb2 import ListT2sPipelinesRequest
+
+config = ClientConfig(
+    host="127.0.0.1",
+    port="50555",
+    keycloak_url="https://keycloak.example.com/auth",
+    realm="ondewo-ccai-platform",
+    client_id="ondewo-nlu-cai-sdk-public",
+    username="technical-user@ondewo.com",
+    password="<password>",
+)
+client = Client(config=config, use_secure_channel=bool(config.grpc_cert))
+response = client.services.text_to_speech.list_t2s_pipelines(ListT2sPipelinesRequest())
+```
+
+The SDK performs a headless Resource-Owner-Password-Credentials (ROPC) grant with
+`scope=offline_access` against the **public** Keycloak client (`ondewo-nlu-cai-sdk-public` - no
+client secret), auto-refreshes the short-lived access token in the background, and attaches it to
+every gRPC call as the `Authorization: Bearer <jwt>` header. When the client is built from a
+Keycloak config the generated convenience methods
+(`client.services.text_to_speech.synthesize(...)`, `list_t2s_pipelines(...)`, ...) attach the
+bearer token automatically; Envoy validates the bearer JWT (D5). See
+[`examples/synthesize_with_keycloak.py`](examples/synthesize_with_keycloak.py) for a full working
+example.
 
 ## Automatic Release Process
 
