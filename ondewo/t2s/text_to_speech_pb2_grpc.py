@@ -126,6 +126,11 @@ class Text2SpeechStub(object):
                 request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerRequest.SerializeToString,
                 response_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerResponse.FromString,
                 _registered_method=True)
+        self.VoiceCloning = channel.unary_unary(
+                '/ondewo.t2s.Text2Speech/VoiceCloning',
+                request_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.VoiceCloningRequest.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                _registered_method=True)
 
 
 class Text2SpeechServicer(object):
@@ -262,6 +267,14 @@ class Text2SpeechServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def VoiceCloning(self, request, context):
+        """<p>Clones a voice based on a sample audio of the speaker and its transcription.
+        The cloned voice can afterwards be used for synthesis by referencing the given speaker name.</p>
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_Text2SpeechServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -354,6 +367,11 @@ def add_Text2SpeechServicer_to_server(servicer, server):
                     servicer.ListCustomPhonemizer,
                     request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerRequest.FromString,
                     response_serializer=ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerResponse.SerializeToString,
+            ),
+            'VoiceCloning': grpc.unary_unary_rpc_method_handler(
+                    servicer.VoiceCloning,
+                    request_deserializer=ondewo_dot_t2s_dot_text__to__speech__pb2.VoiceCloningRequest.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -843,6 +861,33 @@ class Text2Speech(object):
             '/ondewo.t2s.Text2Speech/ListCustomPhonemizer',
             ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerRequest.SerializeToString,
             ondewo_dot_t2s_dot_text__to__speech__pb2.ListCustomPhonemizerResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def VoiceCloning(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/ondewo.t2s.Text2Speech/VoiceCloning',
+            ondewo_dot_t2s_dot_text__to__speech__pb2.VoiceCloningRequest.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options,
             channel_credentials,
             insecure,

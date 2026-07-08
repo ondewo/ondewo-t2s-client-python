@@ -125,21 +125,129 @@ class SynthesizeRequest(google.protobuf.message.Message):
     CONFIG_FIELD_NUMBER: builtins.int
     text: builtins.str
     """Required. Represents the text that will be transformed to speech.
-    Synthesize text:
+
+    <p>The text may be plain text, or it may embed SSML markup, phonemes and voice-control tags to
+    shape how it is spoken. The sections below list every supported form with a copy-paste example.
+    Which forms take effect depends on the pipeline (model) selected via
+    <code>RequestConfig.t2s_pipeline_id</code>; unsupported tags are stripped and the plain text is
+    still spoken.</p>
+
+    <p><b>1. Plain text</b></p>
     <ul>
       <li>Simple text: <pre><code>Hello, how are you?</code></pre></li>
     </ul>
-    Examples to modulate the voice based on SSML tags and Arpabet phonemes:
+
+    <p><b>2. SSML <code>&lt;say-as&gt;</code> tags (local vits / qwen3-tts and cloud providers)</b></p>
+    <p>Rewrites the enclosed text into its spoken form (spelled out letters, digits, symbols, ...).
+    Supported by the local normalization pipeline and forwarded to the cloud providers.</p>
     <ul>
-      <li>SSML Tag Phone: <pre><code>&lt;say-as interpret-as=&quot;phone&quot;&gt;+12354321&lt;/say-as&gt;</code></pre></li>
-      <li>SSML Tag Email: <pre><code>&lt;say-as interpret-as=&quot;email&quot;&gt;voices@ondewo.com&lt;/say-as&gt;</code></pre></li>
-      <li>SSML Tag URL: <pre><code>&lt;say-as interpret-as=&quot;url&quot;&gt;ondewo.com/en/&lt;/say-as&gt;</code></pre></li>
-      <li>SSML Tag Spell: <pre><code>&lt;say-as interpret-as=&quot;spell&quot;&gt;AP732&lt;/say-as&gt;</code></pre></li>
-      <li>SSML Tag Spell With Names: <pre><code>&lt;say-as interpret-as=&quot;spell-with-names&quot;&gt;AHO32&lt;/say-as&gt;</code></pre></li>
-      <li>SSML Tag Callsigns Short: <pre><code>&lt;say-as interpret-as=&quot;callsign-short&quot;&gt;AUA439&lt;/say-as&gt;</code></pre></li>
-      <li>SSML Tag Callsigns Long: <pre><code>&lt;say-as interpret-as=&quot;callsign-long&quot;&gt;AAL439&lt;/say-as&gt;</code></pre></li>
-      <li>SSML Tag Break Tag: <pre><code>I am going to take a 2 seconds break &lt;break time=&quot;2.0&quot;/&gt; done</code></pre></li>
-      <li>Arpabet Phonemes: <pre><code>Hello I am {AE2 L EH0 G Z AE1 N D R AH0}</code></pre></li>
+      <li>Phone: <pre><code>&lt;say-as interpret-as=&quot;phone&quot;&gt;+12354321&lt;/say-as&gt;</code></pre></li>
+      <li>Email: <pre><code>&lt;say-as interpret-as=&quot;email&quot;&gt;voices@ondewo.com&lt;/say-as&gt;</code></pre></li>
+      <li>URL: <pre><code>&lt;say-as interpret-as=&quot;url&quot;&gt;ondewo.com/en/&lt;/say-as&gt;</code></pre></li>
+      <li>Spell (spell out each character): <pre><code>&lt;say-as interpret-as=&quot;spell&quot;&gt;AP732&lt;/say-as&gt;</code></pre></li>
+      <li>Spell with names (e.g. &quot;A like Anton&quot;): <pre><code>&lt;say-as interpret-as=&quot;spell-with-names&quot;&gt;AHO32&lt;/say-as&gt;</code></pre></li>
+      <li>Callsigns short: <pre><code>&lt;say-as interpret-as=&quot;callsign-short&quot;&gt;AUA439&lt;/say-as&gt;</code></pre></li>
+      <li>Callsigns long: <pre><code>&lt;say-as interpret-as=&quot;callsign-long&quot;&gt;AAL439&lt;/say-as&gt;</code></pre></li>
+    </ul>
+
+    <p><b>3. Pauses / breaks</b></p>
+    <ul>
+      <li>Break tag (seconds): <pre><code>I am going to take a 2 seconds break &lt;break time=&quot;2.0&quot;/&gt; done</code></pre></li>
+      <li>Break tag (milliseconds, cloud providers): <pre><code>please wait &lt;break time=&quot;500ms&quot;/&gt; done</code></pre></li>
+    </ul>
+
+    <p><b>4. Phonemes / pronunciation control</b></p>
+    <p>The phoneme alphabet depends exclusively on the model type:</p>
+    <p><b>4a. IPA phonemes (vits and cloud providers only)</b> - the vits models and the cloud
+    providers (Amazon Polly, Microsoft Azure and Google Cloud TTS) control pronunciation with the SSML
+    <code>&lt;phoneme&gt;</code> element using the IPA alphabet (<code>alphabet=&quot;ipa&quot;</code>).
+    The IPA string goes in the <code>ph</code> attribute and the written word between the tags:</p>
+    <ul>
+      <li>English: <pre><code>I would like a &lt;phoneme alphabet=&quot;ipa&quot; ph=&quot;t&#601;&#712;me&#618;to&#650;&quot;&gt;tomato&lt;/phoneme&gt; please</code></pre></li>
+      <li>German: <pre><code>Ich h&auml;tte gerne ein &lt;phoneme alphabet=&quot;ipa&quot; ph=&quot;&#712;ba&#618;&#643;pi&#720;l&quot;&gt;Beispiel&lt;/phoneme&gt; bitte</code></pre></li>
+    </ul>
+    <p><b>4b. Arpabet phonemes (glow model only)</b> - the glow model controls pronunciation with
+    Arpabet phonemes, supplied through the same SSML <code>&lt;phoneme&gt;</code> element but with
+    <code>alphabet=&quot;arpabet&quot;</code>. The ARPAbet transcription goes in the <code>ph</code>
+    attribute and the written word between the tags (the phonemes are <b>not</b> written in curly
+    braces <code>{}</code> in the request text):</p>
+    <ul>
+      <li>English: <pre><code>Please say &lt;phoneme alphabet=&quot;arpabet&quot; ph=&quot;T EH1 S T&quot;&gt;test&lt;/phoneme&gt; out loud</code></pre></li>
+      <li>German: <pre><code>Ich sage &lt;phoneme alphabet=&quot;arpabet&quot; ph=&quot;T EH1 S T&quot;&gt;test&lt;/phoneme&gt; laut</code></pre></li>
+    </ul>
+    <p><b>4c. qwen3-tts has no phonemes - use the verbalized form instead</b> - the qwen3-tts models
+    do <b>not</b> support Arpabet or IPA phonemes; the <code>&lt;phoneme&gt;</code> element and its
+    <code>ph</code> string are ignored. Instead, to have a special text (symbols, codes,
+    abbreviations, ...) spoken correctly, pass its <b>verbalization</b>: the plain, written-out spoken
+    form of the text in the target language. For example, to have <code>A-7+8*</code> pronounced
+    correctly:</p>
+    <ul>
+      <li>English: <pre><code>ai dash seven plus eight asterisk</code></pre></li>
+      <li>German: <pre><code>ah bindestrich sieben plus acht sternchen</code></pre></li>
+    </ul>
+
+    <p><b>5. Voice control for qwen3-tts (emotion / style / prosody)</b></p>
+    <p>These ONDEWO-namespaced tags are compiled into the model instruction and stripped from the
+    spoken text, so the transcription stays the plain sentence while the delivery changes. They only
+    take effect on the qwen3-tts <b>CustomVoice</b> model; on the base and voicedesign models they are
+    stripped and a warning is logged.</p>
+    <ul>
+      <li>Style - one of the five primary styles <code>apologetic</code>, <code>calm</code>,
+        <code>empathetic</code>, <code>firm</code>, <code>lively</code>, or one of the accepted
+        synonyms <code>cheerful</code> / <code>happy</code> / <code>joyful</code>,
+        <code>sad</code> / <code>sorrowful</code>, <code>angry</code> / <code>furious</code>,
+        <code>excited</code>, <code>serious</code>, <code>tender</code> / <code>gentle</code>.
+        An unknown name falls back to <code>neutral</code> and a warning is logged:
+        <pre><code>&lt;ondewo:style name=&quot;calm&quot;&gt;please stay calm everything will be fine&lt;/ondewo:style&gt;</code></pre></li>
+      <li>Emphasis - selects the intensity tier of the chosen style: <code>strong</code> (intense),
+        <code>moderate</code> (the default when no emphasis is given) or <code>reduced</code> /
+        <code>none</code> (mild):
+        <pre><code>&lt;ondewo:style name=&quot;firm&quot;&gt;&lt;emphasis level=&quot;strong&quot;&gt;listen carefully&lt;/emphasis&gt;&lt;/ondewo:style&gt;</code></pre></li>
+      <li>Prosody - <code>rate</code> (<code>x-slow</code>/<code>slow</code>/<code>medium</code>/<code>fast</code>/<code>x-fast</code>
+        or a percentage such as <code>+20%</code>/<code>-20%</code>/<code>120%</code>),
+        <code>pitch</code> (<code>x-low</code>/<code>low</code>/<code>medium</code>/<code>high</code>/<code>x-high</code>,
+        a semitone offset such as <code>+4st</code>/<code>-4st</code> or a percentage such as
+        <code>+10%</code>/<code>-10%</code>) and
+        <code>volume</code> (<code>silent</code>/<code>x-soft</code>/<code>soft</code>/<code>medium</code>/<code>loud</code>/<code>x-loud</code>
+        or a decibel offset such as <code>+6dB</code>/<code>-6dB</code>):
+        <pre><code>&lt;prosody rate=&quot;slow&quot; pitch=&quot;+4st&quot; volume=&quot;loud&quot;&gt;hello there&lt;/prosody&gt;</code></pre></li>
+      <li>Nested combination (style + emphasis + prosody):
+        <pre><code>&lt;ondewo:style name=&quot;calm&quot;&gt;&lt;emphasis level=&quot;moderate&quot;&gt;&lt;prosody rate=&quot;slow&quot; pitch=&quot;low&quot; volume=&quot;soft&quot;&gt;hello there&lt;/prosody&gt;&lt;/emphasis&gt;&lt;/ondewo:style&gt;</code></pre></li>
+      <li>Free-form instruction (CustomVoice only) - describe the delivery in natural language in the
+        <code>instruction</code> attribute. The attribute value is used verbatim as the model
+        instruction and takes precedence over the style / emphasis / prosody tags; the wrapped inner
+        text is kept as the spoken text and it should be always in English:
+        <pre><code>&lt;ondewo:instruct instruction=&quot;speak slowly in a warm and reassuring tone&quot;&gt;hello there&lt;/ondewo:instruct&gt;</code></pre></li>
+      <li>Inline audio tags (CustomVoice only) - emotional expressions / sound effects in square
+        brackets. They are compiled into the instruction and stripped from the spoken text. The
+        supported tags are:
+        <ul>
+          <li>Voice-related: <code>[laughs]</code>, <code>[laughs harder]</code>,
+            <code>[starts laughing]</code>, <code>[wheezing]</code>, <code>[whispers]</code>,
+            <code>[sighs]</code>, <code>[exhales]</code>, <code>[sarcastic]</code>,
+            <code>[curious]</code>, <code>[excited]</code>, <code>[crying]</code>,
+            <code>[snorts]</code>, <code>[mischievously]</code></li>
+          <li>Sound effects: <code>[gunshot]</code>, <code>[applause]</code>,
+            <code>[clapping]</code>, <code>[explosion]</code>, <code>[swallows]</code>,
+            <code>[gulps]</code></li>
+          <li>Unique and special: <code>[sings]</code>, <code>[woo]</code>, <code>[fart]</code></li>
+          <li>Accent (variable form): <code>[strong &lt;accent&gt; accent]</code>, e.g.
+            <code>[strong French accent]</code></li>
+        </ul>
+        <pre><code>[whispers] hello there</code></pre></li>
+    </ul>
+    <p>See also <code>RequestConfig.instruction</code> for supplying the instruction / voice
+    description directly instead of embedding it in the text.</p>
+
+    <p><b>6. Provider-specific SSML (cloud pipelines only)</b></p>
+    <p>Each cloud provider documents its own SSML vocabulary; use the elements matching the provider
+    behind the selected pipeline. Standard <code>&lt;prosody&gt;</code>, <code>&lt;emphasis&gt;</code>
+    and <code>&lt;break&gt;</code> are common to all three.</p>
+    <ul>
+      <li>Google Cloud TTS: <pre><code>&lt;google:style name=&quot;calm&quot;&gt;please stay calm everything will be fine&lt;/google:style&gt;</code></pre></li>
+      <li>Microsoft Azure: <pre><code>&lt;mstts:express-as style=&quot;cheerful&quot;&gt;please stay calm everything will be fine&lt;/mstts:express-as&gt;</code></pre></li>
+      <li>Amazon Polly (whispered): <pre><code>&lt;amazon:effect name=&quot;whispered&quot;&gt;please stay calm everything will be fine&lt;/amazon:effect&gt;</code></pre></li>
+      <li>Amazon Polly (soft phonation): <pre><code>&lt;amazon:effect phonation=&quot;soft&quot;&gt;please stay calm everything will be fine&lt;/amazon:effect&gt;</code></pre></li>
     </ul>
     """
     @property
@@ -247,7 +355,7 @@ class RequestConfig(google.protobuf.message.Message):
     length_scale: builtins.float
     """Optional. This parameter is used for time stretching which is the process of
     changing the speed or duration of an audio.
-    It should be much more than 1.0. O is not a valid number for this variable.
+    It should be much more than 1.0. 0 is not a valid number for this variable.
     The default value is 1.
     """
     noise_scale: builtins.float
@@ -272,7 +380,16 @@ class RequestConfig(google.protobuf.message.Message):
     The default value is False.
     """
     instruction: builtins.str
-    """Optional. Define an instruction or prompt to be passed to the TTS/LLM backend for this request."""
+    """Optional. Define an instruction or prompt to be passed to the TTS/LLM backend for this request.
+
+    <p>This field is only honored by the <b>qwen3-tts-voicedesign</b> model, where it is a
+    natural-language description of the target voice to design, e.g.
+    <pre><code>a calm female voice with a slight British accent</code></pre></p>
+    <p>It is ignored by every other pipeline, including the qwen3-tts CustomVoice and base models and
+    the local vits / glow-tts models. To control the delivery / emotion of the qwen3-tts CustomVoice
+    model, embed the control tags in the request text instead (see <code>SynthesizeRequest.text</code>),
+    not via this field.</p>
+    """
     @property
     def t2s_service_config(self) -> google.protobuf.struct_pb2.Struct:
         """Optional. t2s_service_config provides the configuration of the service such as API key, bearer tokens, JWT,
@@ -504,19 +621,19 @@ class SynthesizeResponse(google.protobuf.message.Message):
     NORMALIZED_TEXT_FIELD_NUMBER: builtins.int
     SAMPLE_RATE_FIELD_NUMBER: builtins.int
     audio_uuid: builtins.str
-    """Required. Represents the pipeline id of the model configuration that will be used."""
+    """Required. The unique identifier (UUID) assigned to the generated audio."""
     audio: builtins.bytes
     """Required. Generated file with the parameters described in request."""
     generation_time: builtins.float
-    """Required. Time to generate audio."""
+    """Required. Time taken to generate the audio, in seconds."""
     audio_length: builtins.float
-    """Required. Audio length."""
+    """Required. Length (duration) of the generated audio, in seconds."""
     text: builtins.str
     """Required. Text from which audio was generated."""
     normalized_text: builtins.str
     """Optional. Normalized text."""
     sample_rate: builtins.float
-    """Optional. Value of sampling rate"""
+    """Optional. Sampling rate of the generated audio, in Hertz (Hz)."""
     @property
     def config(self) -> global___RequestConfig:
         """Required. Configuration from which audio was generated."""
@@ -556,19 +673,19 @@ class StreamingSynthesizeResponse(google.protobuf.message.Message):
     NORMALIZED_TEXT_FIELD_NUMBER: builtins.int
     SAMPLE_RATE_FIELD_NUMBER: builtins.int
     audio_uuid: builtins.str
-    """Required. Represents the pipeline id of the model configuration that will be used."""
+    """Required. The unique identifier (UUID) assigned to the generated audio."""
     audio: builtins.bytes
     """Required. Generated file with the parameters described in request."""
     generation_time: builtins.float
-    """Required. Time to generate audio."""
+    """Required. Time taken to generate the audio, in seconds."""
     audio_length: builtins.float
-    """Required. Audio length."""
+    """Required. Length (duration) of the generated audio, in seconds."""
     text: builtins.str
     """Required. Text from which audio was generated."""
     normalized_text: builtins.str
     """Optional. Normalized text."""
     sample_rate: builtins.float
-    """Optional. Value of sampling rate"""
+    """Optional. Sampling rate of the generated audio, in Hertz (Hz)."""
     @property
     def config(self) -> global___RequestConfig:
         """Required. Configuration from which audio was generated."""
@@ -972,7 +1089,7 @@ class Text2SpeechConfig(google.protobuf.message.Message):
 
     @property
     def inference(self) -> global___T2SInference:
-        """Required. Defines he inference of the pipeline representation."""
+        """Required. Defines the inference of the pipeline representation."""
 
     @property
     def normalization(self) -> global___T2SNormalization:
@@ -1046,14 +1163,17 @@ class T2SInference(google.protobuf.message.Message):
     SINGLE_INFERENCE_FIELD_NUMBER: builtins.int
     CACHING_FIELD_NUMBER: builtins.int
     type: builtins.str
-    """The type of inference."""
+    """The type of inference, selecting which of the settings below is applied:
+    composite_inference (two-stage text-to-mel then mel-to-audio) or
+    single_inference (single-stage text-to-audio).
+    """
     @property
     def composite_inference(self) -> global___CompositeInference:
-        """Composite inference settings."""
+        """Composite (two-stage) inference settings, used when type selects composite inference."""
 
     @property
     def single_inference(self) -> global___SingleInference:
-        """Single inference settings."""
+        """Single (one-stage) inference settings, used when type selects single inference."""
 
     @property
     def caching(self) -> global___Caching:
@@ -1130,7 +1250,9 @@ class Text2Mel(google.protobuf.message.Message):
     GLOW_TTS_FIELD_NUMBER: builtins.int
     GLOW_TTS_TRITON_FIELD_NUMBER: builtins.int
     type: builtins.str
-    """The type of text-to-mel inference."""
+    """The type of text-to-mel inference, selecting which of the settings below is applied
+    (glow_tts or glow_tts_triton).
+    """
     @property
     def glow_tts(self) -> global___GlowTTS:
         """GlowTTS inference settings."""
@@ -1167,7 +1289,11 @@ class Text2Audio(google.protobuf.message.Message):
     QWEN3_TTS_CUSTOM_VOICE_FIELD_NUMBER: builtins.int
     QWEN3_TTS_BASE_FIELD_NUMBER: builtins.int
     type: builtins.str
-    """The type of text-to-audio inference."""
+    """The type of text-to-audio inference, selecting which of the settings below is applied:
+    a local model (vits, vits_triton) or a cloud / neural service (t2s_cloud_service_elevenlabs,
+    t2s_cloud_service_amazon, t2s_cloud_service_google, t2s_cloud_service_microsoft,
+    qwen3_tts_custom_voice, qwen3_tts_base).
+    """
     @property
     def vits(self) -> global___Vits:
         """Vits inference settings."""
@@ -1290,9 +1416,9 @@ class GlowTTSTriton(google.protobuf.message.Message):
     triton_model_name: builtins.str
     """The name of the Triton model."""
     triton_server_host: builtins.str
-    """The host of the Triton inference server which servers the model."""
+    """The host of the Triton inference server which serves the model."""
     triton_server_port: builtins.int
-    """The port of the Triton inference server which servers the model."""
+    """The port of the Triton inference server which serves the model."""
     @property
     def cleaners(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
         """Repeated field containing the cleaners for text normalization."""
@@ -1386,9 +1512,9 @@ class VitsTriton(google.protobuf.message.Message):
     triton_model_name: builtins.str
     """The name of the Triton model."""
     triton_server_host: builtins.str
-    """The host of the Triton inference server which servers the model."""
+    """The host of the Triton inference server which serves the model."""
     triton_server_port: builtins.int
-    """The port of the Triton inference server which servers the model."""
+    """The port of the Triton inference server which serves the model."""
     @property
     def cleaners(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
         """Repeated field containing the cleaners for text normalization."""
@@ -1650,7 +1776,9 @@ class Mel2Audio(google.protobuf.message.Message):
     HIFI_GAN_FIELD_NUMBER: builtins.int
     HIFI_GAN_TRITON_FIELD_NUMBER: builtins.int
     type: builtins.str
-    """The type of mel-to-audio inference."""
+    """The type of mel-to-audio inference (vocoder), selecting which of the settings below is applied
+    (mb_melgan_triton, hifi_gan or hifi_gan_triton).
+    """
     @property
     def mb_melgan_triton(self) -> global___MbMelganTriton:
         """MbMelgan Triton inference settings."""
@@ -1721,9 +1849,9 @@ class HiFiGanTriton(google.protobuf.message.Message):
     triton_model_name: builtins.str
     """The name of the Triton model."""
     triton_server_host: builtins.str
-    """The host of the Triton inference server which servers the model."""
+    """The host of the Triton inference server which serves the model."""
     triton_server_port: builtins.int
-    """The port of the Triton inference server which servers the model."""
+    """The port of the Triton inference server which serves the model."""
     def __init__(
         self,
         *,
@@ -1754,9 +1882,9 @@ class MbMelganTriton(google.protobuf.message.Message):
     triton_model_name: builtins.str
     """The name of the Triton model."""
     triton_server_host: builtins.str
-    """The host of the Triton inference server which servers the model."""
+    """The host of the Triton inference server which serves the model."""
     triton_server_port: builtins.int
-    """The port of the Triton inference server which servers the model."""
+    """The port of the Triton inference server which serves the model."""
     def __init__(
         self,
         *,
@@ -2206,3 +2334,44 @@ class CreateCustomPhonemizerRequest(google.protobuf.message.Message):
     def ClearField(self, field_name: typing.Literal["maps", b"maps", "prefix", b"prefix"]) -> None: ...
 
 global___CreateCustomPhonemizerRequest = CreateCustomPhonemizerRequest
+
+@typing.final
+class VoiceCloningRequest(google.protobuf.message.Message):
+    """/////////////////
+    VOICE CLONING //
+    /////////////////
+
+    <p>VoiceCloningRequest message represents the request for cloning a voice.</p>
+    <p>A VoiceCloningRequest contains a sample audio of the speaker to be cloned together with
+    its transcription and the information about the speaker and the model to use for cloning.</p>
+    """
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    SAMPLE_AUDIO_FIELD_NUMBER: builtins.int
+    TRANSCRIPTION_FIELD_NUMBER: builtins.int
+    SPEAKER_NAME_FIELD_NUMBER: builtins.int
+    SPEAKER_LANGUAGE_FIELD_NUMBER: builtins.int
+    MODEL_NAME_FIELD_NUMBER: builtins.int
+    sample_audio: builtins.bytes
+    """Required. The sample audio of the speaker whose voice should be cloned."""
+    transcription: builtins.str
+    """Required. The transcription of the sample audio."""
+    speaker_name: builtins.str
+    """Required. The name of the speaker to associate with the cloned voice."""
+    speaker_language: builtins.str
+    """Required. The language of the speaker in the sample audio."""
+    model_name: builtins.str
+    """Required. The name of the model used for voice cloning."""
+    def __init__(
+        self,
+        *,
+        sample_audio: builtins.bytes = ...,
+        transcription: builtins.str = ...,
+        speaker_name: builtins.str = ...,
+        speaker_language: builtins.str = ...,
+        model_name: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["model_name", b"model_name", "sample_audio", b"sample_audio", "speaker_language", b"speaker_language", "speaker_name", b"speaker_name", "transcription", b"transcription"]) -> None: ...
+
+global___VoiceCloningRequest = VoiceCloningRequest

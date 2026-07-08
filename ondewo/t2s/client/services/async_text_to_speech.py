@@ -52,6 +52,7 @@ from ondewo.t2s.text_to_speech_pb2 import (
     T2sPipelineId,
     Text2SpeechConfig,
     UpdateCustomPhonemizerRequest,
+    VoiceCloningRequest,
 )
 from ondewo.t2s.text_to_speech_pb2_grpc import Text2SpeechStub
 
@@ -148,4 +149,8 @@ class Text2Speech(AsyncServicesInterface):
 
     async def list_custom_phonemizer(self, request: ListCustomPhonemizerRequest) -> ListCustomPhonemizerResponse:
         response: ListCustomPhonemizerResponse = await self.stub.ListCustomPhonemizer(request, metadata=self.metadata)
+        return response
+
+    async def voice_cloning(self, request: VoiceCloningRequest) -> Empty:
+        response: Empty = await self.stub.VoiceCloning(request, metadata=self.metadata)
         return response
