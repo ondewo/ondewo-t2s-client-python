@@ -46,6 +46,7 @@ dev = [
     "loguru",
     "mypy",
     "mypy-protobuf>=3.6.0",
+    "pre-commit",
     "pytest",
     "pytest-cov",
     "pytest-asyncio",
@@ -102,9 +103,10 @@ quote-style = "double"
 # Mypy  (translated faithfully from mypy.ini)
 # ---------------------------------------------------------------------------
 [tool.mypy]
-# mypy.ini had python_version=3.9, but current mypy requires >=3.10; use 3.10
-# (the lowest mypy still supports). Runtime requires-python stays ">=3.9".
-python_version = "3.10"
+# mypy.ini had python_version=3.9, but current mypy requires >=3.10. Use 3.12 so
+# mypy parses the numpy 2.x type stubs (which use PEP 695 `type X = ...` statements,
+# valid only on 3.12+). Runtime requires-python stays ">=3.9".
+python_version = "3.12"
 ignore_errors = false
 ignore_missing_imports = false
 disallow_untyped_defs = true
@@ -132,5 +134,7 @@ module = [
     "grpc.*",
     "ondewo.utils.*",
     "requests.*",
+    # imported only by examples/ (checked by the pre-commit mypy hook), not a dep.
+    "soundfile.*",
 ]
 ignore_missing_imports = true

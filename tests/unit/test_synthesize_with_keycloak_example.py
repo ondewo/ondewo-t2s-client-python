@@ -17,6 +17,7 @@ No live server and no network are touched: the gRPC stub and the Keycloak token 
 replaced with ``unittest.mock`` fakes, so the tests assert that the example builds the right
 protobuf requests, forwards the bearer metadata on every call, and handles the response.
 """
+
 from typing import (
     List,
     Tuple,
@@ -297,13 +298,16 @@ class TestMain:
         provider: MagicMock = MagicMock()
         provider.bearer_metadata.return_value = BEARER_METADATA
 
-        with patch(
-            "examples.synthesize_with_keycloak.Client",
-            return_value=client,
-        ) as client_cls, patch(
-            "examples.synthesize_with_keycloak.get_keycloak_token_provider",
-            return_value=provider,
-        ) as get_provider:
+        with (
+            patch(
+                "examples.synthesize_with_keycloak.Client",
+                return_value=client,
+            ) as client_cls,
+            patch(
+                "examples.synthesize_with_keycloak.get_keycloak_token_provider",
+                return_value=provider,
+            ) as get_provider,
+        ):
             main()
 
         # The factory + client were constructed from the same validated config.

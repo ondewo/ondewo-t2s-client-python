@@ -93,14 +93,16 @@ def test_client_disconnect_without_services_raises(client: Client) -> None:
 
 
 def test_client_connect_when_already_connected_raises(
-    client: Client, config: ClientConfig,
+    client: Client,
+    config: ClientConfig,
 ) -> None:
     with pytest.raises(ConnectionError):
         client.connect(config=config, use_secure_channel=False)
 
 
 def test_client_can_reconnect_after_disconnect(
-    client: Client, config: ClientConfig,
+    client: Client,
+    config: ClientConfig,
 ) -> None:
     client.disconnect()
     client.connect(config=config, use_secure_channel=False)

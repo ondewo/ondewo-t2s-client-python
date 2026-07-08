@@ -28,10 +28,11 @@ def test_list_languages(client: Client) -> None:
 
 
 @pytest.mark.parametrize(
-    'text, length_scale', [
+    "text, length_scale",
+    [
         ("Hi, this is Brigitte. Thanks for calling.", 1.0),
         ("I'm not here at the moment, so please leave a message and I'll call you back.", 0.7),
-    ]
+    ],
 )
 def test_synthesize_request(client: Client, text: str, length_scale: float) -> None:
     pipelines: ListT2sPipelinesResponse = client.services.text_to_speech.list_t2s_pipelines(

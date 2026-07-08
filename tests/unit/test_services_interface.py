@@ -18,6 +18,7 @@ No live server and no network are touched: the keycloak token endpoint is replac
 that the generated service wrappers inherit these interfaces and expose the ``metadata`` the
 wrapper methods forward as ``Authorization: Bearer`` on every gRPC call.
 """
+
 import asyncio
 from typing import (
     Any,
@@ -152,6 +153,7 @@ class TestAsyncServicesInterface:
 
     def test_wrapper_subclasses_the_interface(self) -> None:
         """The generated async ``Text2Speech`` wrapper inherits the async Keycloak-aware interface."""
+
         async def _body() -> None:
             service: AsyncText2Speech = AsyncText2Speech(config=_legacy_config(), use_secure_channel=False)
             try:
@@ -163,6 +165,7 @@ class TestAsyncServicesInterface:
 
     def test_no_keycloak_yields_empty_metadata(self) -> None:
         """Without Keycloak configured, no provider is built and the metadata is empty."""
+
         async def _body() -> None:
             service: AsyncText2Speech = AsyncText2Speech(config=_legacy_config(), use_secure_channel=False)
             try:

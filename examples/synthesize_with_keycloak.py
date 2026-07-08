@@ -28,6 +28,7 @@ Configure it by filling in ``examples/environment.env`` (loaded automatically), 
 
     python examples/synthesize_with_keycloak.py
 """
+
 import os
 import sys
 from pathlib import Path
@@ -232,8 +233,7 @@ def synthesize(
         response: SynthesizeResponse = service.stub.Synthesize(request, metadata=metadata)
     except grpc.RpcError as rpc_error:
         log.error(
-            f"Synthesize RPC failed for pipeline {pipeline_id}: "
-            f"code={rpc_error.code()} details={rpc_error.details()}"
+            f"Synthesize RPC failed for pipeline {pipeline_id}: code={rpc_error.code()} details={rpc_error.details()}"
         )
         raise
     log.info("DONE: synthesize")
@@ -319,8 +319,7 @@ if __name__ == "__main__":
         main()
     except grpc.RpcError as rpc_error:
         log.exception(
-            f"Keycloak T2S example failed with a gRPC error: "
-            f"code={rpc_error.code()} details={rpc_error.details()}"
+            f"Keycloak T2S example failed with a gRPC error: code={rpc_error.code()} details={rpc_error.details()}"
         )
         sys.exit(1)
     except Exception:

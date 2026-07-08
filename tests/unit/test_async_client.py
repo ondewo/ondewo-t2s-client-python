@@ -70,7 +70,8 @@ def test_async_client_text_to_speech_has_aio_grpc_channel(config: ClientConfig) 
         client: AsyncClient = AsyncClient(config=config, use_secure_channel=False)
         try:
             assert isinstance(
-                client.services.text_to_speech.grpc_channel, grpc.aio.Channel,
+                client.services.text_to_speech.grpc_channel,
+                grpc.aio.Channel,
             )
         finally:
             await client.disconnect()
@@ -100,7 +101,9 @@ def test_async_client_accepts_custom_grpc_options(config: ClientConfig) -> None:
 
     async def _body() -> None:
         client: AsyncClient = AsyncClient(
-            config=config, use_secure_channel=False, options=options,
+            config=config,
+            use_secure_channel=False,
+            options=options,
         )
         try:
             assert client.services is not None
@@ -181,7 +184,8 @@ def test_async_client_can_reconnect_after_disconnect(config: ClientConfig) -> No
     ],
 )
 def test_async_client_text_to_speech_exposes_coroutine_method(
-    config: ClientConfig, method_name: str,
+    config: ClientConfig,
+    method_name: str,
 ) -> None:
     async def _body() -> None:
         client: AsyncClient = AsyncClient(config=config, use_secure_channel=False)

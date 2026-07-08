@@ -99,9 +99,7 @@ class ClientConfig(BaseClientConfig):
                     f"{self.__class__.__name__}."
                 )
             if not self.password:
-                raise ValueError(
-                    f"The field `password` is mandatory for Keycloak auth in {self.__class__.__name__}."
-                )
+                raise ValueError(f"The field `password` is mandatory for Keycloak auth in {self.__class__.__name__}.")
 
     @property
     def use_keycloak(self) -> bool:

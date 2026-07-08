@@ -120,8 +120,7 @@ def synthesis_request(
         raise
 
     log.info(
-        f"DONE: synthesis_request: audio_length={response.audio_length}s "
-        f"generation_time={response.generation_time}s"
+        f"DONE: synthesis_request: audio_length={response.audio_length}s generation_time={response.generation_time}s"
     )
 
     bio: io.BytesIO = io.BytesIO(response.audio)
@@ -186,23 +185,17 @@ def main() -> None:
         ("grpc.service_config", service_config_json),
     }
 
-    client: Client = Client(
-        config=config, use_secure_channel=use_secure_channel, options=options
-    )
+    client: Client = Client(config=config, use_secure_channel=use_secure_channel, options=options)
     t2s_service: Text2Speech = client.services.text_to_speech
 
     # 2. List all available pipelines and filter on german language ones
     # List all t2s pipelines present on the server
     log.info("Listing all available T2S pipelines")
-    for pipeline in t2s_service.list_t2s_pipelines(
-        request=ListT2sPipelinesRequest()
-    ).pipelines:
+    for pipeline in t2s_service.list_t2s_pipelines(request=ListT2sPipelinesRequest()).pipelines:
         log.info(f"Pipeline: {pipeline.id}")
 
     # List pipelines based on conditions
-    german_pipelines = t2s_service.list_t2s_pipelines(
-        request=ListT2sPipelinesRequest(languages=["de"])
-    ).pipelines
+    german_pipelines = t2s_service.list_t2s_pipelines(request=ListT2sPipelinesRequest(languages=["de"])).pipelines
     if not german_pipelines:
         raise RuntimeError("No German (de) T2S pipelines are available on the server.")
     german_pipeline: Text2SpeechConfig = german_pipelines[0]
@@ -210,9 +203,7 @@ def main() -> None:
 
     # 3. Send a synthesis request to the specified pipeline
     # Make synthesize request to the server to get audio for given text
-    audio = synthesis_request(
-        t2s_service, text="Hallo, wie geht es dir?", t2s_pipeline_id=german_pipeline.id
-    )
+    audio = synthesis_request(t2s_service, text="Hallo, wie geht es dir?", t2s_pipeline_id=german_pipeline.id)
     assert audio
     # Adding length scale parameter to make speech faster or slower
     audio = synthesis_request(
@@ -233,9 +224,7 @@ def main() -> None:
 
     # 5. Send a synthesis request to the updated pipeline
     # See if generated audio change according to updated config
-    audio = synthesis_request(
-        t2s_service, text="Hallo, wie geht es dir?", t2s_pipeline_id=german_pipeline.id
-    )
+    audio = synthesis_request(t2s_service, text="Hallo, wie geht es dir?", t2s_pipeline_id=german_pipeline.id)
     assert audio
 
     # 6. Revert the update of the specified pipeline
@@ -250,9 +239,7 @@ if __name__ == "__main__":
     try:
         main()
     except grpc.RpcError as rpc_error:
-        log.exception(
-            f"T2S example failed with a gRPC error: code={rpc_error.code()} details={rpc_error.details()}"
-        )
+        log.exception(f"T2S example failed with a gRPC error: code={rpc_error.code()} details={rpc_error.details()}")
         sys.exit(1)
     except Exception:
         log.exception("T2S example failed with an unexpected error.")
