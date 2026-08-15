@@ -185,3 +185,56 @@ The repo is now fully on **uv** (not just pyproject.toml):
 - **`[tool.mypy] python_version` must be `3.12`** wherever numpy 2.x is on the mypy path — its PEP-695 `type X = …` stubs fail to parse on < 3.12.
 - The release `git commit` uses **`--no-verify`** so pre-commit hooks never gate an automated release.
 - **Validated by a real PyPI publish** — `ondewo-t2s-client 6.5.0` was built with `uv build` and uploaded via twine end-to-end; the uv release pipeline works.
+
+## `ClientConfig` must not print its secrets
+
+`@dataclass` generates a `__repr__` that prints **every** field, so `log.debug(f"…{config}")` — or any
+traceback carrying locals — wrote the ROPC `password` and the PEM `grpc_cert` to the log in clear text.
+Downstream consumers really do log config objects: a repository-wide sweep in ondewo-vtsi found this class
+among the leakers, alongside thirteen of its own dataclasses. All five ONDEWO Python clients had the same
+defect and all five now carry the same fix.
+
+`ondewo/t2s/client/client_config.py` names the secrets once and renders around them:
+
+```python
+SECRET_FIELD_NAMES: ClassVar[FrozenSet[str]] = frozenset({"password", "grpc_cert"})
+```
+
+Four properties are load-bearing:
+
+- **An empty secret renders as `''`, never as `***REDACTED***`.** The marker reads as "this is set and
+  sensitive", which is actively misleading when the real fault is that nobody set it — usually the very
+  thing being debugged. The `__repr__` therefore redacts only a *truthy* value.
+- **A new secret field must join `SECRET_FIELD_NAMES` in the same commit.** That frozenset is the entire
+  policy; nothing infers sensitivity from a field name.
+- **Redaction covers `repr()` / `str()` only.** Measured on the sibling class: `to_json()`, `to_dict()` and
+  `dataclasses.asdict()` still return the plaintext password, and `to_json()` renders the certificate as a
+  byte array. That is deliberate, because `@dataclass_json` has to round-trip through `from_json` — so
+  never log a serialized config, and do not "fix" it by redacting there.
+- **The guard is behavioural.** `tests/unit/test_client_config_redacts_secrets.py` builds a `ClientConfig`
+  with distinctive planted values and reads its `repr`. It does not grep for `__repr__`, because a grep
+  passes just as well for a `__repr__` that prints the secret anyway. It also asserts each secret is really
+  **on the object** (`config.password == PASSWORD`) before asserting it is absent from the repr — reading
+  only the repr would pass vacuously against unfixed code. The certificate is compared against
+  `GRPC_CERT.encode()`, since `BaseClientConfig.__post_init__` encodes it to `bytes`; comparing to the
+  `str` would fail while the redaction it guards worked perfectly.
+
+Run it with `uv run pytest tests/unit/test_client_config_redacts_secrets.py -q` — 5 tests.
+
+**Released in `6.6.1`.** The section above was written while the fix was still on the feature branch; it
+shipped when `OND211-2418-add-keycloak-for-2-fa` was merged to `master` and cut as `6.6.1`. ondewo-vtsi
+pins `ondewo-t2s-client` by exact version, so raising that pin is what carries the redaction downstream.
+
+## The `commit-msg` hooks run in the WRONG order here
+
+`.pre-commit-config.yaml` declares `giticket` **before** `conventional-pre-commit`. pre-commit runs hooks
+in file order, and `giticket` rewrites the subject to `[OND211-2418] <subject>`, which is not a valid
+Conventional Commit — so the validator is handed the prefix the other hook just added and rejects it, and
+no conforming commit message exists at all. The nlu client has the two the right way round
+(`conventional-pre-commit` first, then `giticket`); this repo does not, which is why commits here need
+`--no-verify`. The release target already passes `--no-verify`, so releases are unaffected.
+
+Write the plain subject and let `giticket` decorate it — never type the `[TICKET]` prefix yourself, which
+yields `[OND211-2418] [OND211-2418] …`. `giticket`'s regex here is also the looser
+`([A-Z]{3}[0-9]{3}-[0-9]{1,5})` rather than the `OND`-anchored `(OND[0-9]{3}-[0-9]{1,5})` the others use,
+so it accepts any three-letter project key.
