@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ondewo-t2s-client"
-version = "6.6.1"
+version = "6.6.2"
 description = "ONDEWO Text 2 Speech (T2S) Client library for Python"
 readme = "README.md"
 requires-python = ">=3.9"

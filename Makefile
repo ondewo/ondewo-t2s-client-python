@@ -16,7 +16,7 @@ export
 
 # MUST BE THE SAME AS API in Mayor and Minor Version Number
 # example: API 2.9.0 --> Client 2.9.X
-ONDEWO_T2S_VERSION=6.6.1
+ONDEWO_T2S_VERSION=6.6.2
 
 ONDEWO_T2S_API_GIT_BRANCH=tags/6.6.0
 ONDEWO_PROTO_COMPILER_GIT_BRANCH=tags/5.12.0
@@ -28,7 +28,7 @@ GITHUB_GH_TOKEN?=ENTER_YOUR_TOKEN_HERE
 
 # Terminate on the ***** separator that delimits release entries, NOT on /\*\*/ — that matched the first
 # markdown **bold** span inside the entry and silently truncated the notes there, with no error from
-# `gh release create`. Harmless only while no entry used inline bold; the 6.6.1 entry does. Same fix as
+# `gh release create`. Harmless only while no entry used inline bold; the 6.6.1 and 6.6.2 entries do. Same fix as
 # ondewo-nlu-client-python's Makefile.
 CURRENT_RELEASE_NOTES=`cat RELEASE.md \
 	| perl -ne 'print if /Release ONDEWO T2S Python Client ${ONDEWO_T2S_VERSION}/../^\*{5}/'`
