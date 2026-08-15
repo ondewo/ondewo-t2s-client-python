@@ -204,7 +204,7 @@ Four properties are load-bearing:
 
 - **An empty secret renders as `''`, never as `***REDACTED***`.** The marker reads as "this is set and
   sensitive", which is actively misleading when the real fault is that nobody set it — usually the very
-  thing being debugged. The `__repr__` therefore redacts only a *truthy* value.
+  thing being debugged. The `__repr__` therefore redacts only a _truthy_ value.
 - **A new secret field must join `SECRET_FIELD_NAMES` in the same commit.** That frozenset is the entire
   policy; nothing infers sensitivity from a field name.
 - **Redaction covers `repr()` / `str()` only.** Measured on the sibling class: `to_json()`, `to_dict()` and
