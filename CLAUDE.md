@@ -148,3 +148,61 @@ Raises:
 - Use context managers for files, sockets, and thread pools.
 - Prefer region comments for grouping methods in files that already use them.
 - End edited Markdown and YAML files with a trailing newline.
+
+## `ClientConfig` must not print its secrets
+
+`@dataclass` generates a `__repr__` that prints **every** field, so `log.debug(f"…{config}")` — or any
+traceback carrying locals — wrote the ROPC `password` and the PEM `grpc_cert` to the log in clear text.
+Downstream consumers really do log config objects: a repository-wide sweep in ondewo-vtsi found this class
+among the leakers, alongside thirteen of its own dataclasses. All five ONDEWO Python clients had the same
+defect and all five now carry the same fix.
+
+`ondewo/t2s/client/client_config.py` names the secrets once and renders around them:
+
+```python
+SECRET_FIELD_NAMES: ClassVar[FrozenSet[str]] = frozenset({"password", "grpc_cert"})
+```
+
+Four properties are load-bearing:
+
+- **An empty secret renders as `''`, never as `***REDACTED***`.** The marker reads as "this is set and
+  sensitive", which is actively misleading when the real fault is that nobody set it — usually the very
+  thing being debugged. The `__repr__` therefore redacts only a *truthy* value.
+- **A new secret field must join `SECRET_FIELD_NAMES` in the same commit.** That frozenset is the entire
+  policy; nothing infers sensitivity from a field name.
+- **Redaction covers `repr()` / `str()` only.** Measured on the sibling class: `to_json()`, `to_dict()` and
+  `dataclasses.asdict()` still return the plaintext password, and `to_json()` renders the certificate as a
+  byte array. That is deliberate, because `@dataclass_json` has to round-trip through `from_json` — so
+  never log a serialized config, and do not "fix" it by redacting there.
+- **The guard is behavioural.** `tests/unit/test_client_config_redacts_secrets.py` builds a `ClientConfig`
+  with distinctive planted values and reads its `repr`. It does not grep for `__repr__`, because a grep
+  passes just as well for a `__repr__` that prints the secret anyway. It also asserts each secret is really
+  **on the object** (`config.password == PASSWORD`) before asserting it is absent from the repr — reading
+  only the repr would pass vacuously against unfixed code. The certificate is compared against
+  `GRPC_CERT.encode()`, since `BaseClientConfig.__post_init__` encodes it to `bytes`; comparing to the
+  `str` would fail while the redaction it guards worked perfectly.
+
+Run it with `python -m pytest tests/unit/test_client_config_redacts_secrets.py -q` — 5 tests. (This repo
+still builds from `setup.py` with `mypy.ini` / flake8 / black / autopep8; it has no `pyproject.toml`, so
+the `uv run pytest` invocation the other four clients use does not apply here.)
+
+**The fix is unreleased.** `git tag --contains HEAD` is empty here (newest tag `6.6.0`), and ondewo-vtsi
+pins `ondewo-t2s-client==6.6.0` by exact version, so the redaction cannot reach it until this package cuts
+a release.
+
+## This repo has NO Conventional-Commits hook — only `giticket`
+
+Unlike the nlu, sip, csi and vtsi clients, `.pre-commit-config.yaml` here declares exactly one `commit-msg`
+hook: `giticket`, which prepends `[<TICKET>] ` to whatever subject you typed. There is no
+`conventional-pre-commit` block, so **nothing validates the subject in this repo** — a message that the
+other four clients reject commits cleanly here. Its `giticket` regex is also the looser one,
+`([A-Z]{3}[0-9]{3}-[0-9]{1,5})` instead of the `OND`-anchored `(OND[0-9]{3}-[0-9]{1,5})` the others use, so
+it accepts any three-letter project key.
+
+If a `conventional-pre-commit` hook is ever added here, it **must be listed before `giticket`**. pre-commit
+runs hooks in file order, and `giticket` rewrites the subject to `[OND211-2418] <subject>`, which is not a
+valid Conventional Commit; with `giticket` first the validator is handed the prefix the other hook just
+added and rejects it, so no conforming commit message exists at all. That exact ordering bug was live in
+the sip, csi and vtsi clients and forced their authors onto `--no-verify`. Write the plain subject and let
+`giticket` decorate it — never type the `[TICKET]` prefix yourself, which yields
+`[OND211-2418] [OND211-2418] …`.
