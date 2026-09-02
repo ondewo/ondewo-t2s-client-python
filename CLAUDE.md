@@ -185,3 +185,31 @@ The repo is now fully on **uv** (not just pyproject.toml):
 - **`[tool.mypy] python_version` must be `3.12`** wherever numpy 2.x is on the mypy path — its PEP-695 `type X = …` stubs fail to parse on < 3.12.
 - The release `git commit` uses **`--no-verify`** so pre-commit hooks never gate an automated release.
 - **Validated by a real PyPI publish** — `ondewo-t2s-client 6.5.0` was built with `uv build` and uploaded via twine end-to-end; the uv release pipeline works.
+
+## CI — the GitHub Actions workflow is a required gate
+
+`.github/workflows/tests.yml` (job `unit-tests`, `runs-on: ubuntu-latest`) fires on **push to every branch** (`branches: ["**"]`) and on every pull request. It is a **blocking gate, not advisory** — treat a red run the way you would treat a failing test locally, and do not push work that has not been through the four commands below.
+
+The job runs, in order: `actions/checkout@v5` → `astral-sh/setup-uv@v6` (cache on) → `uv python install 3.12` → a frozen sync → ruff → mypy → pytest under a 100 % coverage gate. The last four are the only ones that can fail on your code, and they reproduce locally **verbatim**:
+
+```bash
+uv python install 3.12
+uv sync --extra dev --frozen
+uv run --frozen ruff check .
+uv run --frozen mypy ondewo
+uv run --frozen pytest tests/unit -q \
+    --cov=ondewo.t2s.client.utils.keycloak \
+    --cov=ondewo.t2s.client.client_config \
+    --cov=ondewo.t2s.client.core.services_interface \
+    --cov=ondewo.t2s.client.core.async_services_interface \
+    --cov-report=term-missing \
+    --cov-report=xml \
+    --cov-fail-under=100
+```
+
+- **Copy the commands from the workflow; do not approximate them — and keep `--frozen`.** `uv sync --frozen` and `uv run --frozen` install exactly what `uv.lock` pins and **fail** if the lock is stale relative to `pyproject.toml`. Drop the flag and uv silently re-resolves in memory, so you test a dependency set that is not the one CI installs and a stale `uv.lock` sails through unnoticed. After any `pyproject.toml` edit, run `uv lock` and commit the lock in the same commit.
+- **`.python-version` (`3.12`) is load-bearing — do not delete it.** The workflow's `uv python install 3.12` only guarantees 3.12 on a _fresh runner_, where it is the sole uv-managed interpreter. On a developer machine uv prefers its **newest managed** CPython, so before this file existed `uv sync --extra dev --frozen` built the venv on **3.14** while CI ran 3.12 — and the suite came back `30 failed, 84 passed, 25 errors`, every one of them `AttributeError: 'ServicesContainer' object has no attribute '__annotations__'` raised inside `ondewo/utils/base_client.py`, with nothing whatsoever to do with the change under test. Committing the pin makes the unmodified workflow commands select 3.12 everywhere; `.gitignore` deliberately leaves `.python-version` commented out so it _can_ be tracked.
+- **The SDK really is broken on Python ≥ 3.13, so the pin is honest, not a workaround.** Under PEP 649 a dataclass no longer materialises `__annotations__` into its class `__dict__`, so the instance lookup `self.services.__annotations__` that `ondewo-client-utils`' `BaseClient.disconnect` performs no longer resolves. `requires-python` is `>=3.9` and the trove classifiers stop at 3.12: **3.12 is the tested interpreter**. Raising that ceiling is a real port, not a one-line bump.
+- **The coverage gate FAILS OPEN — read the warnings, not just the percentage.** There is no `[tool.coverage.run] source` in `pyproject.toml`; the measured set is the hand-written list of **dotted** `--cov=` arguments in the workflow, and pytest-cov only measures a dotted module the suite actually **imports**. Verified in this repo: point `--cov` at a module no test imports (`ondewo.t2s.scripts.generate_services`) and it does not score 0 % — it emits `CoverageWarning: Module … was never imported. (module-not-imported)`, **vanishes from the table entirely**, and the run still prints `Required test coverage of 100% reached` and exits 0. A new hand-written module that is simply never added to the list is likewise never measured. So: **when you add hand-written code under `ondewo/`, add its dotted path to the workflow's `--cov=` list in the same commit**, and scan the pytest output for `module-not-imported` before believing a green percentage.
+- **`mypy` prints `note: unused section(s): module = ['soundfile.*']` on a clean run.** That is a _note_ and the step still exits 0 — `soundfile` is imported only by `examples/`, which the pre-commit mypy hook covers but `mypy ondewo` does not reach. Do not "fix" it by deleting the override; the pre-commit hook needs it.
+- **The workflow does not check out submodules** (`actions/checkout@v5` with no `submodules:` key), so `ondewo-t2s-api/` and `ondewo-proto-compiler/` are absent in CI. Nothing in the four gates may depend on them — ruff already excludes both, and the unit suite must never read a `.proto`.
