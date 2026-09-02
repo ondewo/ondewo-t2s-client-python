@@ -213,3 +213,56 @@ uv run --frozen pytest tests/unit -q \
 - **The coverage gate FAILS OPEN — read the warnings, not just the percentage.** There is no `[tool.coverage.run] source` in `pyproject.toml`; the measured set is the hand-written list of **dotted** `--cov=` arguments in the workflow, and pytest-cov only measures a dotted module the suite actually **imports**. Verified in this repo: point `--cov` at a module no test imports (`ondewo.t2s.scripts.generate_services`) and it does not score 0 % — it emits `CoverageWarning: Module … was never imported. (module-not-imported)`, **vanishes from the table entirely**, and the run still prints `Required test coverage of 100% reached` and exits 0. A new hand-written module that is simply never added to the list is likewise never measured. So: **when you add hand-written code under `ondewo/`, add its dotted path to the workflow's `--cov=` list in the same commit**, and scan the pytest output for `module-not-imported` before believing a green percentage.
 - **`mypy` prints `note: unused section(s): module = ['soundfile.*']` on a clean run.** That is a _note_ and the step still exits 0 — `soundfile` is imported only by `examples/`, which the pre-commit mypy hook covers but `mypy ondewo` does not reach. Do not "fix" it by deleting the override; the pre-commit hook needs it.
 - **The workflow does not check out submodules** (`actions/checkout@v5` with no `submodules:` key), so `ondewo-t2s-api/` and `ondewo-proto-compiler/` are absent in CI. Nothing in the four gates may depend on them — ruff already excludes both, and the unit suite must never read a `.proto`.
+
+## `ClientConfig` must not print its secrets
+
+`@dataclass` generates a `__repr__` that prints **every** field, so `log.debug(f"…{config}")` — or any
+traceback carrying locals — wrote the ROPC `password` and the PEM `grpc_cert` to the log in clear text.
+Downstream consumers really do log config objects: a repository-wide sweep in ondewo-vtsi found this class
+among the leakers, alongside thirteen of its own dataclasses. All five ONDEWO Python clients had the same
+defect and all five now carry the same fix.
+
+`ondewo/t2s/client/client_config.py` names the secrets once and renders around them:
+
+```python
+SECRET_FIELD_NAMES: ClassVar[FrozenSet[str]] = frozenset({"password", "grpc_cert"})
+```
+
+Four properties are load-bearing:
+
+- **An empty secret renders as `''`, never as `***REDACTED***`.** The marker reads as "this is set and
+  sensitive", which is actively misleading when the real fault is that nobody set it — usually the very
+  thing being debugged. The `__repr__` therefore redacts only a _truthy_ value.
+- **A new secret field must join `SECRET_FIELD_NAMES` in the same commit.** That frozenset is the entire
+  policy; nothing infers sensitivity from a field name.
+- **Redaction covers `repr()` / `str()` only.** Measured on the sibling class: `to_json()`, `to_dict()` and
+  `dataclasses.asdict()` still return the plaintext password, and `to_json()` renders the certificate as a
+  byte array. That is deliberate, because `@dataclass_json` has to round-trip through `from_json` — so
+  never log a serialized config, and do not "fix" it by redacting there.
+- **The guard is behavioural.** `tests/unit/test_client_config_redacts_secrets.py` builds a `ClientConfig`
+  with distinctive planted values and reads its `repr`. It does not grep for `__repr__`, because a grep
+  passes just as well for a `__repr__` that prints the secret anyway. It also asserts each secret is really
+  **on the object** (`config.password == PASSWORD`) before asserting it is absent from the repr — reading
+  only the repr would pass vacuously against unfixed code. The certificate is compared against
+  `GRPC_CERT.encode()`, since `BaseClientConfig.__post_init__` encodes it to `bytes`; comparing to the
+  `str` would fail while the redaction it guards worked perfectly.
+
+Run it with `uv run pytest tests/unit/test_client_config_redacts_secrets.py -q` — 5 tests.
+
+**Released in `6.6.1`.** The section above was written while the fix was still on the feature branch; it
+shipped when `OND211-2418-add-keycloak-for-2-fa` was merged to `master` and cut as `6.6.1`. ondewo-vtsi
+pins `ondewo-t2s-client` by exact version, so raising that pin is what carries the redaction downstream.
+
+## The `commit-msg` hooks run in the WRONG order here
+
+`.pre-commit-config.yaml` declares `giticket` **before** `conventional-pre-commit`. pre-commit runs hooks
+in file order, and `giticket` rewrites the subject to `[OND211-2418] <subject>`, which is not a valid
+Conventional Commit — so the validator is handed the prefix the other hook just added and rejects it, and
+no conforming commit message exists at all. The nlu client has the two the right way round
+(`conventional-pre-commit` first, then `giticket`); this repo does not, which is why commits here need
+`--no-verify`. The release target already passes `--no-verify`, so releases are unaffected.
+
+Write the plain subject and let `giticket` decorate it — never type the `[TICKET]` prefix yourself, which
+yields `[OND211-2418] [OND211-2418] …`. `giticket`'s regex here is also the looser
+`([A-Z]{3}[0-9]{3}-[0-9]{1,5})` rather than the `OND`-anchored `(OND[0-9]{3}-[0-9]{1,5})` the others use,
+so it accepts any three-letter project key.
