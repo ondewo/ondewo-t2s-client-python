@@ -23,19 +23,19 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Libraries",
 ]
+# Only what the shipped `ondewo` package actually imports. cffi, google-api-core,
+# googleapis-common-protos, grpcio-reflection, grpcio-tools, numpy, polling and regex had zero
+# import sites and only inflated the install (same prune as ondewo-nlu-client-python 941c7e7).
+# grpc_reflection / grpc_tools still show up in sys.modules on `import grpc` because grpc's own
+# _runtime_protos.py probes for them behind try/except - presence there is not use.
 dependencies = [
-    "cffi",
+    # Used by ondewo/t2s/client/client_config.py's @dataclass_json, which gives downstream callers
+    # ClientConfig.from_json()/to_dict(). Unlike the s2t/nlu twins this repo still applies the
+    # decorator, so the dependency is real and stays declared.
     "dataclasses-json",
-    "google-api-core>=2.19.1",
-    "googleapis-common-protos>=1.63.2",
-    "grpcio-reflection>=1.65.5",
-    "grpcio-tools>=1.65.5",
     "grpcio>=1.65.5",
-    "numpy",
     "ondewo-client-utils>=3.2.0",
-    "polling>=0.3.2",
     "protobuf>=5.27.3",
-    "regex>=2022.6.2",
     "requests",
 ]
 
@@ -103,9 +103,9 @@ quote-style = "double"
 # Mypy  (translated faithfully from mypy.ini)
 # ---------------------------------------------------------------------------
 [tool.mypy]
-# mypy.ini had python_version=3.9, but current mypy requires >=3.10. Use 3.12 so
-# mypy parses the numpy 2.x type stubs (which use PEP 695 `type X = ...` statements,
-# valid only on 3.12+). Runtime requires-python stays ">=3.9".
+# mypy.ini had python_version=3.9, but mypy 2.x refuses it outright:
+# "python_version: Python 3.9 is not supported (must be 3.10 or higher)". 3.12 is the
+# interpreter .github/workflows/tests.yml pins; runtime requires-python stays ">=3.9".
 python_version = "3.12"
 ignore_errors = false
 ignore_missing_imports = false
