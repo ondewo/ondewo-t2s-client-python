@@ -30,3 +30,24 @@ accept your pull requests.
    recommended coding standards for this organization.
 1. Ensure that your code has an appropriate set of unit tests which all pass.
 1. Submit a pull request.
+
+## Before you submit
+
+`.github/workflows/tests.yml` runs on every push to every branch and is a blocking gate. Run its
+four commands verbatim first — all four must exit 0:
+
+```bash
+uv sync --extra dev --frozen
+uv run --frozen ruff check .
+uv run --frozen mypy ondewo
+uv run --frozen pytest tests/unit -q --cov --cov-report=term-missing --cov-report=xml --cov-fail-under=100
+```
+
+The coverage gate measures every `.py` under `ondewo/` from disk, so a new hand-written module
+without tests fails it. Add the tests in the same commit rather than widening the `omit` list in
+`pyproject.toml`.
+
+Then run the hooks with `uv run --frozen pre-commit run --all-files` (**not** `uvx pre-commit` —
+the mypy hook is `language: system` and `uvx` cannot see the `.venv` mypy, so it reports a false
+failure). Write plain Conventional Commits subjects; the `giticket` hook adds the `[TICKET]` prefix
+from the branch name, so never type it yourself.

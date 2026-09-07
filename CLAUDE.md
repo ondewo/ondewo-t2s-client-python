@@ -149,70 +149,158 @@ Raises:
 - Prefer region comments for grouping methods in files that already use them.
 - End edited Markdown and YAML files with a trailing newline.
 
-## Release gotchas (hard-won this session)
+## Toolchain: uv + ruff + mypy, all configured in `pyproject.toml`
 
-These bit us during the 6.14.0 release. Keep them in mind when releasing.
+There is no `setup.py`, `setup.cfg`, `mypy.ini`, `.flake8`, `requirements.txt` or
+`requirements-dev.txt` here, and none of them may come back — `pyproject.toml` is the single
+config file and `uv.lock` is the single pin. A re-created `mypy.ini` silently **shadows**
+`[tool.mypy]`; a re-created `setup.py` conflicts with `[project]` under setuptools>=61.
 
-- **Trust the registry, not the log.** `make release_all_clients` wraps each client in `|| echo "Already released …"`, so a _failed_ release is reported as "done". After any release, verify the GitHub release **and** the published package (PyPI / npm) directly.
-- **`npm install failed after 5 attempts` in a release log is usually a red herring** — that text is the echo _inside_ the docker `RUN for i in 1..5; do npm install …` retry loop, not a real failure (`npm install` succeeds → `#10 DONE`). Look further down for the real error (a TTY error, an eslint failure, a `setup.py` error).
-- **Codegen must run TTY-free.** The `docker run` that invokes the proto-compiler must not pass `-it` — non-interactively it fails with `cannot attach stdin to a TTY-enabled container because stdin is not a terminal`. Fix the script (drop `-it`), or run the whole release under a pseudo-TTY: `script -qc 'make …' /dev/null`.
-- **Release Makefiles print secrets.** Some `docker run … -e <TOKEN>=…` recipe lines lack a leading `@`, so `make` echoes the expanded token. Rotate any token printed during a release; fix by prefixing the recipe line with `@`.
-- The release auto-pulls the **latest** `ondewo-proto-compiler` tag.
-- **npm package names are inconsistent** — e.g. the JS client publishes as `@ondewo/ondewo-nlu-client-js` (double `ondewo`), not `@ondewo/nlu-client-js`. Check `src/package.json`'s `name` before querying npm.
-- **PyPI build needs setuptools.** The release image (`Dockerfile.utils`) is `python:3.12-slim`, which bundles no `setuptools`, so `python setup.py sdist bdist_wheel` dies with `ModuleNotFoundError: No module named 'setuptools'`. `Dockerfile.utils` must `pip install … setuptools wheel`.
+- **Deps:** edit `[project.dependencies]` / `[project.optional-dependencies].dev`, then run
+  `uv lock` and commit the lock **in the same commit** — CI syncs `--frozen` and a stale lock is a
+  hard failure.
+- **Build backend stays setuptools** (PyPI compatibility) but the build command is `uv build`.
+  PEP 625 applies: the sdist is `ondewo_t2s_client-<v>.tar.gz` with an **underscore**.
+- **Lint/format is ruff** (`[tool.ruff]`, line-length 120, `*_pb2*` excluded): `make ruff`,
+  `make ruff_fix`, `make ruff_format`. There is no flake8, black or autopep8 target.
+- **`[tool.mypy] python_version = "3.12"`** because mypy 2.x refuses `3.9` outright
+  (`Python 3.9 is not supported (must be 3.10 or higher)`). The old justification about numpy's
+  PEP 695 stubs is gone with numpy itself — the runtime deps are now only `dataclasses-json`,
+  `grpcio`, `ondewo-client-utils`, `protobuf` and `requests`, which is every package the shipped
+  `ondewo` tree actually imports.
+- **`ondewo/t2s/py.typed` must exist.** `[tool.setuptools.package-data]` and `MANIFEST.in` both
+  list it; without the file itself the shipped `text_to_speech_pb2.pyi` is invisible to a
+  downstream mypy (PEP 561). Verify with `uv build` + a `zipfile` listing of the wheel.
+- The release `git commit` uses `--no-verify`, so hooks never gate an automated release.
 
-## Python tooling — uv + ruff + mypy + pyproject.toml (this session's refactor)
+## CI — `.github/workflows/tests.yml` is a required gate
 
-This repo was migrated off `setup.py` / `.flake8` / `mypy.ini` to a single **pyproject.toml** with **uv**, **ruff**, and **mypy**. Going forward:
-
-- **Build backend stays setuptools** (for PyPI compatibility). Build with `python -m build --no-isolation` or `uv build` — NOT `python setup.py sdist bdist_wheel` (setup.py is deleted). `Dockerfile.utils` installs `twine setuptools wheel build`.
-- **Dependencies via uv + a committed `uv.lock`.** CI runs `uv sync --extra dev --frozen`. To add/change a dep: edit `[project.dependencies]`/`[project.optional-dependencies].dev` in pyproject.toml then `uv lock`.
-- **Lint is ruff** (`[tool.ruff]`, line-length 120, generated `*_pb2*` excluded) — `uv run ruff check .`. flake8 is gone.
-- **mypy config lives in `[tool.mypy]`.** Do **NOT** re-create `mypy.ini` — it silently _shadows_ the pyproject config. Generated `*_pb2*` modules get `ignore_errors` overrides.
-- **Do NOT re-add `setup.py`** — with setuptools>=61 it conflicts with `[project]` on duplicated metadata.
-- **PEP 625**: the sdist is now underscore-normalised (`ondewo_<name>-<v>.tar.gz`); anything that greps the tarball name by hand must use underscores.
-- The version-bump release target edits the version in **pyproject.toml** (not setup.py); the release stages `pyproject.toml uv.lock`.
-
-## uv migration — completed conversion (this session)
-
-The repo is now fully on **uv** (not just pyproject.toml):
-
-- `make setup_developer_environment_locally` bootstraps uv (installs it if missing), runs `uv sync --extra dev` (creates `.venv` + installs all runtime+dev deps + pre-commit), then `uv run pre-commit install`. **No conda** — the old `create_conda_env`/`setup_conda_env` scaffolding was removed.
-- Every Makefile target uses uv: `uv sync --extra dev` (deps), `uv run pytest`/`ruff`/`mypy` (tools), `uv build` (wheel). No `pip install`, no `python -m build`, no `python setup.py`.
-- New targets: `make ruff` / `make ruff_fix` / `make ruff_format` / `make mypy`. The `flake8` target is **removed**.
-- Removed for good: `requirements.txt`, `requirements-dev.txt`, `setup.cfg` — deps + tool config live in `pyproject.toml`. Do **not** re-add them.
-- `Dockerfile.utils` installs uv (`COPY --from=ghcr.io/astral-sh/uv`) and builds with uv; it no longer `COPY`s `requirements.txt`.
-- **`[tool.mypy] python_version` must be `3.12`** wherever numpy 2.x is on the mypy path — its PEP-695 `type X = …` stubs fail to parse on < 3.12.
-- The release `git commit` uses **`--no-verify`** so pre-commit hooks never gate an automated release.
-- **Validated by a real PyPI publish** — `ondewo-t2s-client 6.5.0` was built with `uv build` and uploaded via twine end-to-end; the uv release pipeline works.
-
-## CI — the GitHub Actions workflow is a required gate
-
-`.github/workflows/tests.yml` (job `unit-tests`, `runs-on: ubuntu-latest`) fires on **push to every branch** (`branches: ["**"]`) and on every pull request. It is a **blocking gate, not advisory** — treat a red run the way you would treat a failing test locally, and do not push work that has not been through the four commands below.
-
-The job runs, in order: `actions/checkout@v5` → `astral-sh/setup-uv@v6` (cache on) → `uv python install 3.12` → a frozen sync → ruff → mypy → pytest under a 100 % coverage gate. The last four are the only ones that can fail on your code, and they reproduce locally **verbatim**:
+Job `unit-tests` on `ubuntu-latest`, triggered on **push to every branch** (`branches: ["**"]`) and
+on every pull request. `actions/checkout@v5` → `astral-sh/setup-uv@v6` (cache on) →
+`uv python install 3.12` → the four commands below. Reproduce them **verbatim**:
 
 ```bash
-uv python install 3.12
 uv sync --extra dev --frozen
 uv run --frozen ruff check .
 uv run --frozen mypy ondewo
 uv run --frozen pytest tests/unit -q \
-    --cov=ondewo.t2s.client.utils.keycloak \
-    --cov=ondewo.t2s.client.client_config \
-    --cov=ondewo.t2s.client.core.services_interface \
-    --cov=ondewo.t2s.client.core.async_services_interface \
+    --cov \
     --cov-report=term-missing \
     --cov-report=xml \
     --cov-fail-under=100
 ```
 
-- **Copy the commands from the workflow; do not approximate them — and keep `--frozen`.** `uv sync --frozen` and `uv run --frozen` install exactly what `uv.lock` pins and **fail** if the lock is stale relative to `pyproject.toml`. Drop the flag and uv silently re-resolves in memory, so you test a dependency set that is not the one CI installs and a stale `uv.lock` sails through unnoticed. After any `pyproject.toml` edit, run `uv lock` and commit the lock in the same commit.
-- **`.python-version` (`3.12`) is load-bearing — do not delete it.** The workflow's `uv python install 3.12` only guarantees 3.12 on a _fresh runner_, where it is the sole uv-managed interpreter. On a developer machine uv prefers its **newest managed** CPython, so before this file existed `uv sync --extra dev --frozen` built the venv on **3.14** while CI ran 3.12 — and the suite came back `30 failed, 84 passed, 25 errors`, every one of them `AttributeError: 'ServicesContainer' object has no attribute '__annotations__'` raised inside `ondewo/utils/base_client.py`, with nothing whatsoever to do with the change under test. Committing the pin makes the unmodified workflow commands select 3.12 everywhere; `.gitignore` deliberately leaves `.python-version` commented out so it _can_ be tracked.
-- **The SDK really is broken on Python ≥ 3.13, so the pin is honest, not a workaround.** Under PEP 649 a dataclass no longer materialises `__annotations__` into its class `__dict__`, so the instance lookup `self.services.__annotations__` that `ondewo-client-utils`' `BaseClient.disconnect` performs no longer resolves. `requires-python` is `>=3.9` and the trove classifiers stop at 3.12: **3.12 is the tested interpreter**. Raising that ceiling is a real port, not a one-line bump.
-- **The coverage gate FAILS OPEN — read the warnings, not just the percentage.** There is no `[tool.coverage.run] source` in `pyproject.toml`; the measured set is the hand-written list of **dotted** `--cov=` arguments in the workflow, and pytest-cov only measures a dotted module the suite actually **imports**. Verified in this repo: point `--cov` at a module no test imports (`ondewo.t2s.scripts.generate_services`) and it does not score 0 % — it emits `CoverageWarning: Module … was never imported. (module-not-imported)`, **vanishes from the table entirely**, and the run still prints `Required test coverage of 100% reached` and exits 0. A new hand-written module that is simply never added to the list is likewise never measured. So: **when you add hand-written code under `ondewo/`, add its dotted path to the workflow's `--cov=` list in the same commit**, and scan the pytest output for `module-not-imported` before believing a green percentage.
-- **`mypy` prints `note: unused section(s): module = ['soundfile.*']` on a clean run.** That is a _note_ and the step still exits 0 — `soundfile` is imported only by `examples/`, which the pre-commit mypy hook covers but `mypy ondewo` does not reach. Do not "fix" it by deleting the override; the pre-commit hook needs it.
-- **The workflow does not check out submodules** (`actions/checkout@v5` with no `submodules:` key), so `ondewo-t2s-api/` and `ondewo-proto-compiler/` are absent in CI. Nothing in the four gates may depend on them — ruff already excludes both, and the unit suite must never read a `.proto`.
+- **Keep `--frozen`.** It installs exactly what `uv.lock` pins and fails when the lock is stale
+  relative to `pyproject.toml`. Without it uv re-resolves in memory and you test a dependency set
+  CI never installs.
+- **The `--cov` really is bare — do not re-add `--cov=<dotted.module>` arguments.** That older form
+  made the gate **fail open**: pytest-cov only measures a dotted target the suite actually imports,
+  so an untested module emitted `CoverageWarning: module-not-imported`, vanished from the table, and
+  the run still printed `Required test coverage of 100% reached` and exited 0. Measured here: the
+  dotted gate reported 100% over 220 statements while both service wrappers sat at 40%. The
+  measured set now lives in `pyproject.toml` as `[tool.coverage.run] source = ["ondewo"]`, a
+  **filesystem** scan — 393 statements at 100%, and a new untested file under `ondewo/` drops the
+  total below 100 and fails the run (verified: 98.50%).
+- **`include_namespace_packages = true` (under `[tool.coverage.report]`, not `[run]`) is
+  load-bearing.** `ondewo/t2s/scripts/` has no `__init__.py`, so coverage's package walk skips such
+  directories entirely — the same fail-open shape in a different disguise. Putting the option under
+  `[run]` only emits `CoverageWarning: Unrecognized option`.
+- **Only two `omit` entries, both argued in place:** the generated `*_pb2*.py` stubs, and
+  `ondewo/t2s/scripts/generate_services.py`. The latter is developer-only codegen **and cannot
+  reach 100% at all**: `proto_stem_to_file_name` opens with a bare `return stem`, so the six lines
+  under it are unreachable. Do not add a third entry to make a red gate green — write the test.
+- **`mypy` prints `note: unused section(s): module = ['soundfile.*']` on a clean run.** It is a
+  note, the step still exits 0. `soundfile` is imported only by `examples/`, which the pre-commit
+  mypy hook covers but `mypy ondewo` does not reach. Do not delete that override.
+- **`.python-version` (`3.12`) is load-bearing — do not delete it.** `uv python install 3.12` only
+  guarantees 3.12 on a fresh runner; on a developer machine uv prefers its newest managed CPython,
+  and before this file existed the venv was built on 3.14 while CI ran 3.12 — producing
+  `30 failed, 84 passed, 25 errors`, every one an `AttributeError: 'ServicesContainer' object has
+  no attribute '__annotations__'` from `ondewo-client-utils`' `BaseClient.disconnect`, with nothing
+  to do with the change under test.
+- **The SDK really is broken on Python ≥ 3.13, so the pin is honest.** Under PEP 649 a dataclass no
+  longer materialises `__annotations__` into its class `__dict__`, so the `self.services.__annotations__`
+  lookup in `BaseClient.disconnect` no longer resolves. `requires-python` is `>=3.9` and the trove
+  classifiers stop at 3.12: **3.12 is the tested interpreter.** Raising that ceiling is a real port.
+- **CI does not check out submodules** (`actions/checkout@v5` with no `submodules:` key), so
+  `ondewo-t2s-api/` and `ondewo-proto-compiler/` are absent there. Nothing in the four gates may
+  depend on them: ruff already excludes both and the unit suite must never read a `.proto`.
+
+## pre-commit: hook ORDER at the commit-msg stage is the whole game
+
+pre-commit runs hooks in declaration order. `giticket` rewrites the subject to
+`[OND221-2830] feat: …`, which is no longer valid Conventional Commits — so with `giticket` first,
+**every** commit on a ticket branch fails and can only land with `--no-verify`.
+`conventional-pre-commit` is therefore declared **before** `giticket`: validate first, decorate
+second. Do not reorder them, and do not let a second `conventional-pre-commit` block reappear after
+`giticket` — one did, which made the earlier reordering a no-op for two releases.
+
+Write the plain subject (`feat: …`, `fix(scope): …`) and let `giticket` add the prefix; typing it
+yourself yields `[OND221-2830] [OND221-2830] …`. The regex here is `OND`-anchored:
+`(?:(?:feature|bugfix|support|hotfix)/)?(OND[0-9]{3}-[0-9]{1,5})[_-][\w-]+`.
+
+Other hook facts worth not re-deriving:
+
+- **Run the hooks with `uv run --frozen pre-commit run --all-files`, never `uvx pre-commit`.** The
+  mypy hook is `language: system` on purpose (so it sees the `types-*` packages), which means
+  pre-commit resolves `mypy` from `PATH`. Under `uvx` that PATH has no `mypy` and the hook reports
+  a false `Executable 'mypy' not found` failure; everything else passes. `make
+  precommit_hooks_run_all_files` uses `uv run --extra dev …` for the same reason — a bare `uv run`
+  in a fresh checkout cannot even spawn `pre-commit`.
+- **`MD053` must stay `false` in `.markdownlint-cli2.yaml`.** Its auto-fix deletes
+  `[comment]: <>` reference-definition markers that the release tooling greps for.
+- **`RELEASE.md` structure is machine-read.** `CURRENT_RELEASE_NOTES` slices from
+  `Release ONDEWO T2S Python Client ${ONDEWO_T2S_VERSION}` to the next `^\*{5}`, so the
+  `## Release …` headings and the `*****************` separators must survive any reformat. The
+  terminator is `^\*{5}` and **not** `/\*\*/`, which used to match the first inline `**bold**`
+  span and silently truncate the notes with no error from `gh release create`.
+- Hook revs as of this pass: markdownlint-cli2 `v0.23.2`, ruff-pre-commit `v0.16.6`, mirrors-mypy
+  `v2.3.1`, pre-commit-hooks `v6.0.0`, uv-pre-commit `0.12.10` (**no** leading `v` — that is the
+  real tag spelling), giticket `'1.92'` (**keep the quotes**; unquoted it is a YAML float),
+  conventional-pre-commit `v4.4.0`. The ruff and mypy revs are only half the story: ruff runs from
+  `uv.lock` in CI, and the mypy hook being `language: system` means its rev is documentation only —
+  bump `uv.lock` with `uv lock --upgrade-package ruff --upgrade-package mypy` or the hook and the
+  gate silently diverge.
+
+## Submodules and the proto-compiler pin
+
+Two submodules, both pinned twice — as a gitlink **and** as a Makefile variable
+(`ONDEWO_T2S_API_GIT_BRANCH`, `ONDEWO_PROTO_COMPILER_GIT_BRANCH`). `make
+checkout_defined_submodule_versions` checks out the _variable_, so if the two disagree it silently
+**downgrades** the submodule before codegen. Move both together:
+
+```bash
+git -C ondewo-proto-compiler fetch --tags origin
+git -C ondewo-proto-compiler checkout <VERSION>
+git add ondewo-proto-compiler
+# ONDEWO_PROTO_COMPILER_GIT_BRANCH=tags/<VERSION> in the Makefile
+git submodule status          # must print <VERSION> for both lines
+```
+
+- **A pin bump regenerates nothing.** It changes which image `make build` would build; the
+  committed `_pb2*.py` stubs are untouched. Never write "Regenerated with ondewo-proto-compiler
+  X.Y.Z" in `RELEASE.md` unless you ran `make build` and committed the result — the 6.6.3 entry
+  says exactly that while the pin at the time was 5.12.0.
+- `ondewo-proto-compiler` 5.11.0→5.14.0 contains **only** Angular/JS/Node/TS codegen fixes;
+  `git diff 5.11.0..5.14.0 -- python/` is empty. For this repo the bump is pin hygiene.
+- `.gitmodules` declares `[submodule "ondewo-proto-compiler"]` **twice** (identical path and url).
+  Harmless today, pre-existing, and not this task's to fix — but do not be surprised by it.
+
+## Testing
+
+`tests/unit` is the gated suite; `tests/e2e` needs a live T2S server and CI never runs it.
+`make test_unit`, `make test_unit_client`, `make test_unit_async_client`, `make test_e2e`.
+
+- **`make test_unit_coverage` is not the CI gate** — it passes `--cov=ondewo/t2s/client` (a _path_),
+  so it reports a different, smaller number than the `--cov` gate. Trust the workflow command.
+- The service wrappers under `ondewo/t2s/client/services/` are one-line stub delegations. They are
+  tested by driving every method through a patched `Text2SpeechStub` and asserting the RPC name, the
+  forwarded `metadata=` (that is where the Keycloak bearer token rides) and the returned object. The
+  async side uses `AsyncMock` stubs, which is also what would catch a `await` dropped by the perl
+  rewrites in `make create_async_services`. Both test tables carry a guard test asserting the table
+  covers every public method on the class, so a newly generated method cannot ship untested.
+- Async tests drive their own loop via `asyncio.run` (`_run(...)` in `tests/unit/test_async_client.py`);
+  there is no `asyncio_mode` configured, so do not write bare `async def test_…`.
 
 ## `ClientConfig` must not print its secrets
 
@@ -238,7 +326,8 @@ Four properties are load-bearing:
 - **Redaction covers `repr()` / `str()` only.** Measured on the sibling class: `to_json()`, `to_dict()` and
   `dataclasses.asdict()` still return the plaintext password, and `to_json()` renders the certificate as a
   byte array. That is deliberate, because `@dataclass_json` has to round-trip through `from_json` — so
-  never log a serialized config, and do not "fix" it by redacting there.
+  never log a serialized config, and do not "fix" it by redacting there. (That decorator is also why
+  `dataclasses-json` stays a declared runtime dependency here while the s2t and nlu twins dropped it.)
 - **The guard is behavioural.** `tests/unit/test_client_config_redacts_secrets.py` builds a `ClientConfig`
   with distinctive planted values and reads its `repr`. It does not grep for `__repr__`, because a grep
   passes just as well for a `__repr__` that prints the secret anyway. It also asserts each secret is really
@@ -247,22 +336,41 @@ Four properties are load-bearing:
   `GRPC_CERT.encode()`, since `BaseClientConfig.__post_init__` encodes it to `bytes`; comparing to the
   `str` would fail while the redaction it guards worked perfectly.
 
-Run it with `uv run pytest tests/unit/test_client_config_redacts_secrets.py -q` — 5 tests.
+Run it with `uv run --frozen pytest tests/unit/test_client_config_redacts_secrets.py -q` — 5 tests.
+Released in `6.6.1`; ondewo-vtsi pins `ondewo-t2s-client` by exact version, so raising that pin is what
+carries the redaction downstream.
 
-**Released in `6.6.1`.** The section above was written while the fix was still on the feature branch; it
-shipped when `OND211-2418-add-keycloak-for-2-fa` was merged to `master` and cut as `6.6.1`. ondewo-vtsi
-pins `ondewo-t2s-client` by exact version, so raising that pin is what carries the redaction downstream.
+## Keycloak token provider — teardown runs during interpreter finalization
 
-## The `commit-msg` hooks run in the WRONG order here
+`KeycloakTokenProvider.__del__` calls `stop()`, so `stop()` can run while CPython is finalizing. It
+must therefore guard on `sys.is_finalizing()` **and** catch `RuntimeError` around the join:
+`Thread.join` raises `PythonFinalizationError` (a `RuntimeError` subclass) on CPython ≥ 3.13, and
+because it is raised inside a deallocator the interpreter can only _print_ it — every process using
+the SDK ended with an `Exception ignored while calling deallocator … PythonFinalizationError`
+traceback. The refresh thread is a daemon and is reaped anyway, so the skipped join costs nothing.
+`tests/unit/test_keycloak.py::TestInterpreterShutdownTeardown` guards both the guard and the catch,
+plus a child-process probe asserting a clean stderr at exit.
 
-`.pre-commit-config.yaml` declares `giticket` **before** `conventional-pre-commit`. pre-commit runs hooks
-in file order, and `giticket` rewrites the subject to `[OND211-2418] <subject>`, which is not a valid
-Conventional Commit — so the validator is handed the prefix the other hook just added and rejects it, and
-no conforming commit message exists at all. The nlu client has the two the right way round
-(`conventional-pre-commit` first, then `giticket`); this repo does not, which is why commits here need
-`--no-verify`. The release target already passes `--no-verify`, so releases are unaffected.
+The shared-provider registry is keyed by a **SHA-256 of the credential set**, never by
+`id(config)` — the address-keyed version handed a new client the previous user's live token
+provider, silently authenticating as the wrong principal (fixed in 6.6.2).
 
-Write the plain subject and let `giticket` decorate it — never type the `[TICKET]` prefix yourself, which
-yields `[OND211-2418] [OND211-2418] …`. `giticket`'s regex here is also the looser
-`([A-Z]{3}[0-9]{3}-[0-9]{1,5})` rather than the `OND`-anchored `(OND[0-9]{3}-[0-9]{1,5})` the others use,
-so it accepts any three-letter project key.
+## Release process
+
+`make ondewo_release` clones `ondewo-devops-accounts`, then `make release`: build → check_build →
+a `--no-verify` commit → release branch → tag → GitHub release → PyPI.
+
+- **`make TEST` masks its secrets** (`<set>` / `<unset>` for `GITHUB_GH_TOKEN` and
+  `PYPI_PASSWORD`). It is on the automated path — `ondewo-t2s-api`'s `release_client` runs
+  `make -C <client> TEST` — so a plain `@echo ${TOKEN}` there leaks into a release log. Every other
+  token-bearing recipe line is `@`-prefixed; keep it that way and rotate any token you see printed.
+- **Trust the registry, not the log.** The multi-client release wrapper swallows a failed client
+  release into an "Already released …" line. After a release, check the GitHub release **and** PyPI
+  directly.
+- **`npm install failed after 5 attempts` in a release log is a red herring** — it is the echo
+  inside the docker `RUN for i in 1..5; do npm install …` retry loop, not a failure. Read further
+  down for the real error.
+- **Codegen must run TTY-free.** The `docker run` that invokes the proto-compiler must not pass
+  `-it`; non-interactively it dies with `cannot attach stdin to a TTY-enabled container`.
+- **The PyPI build image needs setuptools.** `Dockerfile.utils` is `python:3.12-slim`, which bundles
+  none, so it must `pip install … setuptools wheel build` (it does).

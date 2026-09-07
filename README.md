@@ -45,70 +45,127 @@ make setup_developer_environment_locally
 
 ```
 .
+├── .github
+│   └── workflows
+│       └── tests.yml            <- the CI gate: ruff -> mypy -> pytest @ 100% coverage
 ├── examples
-│   ├── configs
-│   │   ├── insecure_grpc.json
-│   │   └── secure_grpc_placeholder.json
-│   ├── example_api.py
-│   ├── __init__.py
-│   ├── ondewo_t2s_with_certificate.ipynb
-│   └── requirements.txt
+│   ├── configs
+│   │   ├── insecure_grpc.json
+│   │   └── secure_grpc_placeholder.json
+│   ├── environment.env
+│   ├── example_api.py
+│   ├── __init__.py
+│   ├── ondewo_t2s_with_certificate.ipynb
+│   ├── requirements.txt
+│   └── synthesize_with_keycloak.py
 ├── ondewo
-│   ├── t2s
-│   │   ├── client
-│   │   │   ├── services
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── async_text_to_speech.py
-│   │   │   │   └── text_to_speech.py
-│   │   │   ├── async_client.py
-│   │   │   ├── async_services_container.py
-│   │   │   ├── client_config.py
-│   │   │   ├── client.py
-│   │   │   ├── __init__.py
-│   │   │   └── services_container.py
-│   │   ├── scripts
-│   │   │   └── generate_services.py
-│   │   ├── __init__.py
-│   │   ├── text_to_speech_pb2_grpc.py
-│   │   ├── text_to_speech_pb2.py
-│   │   └── text_to_speech_pb2.pyi
-│   └── __init__.py
+│   ├── t2s
+│   │   ├── client
+│   │   │   ├── core
+│   │   │   │   ├── async_services_interface.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── services_interface.py
+│   │   │   ├── services
+│   │   │   │   ├── async_text_to_speech.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── text_to_speech.py
+│   │   │   ├── utils
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── keycloak.py      <- headless Keycloak offline-token auth (D18)
+│   │   │   ├── async_client.py
+│   │   │   ├── async_services_container.py
+│   │   │   ├── client_config.py
+│   │   │   ├── client.py
+│   │   │   ├── __init__.py
+│   │   │   └── services_container.py
+│   │   ├── scripts
+│   │   │   └── generate_services.py <- codegen, run by `make generate_services`
+│   │   ├── __init__.py
+│   │   ├── py.typed                 <- PEP 561 marker; without it the .pyi below is ignored
+│   │   ├── text_to_speech_pb2_grpc.py
+│   │   ├── text_to_speech_pb2.py
+│   │   └── text_to_speech_pb2.pyi
+│   └── __init__.py
 ├── tests
-│   ├── e2e
-│   │   ├── __init__.py
-│   │   └── test_synthesize_request.py
-│   ├── unit
-│   │   ├── __init__.py
-│   │   ├── test_async_client.py
-│   │   └── test_client.py
-│   ├── __init__.py
-│   └── conftest.py
-├── ondewo-proto-compiler
-├── ondewo-t2s-api
+│   ├── e2e                          <- needs a live T2S server; NOT run by CI
+│   │   ├── __init__.py
+│   │   └── test_synthesize_request.py
+│   ├── unit                         <- what the coverage gate runs
+│   │   ├── __init__.py
+│   │   ├── test_async_client.py
+│   │   ├── test_client_config_redacts_secrets.py
+│   │   ├── test_client.py
+│   │   ├── test_keycloak.py
+│   │   ├── test_services_interface.py
+│   │   └── test_synthesize_with_keycloak_example.py
+│   ├── __init__.py
+│   └── conftest.py
+├── ondewo-proto-compiler            <- submodule, pinned in Makefile
+├── ondewo-t2s-api                   <- submodule, pinned in Makefile
+├── .markdownlint-cli2.yaml
+├── .pre-commit-config.yaml
+├── .python-version                  <- 3.12; load-bearing, see CLAUDE.md
 ├── CONTRIBUTING.md
 ├── Dockerfile.utils
 ├── LICENSE
 ├── Makefile
 ├── MANIFEST.in
-├── mypy.ini
+├── pyproject.toml                   <- deps + ruff/mypy/coverage config (no setup.py)
 ├── README.md
 ├── RELEASE.md
-├── requirements-dev.txt
-├── requirements.txt
-├── setup.cfg
-└── setup.py
+└── uv.lock
 ```
 
 ## Build
 
 The `make build` command is dependent on 2 `repositories` and their speciefied `version`:
 
-- [ondewo-t2s-api](https://github.com/ondewo/ondewo-t2s-api) -- `T2S_API_GIT_BRANCH` in `Makefile`
+- [ondewo-t2s-api](https://github.com/ondewo/ondewo-t2s-api) -- `ONDEWO_T2S_API_GIT_BRANCH` in `Makefile`
 - [ondewo-proto-compiler](https://github.com/ondewo/ondewo-proto-compiler) -- `ONDEWO_PROTO_COMPILER_GIT_BRANCH` in `Makefile`
 
 It will generate a `_pb2.py`, `_pb2.pyi` and `_pb2_grpc.py` file for every `.proto` in the api submodule.
 
 > :warning: All Files in the `ondewo` folder that dont have `pb2` in their name are handwritten, and therefor need to be manually adjusted to any changes in the proto-code.
+
+To move to a newer proto-compiler release, do both halves or `make build` will silently use the old
+image: check the submodule out at the tag and set the Makefile variable to the same tag.
+
+```bash
+git -C ondewo-proto-compiler fetch --tags origin
+git -C ondewo-proto-compiler checkout <VERSION>       # e.g. 5.14.0
+git add ondewo-proto-compiler
+# then set ONDEWO_PROTO_COMPILER_GIT_BRANCH=tags/<VERSION> in the Makefile
+git submodule status                                  # must show <VERSION>
+```
+
+Bumping the pin does **not** rewrite a single committed stub - it only changes which image
+`make build` would build. Say "pinned", not "regenerated", in `RELEASE.md` unless you actually ran
+`make build` and committed the regenerated `_pb2*` files.
+
+## Development
+
+```bash
+make setup_developer_environment_locally   # uv + .venv (runtime + dev) + pre-commit hooks
+```
+
+The four commands below are exactly what `.github/workflows/tests.yml` runs; all four must exit 0
+before you push. Keep `--frozen` - it is what makes a stale `uv.lock` fail instead of being silently
+re-resolved.
+
+```bash
+uv sync --extra dev --frozen
+uv run --frozen ruff check .
+uv run --frozen mypy ondewo
+uv run --frozen pytest tests/unit -q --cov --cov-report=term-missing --cov-report=xml --cov-fail-under=100
+```
+
+The bare `--cov` is deliberate: the measured set is `[tool.coverage.run] source = ["ondewo"]` in
+`pyproject.toml`, a filesystem scan, so **a new file under `ondewo/` with no test fails the gate**.
+Add a hand-written module and you must add its tests in the same commit.
+
+Run the hooks with `uv run --frozen pre-commit run --all-files`, not `uvx pre-commit` - the mypy
+hook is `language: system` and `uvx` cannot see the `.venv` mypy, so it reports a false
+`Executable 'mypy' not found` failure.
 
 ## Examples
 
