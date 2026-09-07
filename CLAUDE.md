@@ -373,10 +373,10 @@ a `--no-verify` commit → release branch → tag → GitHub release → PyPI.
 - **Trust the registry, not the log.** The multi-client release wrapper swallows a failed client
   release into an "Already released …" line. After a release, check the GitHub release **and** PyPI
   directly.
-- **`npm install failed after 5 attempts` in a release log is a red herring** — it is the echo
-  inside the docker `RUN for i in 1..5; do npm install …` retry loop, not a failure. Read further
-  down for the real error.
 - **Codegen must run TTY-free.** The `docker run` that invokes the proto-compiler must not pass
   `-it`; non-interactively it dies with `cannot attach stdin to a TTY-enabled container`.
-- **The PyPI build image needs setuptools.** `Dockerfile.utils` is `python:3.12-slim`, which bundles
-  none, so it must `pip install … setuptools wheel build` (it does).
+- **The release image builds with `uv build`, not `python setup.py`.** `Dockerfile.utils`
+  (`python:3.12-slim`) copies in `uv` and `pip install`s only `twine`; `make build_package` is a
+  bare `uv build`, which provisions the `[build-system]` backend (`setuptools>=61.0`, `wheel`) in
+  its own isolated PEP 517 environment. So no `pip install setuptools wheel build` is needed in the
+  image — do not add one back on the theory that the slim base is missing it.
