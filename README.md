@@ -163,9 +163,11 @@ The bare `--cov` is deliberate: the measured set is `[tool.coverage.run] source 
 `pyproject.toml`, a filesystem scan, so **a new file under `ondewo/` with no test fails the gate**.
 Add a hand-written module and you must add its tests in the same commit.
 
-Run the hooks with `uv run --frozen pre-commit run --all-files`, not `uvx pre-commit` - the mypy
-hook is `language: system` and `uvx` cannot see the `.venv` mypy, so it reports a false
-`Executable 'mypy' not found` failure.
+Run the hooks with `uv run --frozen pre-commit run --all-files` (or `make
+precommit_hooks_run_all_files`, or `uvx pre-commit run --all-files` - all three are equivalent).
+The mypy hook stays `language: system` so it sees the `types-*` packages, but its `entry` is
+`uv run --frozen --extra dev mypy`, so it finds the `.venv` mypy no matter which front-end started
+pre-commit.
 
 ## Examples
 

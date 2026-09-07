@@ -241,12 +241,18 @@ yourself yields `[OND221-2830] [OND221-2830] …`. The regex here is `OND`-ancho
 
 Other hook facts worth not re-deriving:
 
-- **Run the hooks with `uv run --frozen pre-commit run --all-files`, never `uvx pre-commit`.** The
-  mypy hook is `language: system` on purpose (so it sees the `types-*` packages), which means
-  pre-commit resolves `mypy` from `PATH`. Under `uvx` that PATH has no `mypy` and the hook reports
-  a false `Executable 'mypy' not found` failure; everything else passes. `make
-  precommit_hooks_run_all_files` uses `uv run --extra dev …` for the same reason — a bare `uv run`
-  in a fresh checkout cannot even spawn `pre-commit`.
+- **The mypy hook names its environment; do not shorten its `entry` back to `mypy`.** It is
+  `language: system` on purpose (so mypy sees the `types-*` packages installed in `.venv`), and
+  `language: system` means pre-commit resolves the entry from `PATH`. A bare `entry: mypy` therefore
+  passes under `uv run pre-commit` but fails under `uvx pre-commit run --all-files` with
+  `Executable 'mypy' not found`, because `uvx` runs pre-commit in an ephemeral env that cannot see
+  `.venv`. `entry: uv run --frozen --extra dev mypy` makes all three front-ends
+  (`uvx pre-commit`, `uv run --frozen pre-commit`, `make precommit_hooks_run_all_files`) behave
+  identically and type-check with the same interpreter and packages as
+  `.github/workflows/tests.yml`. `--extra dev` is required because mypy lives in the `dev`
+  _extra_, which is not a default group: in a fresh checkout `uv run --frozen mypy` dies with
+  `Failed to spawn: 'mypy'` (measured), while `--extra dev` installs the extra first. It does not
+  evict anything from an already-synced `.venv`.
 - **`MD053` must stay `false` in `.markdownlint-cli2.yaml`.** Its auto-fix deletes
   `[comment]: <>` reference-definition markers that the release tooling greps for.
 - **`RELEASE.md` structure is machine-read.** `CURRENT_RELEASE_NOTES` slices from

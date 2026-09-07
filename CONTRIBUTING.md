@@ -47,7 +47,8 @@ The coverage gate measures every `.py` under `ondewo/` from disk, so a new hand-
 without tests fails it. Add the tests in the same commit rather than widening the `omit` list in
 `pyproject.toml`.
 
-Then run the hooks with `uv run --frozen pre-commit run --all-files` (**not** `uvx pre-commit` —
-the mypy hook is `language: system` and `uvx` cannot see the `.venv` mypy, so it reports a false
-failure). Write plain Conventional Commits subjects; the `giticket` hook adds the `[TICKET]` prefix
+Then run the hooks with `uv run --frozen pre-commit run --all-files` (`uvx pre-commit run
+--all-files` and `make precommit_hooks_run_all_files` do the same thing — the mypy hook is
+`language: system` but its `entry` goes through `uv run`, so every front-end finds the `.venv`
+mypy). Write plain Conventional Commits subjects; the `giticket` hook adds the `[TICKET]` prefix
 from the branch name, so never type it yourself.
