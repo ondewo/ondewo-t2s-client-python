@@ -1719,6 +1719,7 @@ class TestInterpreterShutdownTeardown:
         assert "PythonFinalizationError" not in result.stderr
         assert "Exception ignored" not in result.stderr
 
+
 # --------------------------------------------------------------------------- #
 # ClientConfig validation (bearer-only D18) — keeps client_config.py fully covered
 # --------------------------------------------------------------------------- #

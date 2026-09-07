@@ -28,15 +28,17 @@ jobs:
       - name: Mypy type check
         run: uv run --frozen mypy ondewo
 
-      # The repo is ~95% generated protobuf/gRPC stubs; coverage is gated on the HAND-WRITTEN surface
-      # (the Keycloak/D18 auth helper + client config + the services interfaces) — the code this SDK owns.
+      # A bare `--cov` on purpose. The coverage targets live in pyproject.toml's
+      # [tool.coverage.run] as a filesystem source (`source = ["ondewo"]`), so every .py under
+      # ondewo/ is measured whether or not a test imports it. Enumerating dotted
+      # `--cov=<module>` targets here instead made the gate fail OPEN: pytest-cov silently
+      # drops a dotted target the suite never imports rather than scoring it 0%, so an
+      # untested module vanished from the table and the gate still printed
+      # "Required test coverage of 100% reached".
       - name: Unit tests + 100% coverage gate on hand-written code
         run: |
           uv run --frozen pytest tests/unit -q \
-            --cov=ondewo.t2s.client.utils.keycloak \
-            --cov=ondewo.t2s.client.client_config \
-            --cov=ondewo.t2s.client.core.services_interface \
-            --cov=ondewo.t2s.client.core.async_services_interface \
+            --cov \
             --cov-report=term-missing \
             --cov-report=xml \
             --cov-fail-under=100
