@@ -213,10 +213,6 @@
 
 ## Release ONDEWO T2S Python Client 4.0.3
 
-### Breaking Changes
-
-* Rename oneof attributes and merged custom-phonemizer proto into text-to-speech proto
-
 ### New Features
 
 * [[OND232-348]](https://ondewo.atlassian.net/browse/OND232-348) - Add field normalized_text to SynthesizeResponse.
@@ -227,8 +223,7 @@
 
 ### Breaking Changes
 
-* [[OND232-343]](https://ondewo.atlassian.net/browse/OND232-343) - Rename oneof attributes and merged custom-phonemizer
-  proto into text-to-speech proto
+* Add field T2SCustomLengthScales to T2SNormalizePipeline.
 
 *****************
 
@@ -267,11 +262,6 @@
 ### Bug fixes
 
 * Fix issue with PyPI release.
-
-### Breaking Changes
-
-* [[OND231-334]](https://ondewo.atlassian.net/browse/OND231-334) - Rename Description, GetServiceInfoResponse, Inference
-  and Normalization messages to include T2S
 
 *****************
 
