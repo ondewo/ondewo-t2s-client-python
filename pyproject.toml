@@ -47,6 +47,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "ruff",
+    "cryptography",
     "jupyter",
     "loguru",
     "mypy",
