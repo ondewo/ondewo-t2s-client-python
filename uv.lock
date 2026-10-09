@@ -3012,7 +3012,7 @@ wheels = [
 
 [[package]]
 name = "ondewo-t2s-client"
-version = "6.6.3"
+version = "6.6.4"
 source = { editable = "." }
 dependencies = [
     { name = "dataclasses-json" },
