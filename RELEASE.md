@@ -2,6 +2,19 @@
 
 *****************
 
+## Release ONDEWO T2S Python Client 6.6.4
+
+### Bug Fixes
+
+* [[OND211-2443]](https://ondewo.atlassian.net/browse/OND211-2443) **`ClientConfig` printed the mutual-TLS private key.** `ondewo-client-utils` 4.1.0 added `grpc_client_cert` / `grpc_client_key` to `BaseClientConfig`; the hand-written `ClientConfig.__repr__` only redacted the names in `SECRET_FIELD_NAMES`, so `repr()` / `str()` rendered `grpc_client_key` in clear text. It is now redacted, and so is every field declared `repr=False`, so a secret the base class hides later stays hidden here too. `to_dict()` / `to_json()` are unchanged and still carry the plaintext values.
+* [[OND211-2443]](https://ondewo.atlassian.net/browse/OND211-2443) `ondewo-client-utils>=4.1.1` on Python >= 3.12 (`>=3.2.0` below, which has no client-key field).
+* [[OND211-2443]](https://ondewo.atlassian.net/browse/OND211-2443) **PEP 561 `py.typed` marker is shipped.** 6.6.3 was published without `ondewo/t2s/py.typed`, so consumers' mypy treated `ondewo.t2s` as untyped. The wheel and sdist now carry it, pinned by a test that builds both.
+* `KeycloakTokenProvider` no longer prints a `PythonFinalizationError` traceback at interpreter exit on CPython >= 3.13.
+* Runtime dependencies without an import site (`cffi`, `google-api-core`, `googleapis-common-protos`, `grpcio-reflection`, `grpcio-tools`, `numpy`, `polling`, `regex`) are no longer declared.
+* Regenerated with [ondewo-proto-compiler 5.15.3](https://github.com/ondewo/ondewo-proto-compiler/releases/tag/5.15.3), which fixes the build check on hyphenated `.proto` files (`text-to-speech.proto`). The Makefile no longer passes `EXTRA_PROTO_DIR=ondewo-t2s-api/googleapis/google/`: the API ships no `googleapis` directory and imports only the well-known types bundled with `grpc_tools`.
+
+*****************
+
 ## Release ONDEWO T2S Python Client 6.6.3
 
 ### Bug Fixes
