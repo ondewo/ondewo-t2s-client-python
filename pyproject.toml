@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ondewo-t2s-client"
-version = "6.6.4"
+version = "6.7.0"
 description = "ONDEWO Text 2 Speech (T2S) Client library for Python"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [
     { name = "ONDEWO GmbH", email = "office@ondewo.com" },
 ]
@@ -16,8 +16,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -33,14 +31,17 @@ dependencies = [
     # ClientConfig.from_json()/to_dict(). Unlike the s2t/nlu twins this repo still applies the
     # decorator, so the dependency is real and stays declared.
     "dataclasses-json",
-    "grpcio>=1.65.5",
+    # The generated stubs refuse an older runtime at import: every _pb2_grpc.py carries
+    # GRPC_GENERATED_VERSION = '1.85.1' and every _pb2.py "Protobuf Python Version: 7.35.1"
+    # (ondewo-proto-compiler 5.17.0). protobuf 7 requires Python >= 3.10.
+    "grpcio>=1.85.1",
     # Split by interpreter because ondewo-client-utils >=4.0.0 requires Python >=3.12 while this package still
-    # supports >=3.9. On 3.12+ the floor is 4.1.1, the release whose BaseClientConfig carries the mutual-TLS
+    # supports >=3.10. On 3.12+ the floor is 4.1.1, the release whose BaseClientConfig carries the mutual-TLS
     # grpc_client_cert / grpc_client_key fields that ClientConfig.__repr__ redacts. Older interpreters stay on
     # 3.2.0+, which has no client-key field, so there is nothing there to leak.
     "ondewo-client-utils>=4.1.1; python_version >= '3.12'",
     "ondewo-client-utils>=3.2.0; python_version < '3.12'",
-    "protobuf>=5.27.3",
+    "protobuf>=7.35.1,<8",
     "requests",
 ]
 
@@ -155,7 +156,7 @@ quote-style = "double"
 [tool.mypy]
 # mypy.ini had python_version=3.9, but mypy 2.x refuses it outright:
 # "python_version: Python 3.9 is not supported (must be 3.10 or higher)". 3.12 is the
-# interpreter .github/workflows/tests.yml pins; runtime requires-python stays ">=3.9".
+# interpreter .github/workflows/tests.yml pins; runtime requires-python is ">=3.10".
 python_version = "3.12"
 ignore_errors = false
 ignore_missing_imports = false

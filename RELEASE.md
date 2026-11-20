@@ -2,6 +2,15 @@
 
 *****************
 
+## Release ONDEWO T2S Python Client 6.7.0
+
+### Breaking Changes
+
+* Tracking API Version [6.7.0](https://github.com/ondewo/ondewo-t2s-api/releases/tag/6.7.0) ( [Documentation](https://ondewo.github.io/ondewo-t2s-api/) )
+* Generated with ondewo-proto-compiler 5.17.0 (protoc 35.1). New runtime floors: `protobuf>=7.35.1,<8`, `grpcio>=1.85.1`, `requires-python >=3.10`; the generated `_pb2.py` / `_pb2_grpc.py` refuse an older runtime at import.
+
+*****************
+
 ## Release ONDEWO T2S Python Client 6.6.4
 
 ### Bug Fixes

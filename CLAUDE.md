@@ -220,7 +220,7 @@ uv run --frozen pytest tests/unit -q \
   to do with the change under test.
 - **The SDK really is broken on Python ≥ 3.13, so the pin is honest.** Under PEP 649 a dataclass no
   longer materialises `__annotations__` into its class `__dict__`, so the `self.services.__annotations__`
-  lookup in `BaseClient.disconnect` no longer resolves. `requires-python` is `>=3.9` and the trove
+  lookup in `BaseClient.disconnect` no longer resolves. `requires-python` is `>=3.10` and the trove
   classifiers stop at 3.12: **3.12 is the tested interpreter.** Raising that ceiling is a real port.
 - **CI does not check out submodules** (`actions/checkout@v5` with no `submodules:` key), so
   `ondewo-t2s-api/` and `ondewo-proto-compiler/` are absent there. Nothing in the four gates may

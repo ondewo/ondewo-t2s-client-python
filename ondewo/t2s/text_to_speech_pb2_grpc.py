@@ -6,7 +6,7 @@ import warnings
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 from ondewo.t2s import text_to_speech_pb2 as ondewo_dot_t2s_dot_text__to__speech__pb2
 
-GRPC_GENERATED_VERSION = '1.67.1'
+GRPC_GENERATED_VERSION = '1.85.1'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
@@ -19,14 +19,14 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in ondewo/t2s/text_to_speech_pb2_grpc.py depends on'
+        + ' but the generated code in ondewo/t2s/text_to_speech_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
 
 
-class Text2SpeechStub(object):
+class Text2SpeechStub:
     """<p>Text2Speech service provides endpoints for text-to-speech generation.</p>
     """
 
@@ -133,7 +133,7 @@ class Text2SpeechStub(object):
                 _registered_method=True)
 
 
-class Text2SpeechServicer(object):
+class Text2SpeechServicer:
     """<p>Text2Speech service provides endpoints for text-to-speech generation.</p>
     """
 
@@ -381,7 +381,7 @@ def add_Text2SpeechServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class Text2Speech(object):
+class Text2Speech:
     """<p>Text2Speech service provides endpoints for text-to-speech generation.</p>
     """
 

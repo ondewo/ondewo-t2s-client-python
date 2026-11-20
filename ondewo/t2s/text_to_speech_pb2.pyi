@@ -16,29 +16,29 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import builtins
-import collections.abc
-import google.protobuf.descriptor
-import google.protobuf.internal.containers
-import google.protobuf.internal.enum_type_wrapper
-import google.protobuf.message
-import google.protobuf.struct_pb2
+from collections import abc as _abc
+from google.protobuf import descriptor as _descriptor
+from google.protobuf import message as _message
+from google.protobuf import struct_pb2 as _struct_pb2
+from google.protobuf.internal import containers as _containers
+from google.protobuf.internal import enum_type_wrapper as _enum_type_wrapper
+import builtins as _builtins
 import sys
-import typing
+import typing as _typing
 
-if sys.version_info >= (3, 10):
-    import typing as typing_extensions
+if sys.version_info >= (3, 11):
+    from typing import TypeAlias as _TypeAlias, Never as _Never
 else:
-    import typing_extensions
+    from typing_extensions import TypeAlias as _TypeAlias, Never as _Never
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: _descriptor.FileDescriptor
 
 class _Pcm:
-    ValueType = typing.NewType("ValueType", builtins.int)
-    V: typing_extensions.TypeAlias = ValueType
+    ValueType = _typing.NewType("ValueType", _builtins.int)
+    V: _TypeAlias = ValueType  # noqa: Y015
 
-class _PcmEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Pcm.ValueType], builtins.type):
-    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+class _PcmEnumTypeWrapper(_enum_type_wrapper._EnumTypeWrapper[_Pcm.ValueType], _builtins.type):
+    DESCRIPTOR: _descriptor.EnumDescriptor
     PCM_16: _Pcm.ValueType  # 0
     """16-bit pulse-code modulation."""
     PCM_24: _Pcm.ValueType  # 1
@@ -71,14 +71,14 @@ FLOAT: Pcm.ValueType  # 5
 """Floating-point (32-bit) pulse-code modulation."""
 DOUBLE: Pcm.ValueType  # 6
 """Floating-point (64-bit) pulse-code modulation."""
-global___Pcm = Pcm
+Global___Pcm: _TypeAlias = Pcm  # noqa: Y015
 
 class _AudioFormat:
-    ValueType = typing.NewType("ValueType", builtins.int)
-    V: typing_extensions.TypeAlias = ValueType
+    ValueType = _typing.NewType("ValueType", _builtins.int)
+    V: _TypeAlias = ValueType  # noqa: Y015
 
-class _AudioFormatEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_AudioFormat.ValueType], builtins.type):
-    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+class _AudioFormatEnumTypeWrapper(_enum_type_wrapper._EnumTypeWrapper[_AudioFormat.ValueType], _builtins.type):
+    DESCRIPTOR: _descriptor.EnumDescriptor
     wav: _AudioFormat.ValueType  # 0
     """Waveform Audio File Format (WAV)"""
     flac: _AudioFormat.ValueType  # 1
@@ -111,19 +111,19 @@ ogg: AudioFormat.ValueType  # 5
 """Ogg Vorbis (OGG)"""
 wma: AudioFormat.ValueType  # 6
 """Windows Media Audio (WMA)"""
-global___AudioFormat = AudioFormat
+Global___AudioFormat: _TypeAlias = AudioFormat  # noqa: Y015
 
-@typing.final
-class SynthesizeRequest(google.protobuf.message.Message):
+@_typing.final
+class SynthesizeRequest(_message.Message):
     """<p>Represents a Synthesize Request.</p>
     <p>A Synthesize Request contains the information need to perform a text to speech conversion.</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    TEXT_FIELD_NUMBER: builtins.int
-    CONFIG_FIELD_NUMBER: builtins.int
-    text: builtins.str
+    TEXT_FIELD_NUMBER: _builtins.int
+    CONFIG_FIELD_NUMBER: _builtins.int
+    text: _builtins.str
     """Required. Represents the text that will be transformed to speech.
 
     <p>The text may be plain text, or it may embed SSML markup, phonemes and voice-control tags to
@@ -151,9 +151,17 @@ class SynthesizeRequest(google.protobuf.message.Message):
     </ul>
 
     <p><b>3. Pauses / breaks</b></p>
+    <p>Inserts a pause of the given duration into the spoken text. Supported by the local pipelines and
+    forwarded to the cloud providers. The duration is written either with a unit -
+    <code>ms</code> for milliseconds, <code>s</code> for seconds - or as a bare number, which is read as
+    <b>seconds</b>: <code>&lt;break time=&quot;0.5&quot;/&gt;</code> is half a second. A bare number is
+    therefore never milliseconds; <code>&lt;break time=&quot;2000&quot;/&gt;</code> asks for 2000 seconds and
+    is rejected with an error - write <code>&lt;break time=&quot;2000ms&quot;/&gt;</code> instead. A single
+    break may not be longer than 60 seconds.</p>
     <ul>
-      <li>Break tag (seconds): <pre><code>I am going to take a 2 seconds break &lt;break time=&quot;2.0&quot;/&gt; done</code></pre></li>
-      <li>Break tag (milliseconds, cloud providers): <pre><code>please wait &lt;break time=&quot;500ms&quot;/&gt; done</code></pre></li>
+      <li>Milliseconds: <pre><code>Welcome to our service. &lt;break time=&quot;500ms&quot;/&gt; How can I help you today?</code></pre></li>
+      <li>Seconds: <pre><code>Please hold the line. &lt;break time=&quot;2s&quot;/&gt; Thank you for waiting.</code></pre></li>
+      <li>Seconds without a unit: <pre><code>Let me check that for you. &lt;break time=&quot;1.5&quot;/&gt; I found your booking.</code></pre></li>
     </ul>
 
     <p><b>4. Phonemes / pronunciation control</b></p>
@@ -186,56 +194,121 @@ class SynthesizeRequest(google.protobuf.message.Message):
       <li>German: <pre><code>ah bindestrich sieben plus acht sternchen</code></pre></li>
     </ul>
 
-    <p><b>5. Voice control for qwen3-tts (emotion / style / prosody)</b></p>
+    <p><b>5. Voice control for qwen3-tts (style / prosody)</b></p>
     <p>These ONDEWO-namespaced tags are compiled into the model instruction and stripped from the
     spoken text, so the transcription stays the plain sentence while the delivery changes. They only
     take effect on the qwen3-tts <b>CustomVoice</b> model; on the base and voicedesign models they are
-    stripped and a warning is logged.</p>
+    stripped from the text without changing the delivery.</p>
+    <p>qwen3-tts is steered by a natural-language instruction rather than by numeric parameters, so
+    every dimension has exactly <b>one step per direction</b> and the values listed below are the
+    whole vocabulary. Any other value is reported in the server log and then ignored.</p>
     <ul>
-      <li>Style - one of the five primary styles <code>apologetic</code>, <code>calm</code>,
-        <code>empathetic</code>, <code>firm</code>, <code>lively</code>, or one of the accepted
-        synonyms <code>cheerful</code> / <code>happy</code> / <code>joyful</code>,
+      <li>Style - one of the four primary styles <code>apologetic</code>, <code>calm</code>,
+        <code>empathetic</code>, <code>firm</code>, or one of the accepted synonyms
+        <code>cheerful</code> / <code>happy</code> / <code>joyful</code>,
         <code>sad</code> / <code>sorrowful</code>, <code>angry</code> / <code>furious</code>,
-        <code>excited</code>, <code>serious</code>, <code>tender</code> / <code>gentle</code>.
-        An unknown name falls back to <code>neutral</code> and a warning is logged:
+        <code>excited</code>. An unknown name falls back to
+        <code>neutral</code>, which adds no style at all, and a warning is logged:
         <pre><code>&lt;ondewo:style name=&quot;calm&quot;&gt;please stay calm everything will be fine&lt;/ondewo:style&gt;</code></pre></li>
-      <li>Emphasis - selects the intensity tier of the chosen style: <code>strong</code> (intense),
-        <code>moderate</code> (the default when no emphasis is given) or <code>reduced</code> /
-        <code>none</code> (mild):
-        <pre><code>&lt;ondewo:style name=&quot;firm&quot;&gt;&lt;emphasis level=&quot;strong&quot;&gt;listen carefully&lt;/emphasis&gt;&lt;/ondewo:style&gt;</code></pre></li>
-      <li>Prosody - <code>rate</code> (<code>x-slow</code>/<code>slow</code>/<code>medium</code>/<code>fast</code>/<code>x-fast</code>
-        or a percentage such as <code>+20%</code>/<code>-20%</code>/<code>120%</code>),
-        <code>pitch</code> (<code>x-low</code>/<code>low</code>/<code>medium</code>/<code>high</code>/<code>x-high</code>,
-        a semitone offset such as <code>+4st</code>/<code>-4st</code> or a percentage such as
-        <code>+10%</code>/<code>-10%</code>) and
-        <code>volume</code> (<code>silent</code>/<code>x-soft</code>/<code>soft</code>/<code>medium</code>/<code>loud</code>/<code>x-loud</code>
-        or a decibel offset such as <code>+6dB</code>/<code>-6dB</code>):
-        <pre><code>&lt;prosody rate=&quot;slow&quot; pitch=&quot;+4st&quot; volume=&quot;loud&quot;&gt;hello there&lt;/prosody&gt;</code></pre></li>
-      <li>Nested combination (style + emphasis + prosody):
-        <pre><code>&lt;ondewo:style name=&quot;calm&quot;&gt;&lt;emphasis level=&quot;moderate&quot;&gt;&lt;prosody rate=&quot;slow&quot; pitch=&quot;low&quot; volume=&quot;soft&quot;&gt;hello there&lt;/prosody&gt;&lt;/emphasis&gt;&lt;/ondewo:style&gt;</code></pre></li>
+      <li>Prosody - <code>rate</code> (<code>slow</code> / <code>medium</code> / <code>fast</code>)
+        and <code>volume</code> (<code>soft</code> / <code>medium</code> / <code>loud</code>), where
+        <code>medium</code> means &quot;leave it alone&quot; and adds nothing.
+        <pre><code>&lt;prosody rate=&quot;slow&quot; volume=&quot;loud&quot;&gt;hello there&lt;/prosody&gt;</code></pre></li>
+      <li>Nested combination (style + prosody):
+        <pre><code>&lt;ondewo:style name=&quot;calm&quot;&gt;&lt;prosody rate=&quot;slow&quot; volume=&quot;soft&quot;&gt;hello there&lt;/prosody&gt;&lt;/ondewo:style&gt;</code></pre></li>
       <li>Free-form instruction (CustomVoice only) - describe the delivery in natural language in the
         <code>instruction</code> attribute. The attribute value is used verbatim as the model
-        instruction and takes precedence over the style / emphasis / prosody tags; the wrapped inner
-        text is kept as the spoken text and it should be always in English:
+        instruction and takes precedence over the style / prosody tags; the wrapped inner text is kept
+        as the spoken text and the instruction should always be written in English:
         <pre><code>&lt;ondewo:instruct instruction=&quot;speak slowly in a warm and reassuring tone&quot;&gt;hello there&lt;/ondewo:instruct&gt;</code></pre></li>
-      <li>Inline audio tags (CustomVoice only) - emotional expressions / sound effects in square
-        brackets. They are compiled into the instruction and stripped from the spoken text. The
-        supported tags are:
-        <ul>
-          <li>Voice-related: <code>[laughs]</code>, <code>[laughs harder]</code>,
-            <code>[starts laughing]</code>, <code>[wheezing]</code>, <code>[whispers]</code>,
-            <code>[sighs]</code>, <code>[exhales]</code>, <code>[sarcastic]</code>,
-            <code>[curious]</code>, <code>[excited]</code>, <code>[crying]</code>,
-            <code>[snorts]</code>, <code>[mischievously]</code></li>
-          <li>Sound effects: <code>[gunshot]</code>, <code>[applause]</code>,
-            <code>[clapping]</code>, <code>[explosion]</code>, <code>[swallows]</code>,
-            <code>[gulps]</code></li>
-          <li>Unique and special: <code>[sings]</code>, <code>[woo]</code>, <code>[fart]</code></li>
-          <li>Accent (variable form): <code>[strong &lt;accent&gt; accent]</code>, e.g.
-            <code>[strong French accent]</code></li>
-        </ul>
-        <pre><code>[whispers] hello there</code></pre></li>
+      <li>Inline style tags (CustomVoice only) - the same style vocabulary written positionally in
+        square brackets, so <code>[calm] hello there</code> and the
+        <code>&lt;ondewo:style name=&quot;calm&quot;&gt;</code> element compile to the identical
+        instruction. Such a tag applies to everything that follows it until another tag or the
+        <code>[Neutral]</code> reset replaces it.
+        <pre><code>[excited] we shipped it. it works. [calm] now let us review.</code></pre></li>
     </ul>
+
+    <p><b>Styles supported per voice</b></p>
+    <p>A style is rendered by the voice, not by the markup, and no voice renders all of them. The
+    table below lists what each qwen3-tts speaker supports; the speaker is fixed by the pipeline
+    selected through <code>RequestConfig.t2s_pipeline_id</code>.</p>
+    <p>The table applies to <b>both</b> ways of asking for a style. The
+    <code>&lt;ondewo:style name=&quot;calm&quot;&gt;</code> element and the inline
+    <code>[calm]</code> tag compile to the very same instruction, so they are limited by the voice
+    in exactly the same way - switching from one spelling to the other never makes a style work
+    that the voice cannot render.</p>
+    <p><b>The server does not check your request against this table.</b> If you ask a voice for a
+    style it cannot render, the request still succeeds: audio is returned, no error is raised and
+    nothing is written to the log. The only symptom is that the voice sounds exactly as it would
+    have without the style. Use the table to choose a suitable voice <i>before</i> sending the
+    request.</p>
+    <p>This is not the same as writing a style name that does not exist, which <b>is</b> reported:
+    <code>&lt;ondewo:style name=&quot;bored&quot;&gt;</code> logs a warning and falls back to no
+    style, because <code>bored</code> is outside the vocabulary listed further above. The silent
+    case is a name that is in the vocabulary but beyond what the selected voice can do, for example
+    <code>excited</code> on <code>dylan</code>.</p>
+    <table>
+      <tr><th>Voice</th><th>apologetic</th><th>calm</th><th>empathetic</th><th>firm</th><th>cheerful</th><th>sad</th><th>excited</th><th>angry</th></tr>
+      <tr><td>aiden</td><td>-</td><td>-</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>-</td><td>-</td></tr>
+      <tr><td>dylan</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+      <tr><td>eric</td><td>-</td><td>-</td><td>-</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>-</td><td>-</td></tr>
+      <tr><td>ono_anna</td><td>-</td><td>-</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>-</td></tr>
+      <tr><td>ryan</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>-</td></tr>
+      <tr><td>serena</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+      <tr><td>sohee</td><td>-</td><td>-</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>-</td><td>-</td></tr>
+      <tr><td>uncle_fu</td><td>-</td><td>-</td><td>-</td><td>&#10003;</td><td>&#10003;</td><td>-</td><td>-</td><td>&#10003;</td></tr>
+      <tr><td>vivian</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>-</td></tr>
+    </table>
+    <p>Notes on the table:</p>
+    <ul>
+      <li><code>dylan</code> and <code>serena</code> render no style at all - use them for neutral
+        delivery only, and see the prosody table below for what little can still be varied on
+        them.</li>
+      <li><code>ryan</code> and <code>vivian</code> cover the widest range, so they are the safest
+        choice when the style is chosen at runtime rather than fixed in advance.</li>
+      <li>A synonym behaves exactly like its primary name, so <code>happy</code> / <code>joyful</code>
+        work wherever <code>cheerful</code> does, as do <code>sorrowful</code> for <code>sad</code>
+        and <code>furious</code> for <code>angry</code>.</li>
+    </ul>
+
+    <p><b>Prosody supported per voice</b></p>
+    <p>Rate and volume are limited per voice in the same way, and the same caveat applies: the server
+    does not check this table either, so asking for a step a voice cannot render succeeds silently
+    and leaves the delivery unchanged. Only the two steps of each dimension are listed -
+    <code>medium</code> (equally <code>default</code>) is available on every voice, because it means
+    &quot;leave this dimension alone&quot; and sends no instruction at all.</p>
+    <table>
+      <tr><th>Voice</th><th>rate slow</th><th>rate fast</th><th>volume soft</th><th>volume loud</th></tr>
+      <tr><td>aiden</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+      <tr><td>dylan</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>-</td></tr>
+      <tr><td>eric</td><td>&#10003;</td><td>-</td><td>&#10003;</td><td>-</td></tr>
+      <tr><td>ono_anna</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+      <tr><td>ryan</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+      <tr><td>serena</td><td>&#10003;</td><td>-</td><td>-</td><td>-</td></tr>
+      <tr><td>sohee</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+      <tr><td>uncle_fu</td><td>-</td><td>-</td><td>&#10003;</td><td>&#10003;</td></tr>
+      <tr><td>vivian</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>-</td></tr>
+    </table>
+    <p>Notes on the table:</p>
+    <ul>
+      <li><code>uncle_fu</code> does not respond to <code>rate</code> at all - change its pace by
+        rewriting the text, or pick another voice.</li>
+      <li><code>dylan</code> renders no style but does respond to <code>rate</code> and to
+        <code>volume=&quot;soft&quot;</code>, so <code>&lt;prosody&gt;</code> is the only delivery
+        control that works on it.</li>
+      <li><code>serena</code> is the most constrained voice: <code>rate=&quot;slow&quot;</code> is the
+        one control it responds to, and no style, no <code>rate=&quot;fast&quot;</code> and no volume
+        step has any effect. Treat it as a fixed delivery that can only be slowed down.</li>
+      <li><code>ono_anna</code>, <code>ryan</code>, <code>sohee</code> and <code>aiden</code> render
+        every step of both dimensions.</li>
+    </ul>
+
+    <p>Every control is positional - it colours exactly the text it wraps - and a delivery change may
+    only land on a <b>sentence boundary</b>. Markup wrapping part of a sentence is widened to the
+    whole sentence, because a sentence fragment sent as a complete utterance makes the model
+    hallucinate. Each delivery change also costs one additional inference call, so marking up whole
+    sentences, or leaving the text unmarked, synthesises fastest.</p>
     <p>See also <code>RequestConfig.instruction</code> for supplying the instruction / voice
     description directly instead of embedding it in the text.</p>
 
@@ -244,142 +317,162 @@ class SynthesizeRequest(google.protobuf.message.Message):
     behind the selected pipeline. Standard <code>&lt;prosody&gt;</code>, <code>&lt;emphasis&gt;</code>
     and <code>&lt;break&gt;</code> are common to all three.</p>
     <ul>
-      <li>Google Cloud TTS: <pre><code>&lt;google:style name=&quot;calm&quot;&gt;please stay calm everything will be fine&lt;/google:style&gt;</code></pre></li>
-      <li>Microsoft Azure: <pre><code>&lt;mstts:express-as style=&quot;cheerful&quot;&gt;please stay calm everything will be fine&lt;/mstts:express-as&gt;</code></pre></li>
-      <li>Amazon Polly (whispered): <pre><code>&lt;amazon:effect name=&quot;whispered&quot;&gt;please stay calm everything will be fine&lt;/amazon:effect&gt;</code></pre></li>
+      <li>Google Cloud TTS: <pre><code>&lt;google:style name=&quot;calm&quot;&gt;please stay calm everything will be fine&lt;/google:style&gt;</code></pre>
+        More information:
+        <a href="https://docs.cloud.google.com/text-to-speech/docs/ssml#styles">Google Cloud TTS - SSML styles</a></li>
+      <li>Microsoft Azure: <pre><code>&lt;mstts:express-as style=&quot;cheerful&quot;&gt;please stay calm everything will be fine&lt;/mstts:express-as&gt;</code></pre>
+        More information:
+        <a href="https://learn.microsoft.com/en-us/azure/ai-services/speech-service/speech-synthesis-markup-voice">Microsoft Azure - speech synthesis markup, voice and speaking styles</a></li>
+      <li>Amazon Polly (whispered): <pre><code>&lt;amazon:effect name=&quot;whispered&quot;&gt;please stay calm everything will be fine&lt;/amazon:effect&gt;</code></pre>
+        More information:
+        <a href="https://docs.aws.amazon.com/polly/latest/dg/whispered-tag.html">Amazon Polly - whispered speech with amazon:effect</a></li>
       <li>Amazon Polly (soft phonation): <pre><code>&lt;amazon:effect phonation=&quot;soft&quot;&gt;please stay calm everything will be fine&lt;/amazon:effect&gt;</code></pre></li>
     </ul>
     """
-    @property
-    def config(self) -> global___RequestConfig:
+    @_builtins.property
+    def config(self) -> Global___RequestConfig:
         """Required. Represents the specifications needed to do the text to speech transformation."""
 
     def __init__(
         self,
         *,
-        text: builtins.str = ...,
-        config: global___RequestConfig | None = ...,
+        text: _builtins.str = ...,
+        config: Global___RequestConfig | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["config", b"config"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["config", b"config", "text", b"text"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["config", b"config"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["config", b"config", "text", b"text"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___SynthesizeRequest = SynthesizeRequest
+Global___SynthesizeRequest: _TypeAlias = SynthesizeRequest  # noqa: Y015
 
-@typing.final
-class BatchSynthesizeRequest(google.protobuf.message.Message):
+@_typing.final
+class BatchSynthesizeRequest(_message.Message):
     """<p>BatchSynthesizeRequest message is used to send a batch request for synthesis.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    BATCH_REQUEST_FIELD_NUMBER: builtins.int
-    @property
-    def batch_request(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___SynthesizeRequest]:
+    BATCH_REQUEST_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def batch_request(self) -> _containers.RepeatedCompositeFieldContainer[Global___SynthesizeRequest]:
         """Repeated field holding individual synthesis requests that make up the batch request."""
 
     def __init__(
         self,
         *,
-        batch_request: collections.abc.Iterable[global___SynthesizeRequest] | None = ...,
+        batch_request: _abc.Iterable[Global___SynthesizeRequest] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["batch_request", b"batch_request"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["batch_request", b"batch_request"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___BatchSynthesizeRequest = BatchSynthesizeRequest
+Global___BatchSynthesizeRequest: _TypeAlias = BatchSynthesizeRequest  # noqa: Y015
 
-@typing.final
-class StreamingSynthesizeRequest(google.protobuf.message.Message):
+@_typing.final
+class StreamingSynthesizeRequest(_message.Message):
     """<p>StreamingSynthesizeRequest is used to perform streaming synthesize.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    TEXT_FIELD_NUMBER: builtins.int
-    CONFIG_FIELD_NUMBER: builtins.int
-    text: builtins.str
+    TEXT_FIELD_NUMBER: _builtins.int
+    CONFIG_FIELD_NUMBER: _builtins.int
+    text: _builtins.str
     """Required. Represents the text that will be transformed to speech.
     All the properties according to the input text in SynthesizeRequest can be also applied here.
     """
-    @property
-    def config(self) -> global___RequestConfig:
+    @_builtins.property
+    def config(self) -> Global___RequestConfig:
         """Required. Represents the specifications needed to do the text to speech transformation."""
 
     def __init__(
         self,
         *,
-        text: builtins.str = ...,
-        config: global___RequestConfig | None = ...,
+        text: _builtins.str = ...,
+        config: Global___RequestConfig | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["config", b"config"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["config", b"config", "text", b"text"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["config", b"config"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["config", b"config", "text", b"text"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___StreamingSynthesizeRequest = StreamingSynthesizeRequest
+Global___StreamingSynthesizeRequest: _TypeAlias = StreamingSynthesizeRequest  # noqa: Y015
 
-@typing.final
-class BatchSynthesizeResponse(google.protobuf.message.Message):
+@_typing.final
+class BatchSynthesizeResponse(_message.Message):
     """<p>BatchSynthesizeResponse message is used to store the responses for a batch synthesis request.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    BATCH_RESPONSE_FIELD_NUMBER: builtins.int
-    @property
-    def batch_response(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___SynthesizeResponse]:
+    BATCH_RESPONSE_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def batch_response(self) -> _containers.RepeatedCompositeFieldContainer[Global___SynthesizeResponse]:
         """Repeated field holding individual synthesis responses that correspond to the input requests in the batch."""
 
     def __init__(
         self,
         *,
-        batch_response: collections.abc.Iterable[global___SynthesizeResponse] | None = ...,
+        batch_response: _abc.Iterable[Global___SynthesizeResponse] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["batch_response", b"batch_response"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["batch_response", b"batch_response"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___BatchSynthesizeResponse = BatchSynthesizeResponse
+Global___BatchSynthesizeResponse: _TypeAlias = BatchSynthesizeResponse  # noqa: Y015
 
-@typing.final
-class RequestConfig(google.protobuf.message.Message):
+@_typing.final
+class RequestConfig(_message.Message):
     """<p>Represents a Configuration for the text to speech conversion.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    T2S_PIPELINE_ID_FIELD_NUMBER: builtins.int
-    LENGTH_SCALE_FIELD_NUMBER: builtins.int
-    NOISE_SCALE_FIELD_NUMBER: builtins.int
-    SAMPLE_RATE_FIELD_NUMBER: builtins.int
-    PCM_FIELD_NUMBER: builtins.int
-    AUDIO_FORMAT_FIELD_NUMBER: builtins.int
-    USE_CACHE_FIELD_NUMBER: builtins.int
-    T2S_SERVICE_CONFIG_FIELD_NUMBER: builtins.int
-    T2S_CLOUD_PROVIDER_CONFIG_FIELD_NUMBER: builtins.int
-    T2S_NORMALIZATION_FIELD_NUMBER: builtins.int
-    WORD_TO_PHONEME_MAPPING_FIELD_NUMBER: builtins.int
-    INSTRUCTION_FIELD_NUMBER: builtins.int
-    t2s_pipeline_id: builtins.str
+    T2S_PIPELINE_ID_FIELD_NUMBER: _builtins.int
+    LENGTH_SCALE_FIELD_NUMBER: _builtins.int
+    NOISE_SCALE_FIELD_NUMBER: _builtins.int
+    SAMPLE_RATE_FIELD_NUMBER: _builtins.int
+    PCM_FIELD_NUMBER: _builtins.int
+    AUDIO_FORMAT_FIELD_NUMBER: _builtins.int
+    USE_CACHE_FIELD_NUMBER: _builtins.int
+    T2S_SERVICE_CONFIG_FIELD_NUMBER: _builtins.int
+    T2S_CLOUD_PROVIDER_CONFIG_FIELD_NUMBER: _builtins.int
+    T2S_NORMALIZATION_FIELD_NUMBER: _builtins.int
+    WORD_TO_PHONEME_MAPPING_FIELD_NUMBER: _builtins.int
+    INSTRUCTION_FIELD_NUMBER: _builtins.int
+    t2s_pipeline_id: _builtins.str
     """Required. Represents the pipeline id of the model configuration that will be used."""
-    length_scale: builtins.float
+    length_scale: _builtins.float
     """Optional. This parameter is used for time stretching which is the process of
     changing the speed or duration of an audio.
     It should be much more than 1.0. 0 is not a valid number for this variable.
     The default value is 1.
     """
-    noise_scale: builtins.float
+    noise_scale: _builtins.float
     """Optional. Defines the noise in the generated audio.
     It should be between 0.0 and 1.
     The default value is 0.0
     """
-    sample_rate: builtins.int
+    sample_rate: _builtins.int
     """Optional. Defines the sample rate of the generated wav file.
     The default value is 22050.
     """
-    pcm: global___Pcm.ValueType
+    pcm: Global___Pcm.ValueType
     """Optional. Defines the pulse-code modulation of the wav file.
     The default value is PCM_16.
     """
-    audio_format: global___AudioFormat.ValueType
+    audio_format: Global___AudioFormat.ValueType
     """Optional. Defines the format of the desired audio.
     The default value is wav.
     """
-    use_cache: builtins.bool
+    use_cache: _builtins.bool
     """Optional. Define if cache should be used or not.
     The default value is False.
     """
-    instruction: builtins.str
+    instruction: _builtins.str
     """Optional. Define an instruction or prompt to be passed to the TTS/LLM backend for this request.
 
     <p>This field is only honored by the <b>qwen3-tts-voicedesign</b> model, where it is a
@@ -390,8 +483,8 @@ class RequestConfig(google.protobuf.message.Message):
     model, embed the control tags in the request text instead (see <code>SynthesizeRequest.text</code>),
     not via this field.</p>
     """
-    @property
-    def t2s_service_config(self) -> google.protobuf.struct_pb2.Struct:
+    @_builtins.property
+    def t2s_service_config(self) -> _struct_pb2.Struct:
         """Optional. t2s_service_config provides the configuration of the service such as API key, bearer tokens, JWT,
         and other header information as key value pairs, e.g., <pre><code>MY_API_KEY=&apos;LKJDIFe244LKJOI&apos;</code></pre>
 
@@ -431,284 +524,329 @@ class RequestConfig(google.protobuf.message.Message):
         Note: ondewo-t2s will raise an error if you don&apos;t pass any of the required arguments above.
         """
 
-    @property
-    def t2s_cloud_provider_config(self) -> global___T2sCloudProviderConfig:
+    @_builtins.property
+    def t2s_cloud_provider_config(self) -> Global___T2sCloudProviderConfig:
         """Optional. Defines the cloud provider's specific configuration for using text to speech cloud services
         The default value is None.
         """
 
-    @property
-    def t2s_normalization(self) -> global___T2SNormalization:
+    @_builtins.property
+    def t2s_normalization(self) -> Global___T2SNormalization:
         """Optional. Define t2s_normalization config parameters for this specific request.
         The default values are set in the config file and the values set via RequestConfig are set just for
         this specific request and will not update the pipeline.
         """
 
-    @property
-    def word_to_phoneme_mapping(self) -> google.protobuf.struct_pb2.Struct:
+    @_builtins.property
+    def word_to_phoneme_mapping(self) -> _struct_pb2.Struct:
         """Optional. Define a dict which specifies the phonemes for a special word."""
 
     def __init__(
         self,
         *,
-        t2s_pipeline_id: builtins.str = ...,
-        length_scale: builtins.float = ...,
-        noise_scale: builtins.float = ...,
-        sample_rate: builtins.int = ...,
-        pcm: global___Pcm.ValueType = ...,
-        audio_format: global___AudioFormat.ValueType = ...,
-        use_cache: builtins.bool = ...,
-        t2s_service_config: google.protobuf.struct_pb2.Struct | None = ...,
-        t2s_cloud_provider_config: global___T2sCloudProviderConfig | None = ...,
-        t2s_normalization: global___T2SNormalization | None = ...,
-        word_to_phoneme_mapping: google.protobuf.struct_pb2.Struct | None = ...,
-        instruction: builtins.str | None = ...,
+        t2s_pipeline_id: _builtins.str = ...,
+        length_scale: _builtins.float = ...,
+        noise_scale: _builtins.float = ...,
+        sample_rate: _builtins.int = ...,
+        pcm: Global___Pcm.ValueType = ...,
+        audio_format: Global___AudioFormat.ValueType = ...,
+        use_cache: _builtins.bool = ...,
+        t2s_service_config: _struct_pb2.Struct | None = ...,
+        t2s_cloud_provider_config: Global___T2sCloudProviderConfig | None = ...,
+        t2s_normalization: Global___T2SNormalization | None = ...,
+        word_to_phoneme_mapping: _struct_pb2.Struct | None = ...,
+        instruction: _builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["_instruction", b"_instruction", "_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "_word_to_phoneme_mapping", b"_word_to_phoneme_mapping", "audio_format", b"audio_format", "instruction", b"instruction", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache", "word_to_phoneme_mapping", b"word_to_phoneme_mapping"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["_instruction", b"_instruction", "_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "_word_to_phoneme_mapping", b"_word_to_phoneme_mapping", "audio_format", b"audio_format", "instruction", b"instruction", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_pipeline_id", b"t2s_pipeline_id", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache", "word_to_phoneme_mapping", b"word_to_phoneme_mapping"]) -> None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing.Literal["_instruction", b"_instruction"]) -> typing.Literal["instruction"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config"]) -> typing.Literal["t2s_cloud_provider_config"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing.Literal["_t2s_service_config", b"_t2s_service_config"]) -> typing.Literal["t2s_service_config"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing.Literal["_word_to_phoneme_mapping", b"_word_to_phoneme_mapping"]) -> typing.Literal["word_to_phoneme_mapping"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing.Literal["oneof_AudioFormat", b"oneof_AudioFormat"]) -> typing.Literal["audio_format"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing.Literal["oneof_Pcm", b"oneof_Pcm"]) -> typing.Literal["pcm"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing.Literal["oneof_length_scale", b"oneof_length_scale"]) -> typing.Literal["length_scale"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing.Literal["oneof_noise_scale", b"oneof_noise_scale"]) -> typing.Literal["noise_scale"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing.Literal["oneof_sample_rate", b"oneof_sample_rate"]) -> typing.Literal["sample_rate"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing.Literal["oneof_t2s_normalization", b"oneof_t2s_normalization"]) -> typing.Literal["t2s_normalization"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing.Literal["oneof_use_cache", b"oneof_use_cache"]) -> typing.Literal["use_cache"] | None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["_instruction", b"_instruction", "_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "_word_to_phoneme_mapping", b"_word_to_phoneme_mapping", "audio_format", b"audio_format", "instruction", b"instruction", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache", "word_to_phoneme_mapping", b"word_to_phoneme_mapping"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["_instruction", b"_instruction", "_t2s_cloud_provider_config", b"_t2s_cloud_provider_config", "_t2s_service_config", b"_t2s_service_config", "_word_to_phoneme_mapping", b"_word_to_phoneme_mapping", "audio_format", b"audio_format", "instruction", b"instruction", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "oneof_AudioFormat", b"oneof_AudioFormat", "oneof_Pcm", b"oneof_Pcm", "oneof_length_scale", b"oneof_length_scale", "oneof_noise_scale", b"oneof_noise_scale", "oneof_sample_rate", b"oneof_sample_rate", "oneof_t2s_normalization", b"oneof_t2s_normalization", "oneof_use_cache", b"oneof_use_cache", "pcm", b"pcm", "sample_rate", b"sample_rate", "t2s_cloud_provider_config", b"t2s_cloud_provider_config", "t2s_normalization", b"t2s_normalization", "t2s_pipeline_id", b"t2s_pipeline_id", "t2s_service_config", b"t2s_service_config", "use_cache", b"use_cache", "word_to_phoneme_mapping", b"word_to_phoneme_mapping"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    _WhichOneofReturnType__instruction: _TypeAlias = _typing.Literal["instruction"]  # noqa: Y015
+    _WhichOneofArgType__instruction: _TypeAlias = _typing.Literal["_instruction", b"_instruction"]  # noqa: Y015
+    _WhichOneofReturnType__t2s_cloud_provider_config: _TypeAlias = _typing.Literal["t2s_cloud_provider_config"]  # noqa: Y015
+    _WhichOneofArgType__t2s_cloud_provider_config: _TypeAlias = _typing.Literal["_t2s_cloud_provider_config", b"_t2s_cloud_provider_config"]  # noqa: Y015
+    _WhichOneofReturnType__t2s_service_config: _TypeAlias = _typing.Literal["t2s_service_config"]  # noqa: Y015
+    _WhichOneofArgType__t2s_service_config: _TypeAlias = _typing.Literal["_t2s_service_config", b"_t2s_service_config"]  # noqa: Y015
+    _WhichOneofReturnType__word_to_phoneme_mapping: _TypeAlias = _typing.Literal["word_to_phoneme_mapping"]  # noqa: Y015
+    _WhichOneofArgType__word_to_phoneme_mapping: _TypeAlias = _typing.Literal["_word_to_phoneme_mapping", b"_word_to_phoneme_mapping"]  # noqa: Y015
+    _WhichOneofReturnType_oneof_AudioFormat: _TypeAlias = _typing.Literal["audio_format"]  # noqa: Y015
+    _WhichOneofArgType_oneof_AudioFormat: _TypeAlias = _typing.Literal["oneof_AudioFormat", b"oneof_AudioFormat"]  # noqa: Y015
+    _WhichOneofReturnType_oneof_Pcm: _TypeAlias = _typing.Literal["pcm"]  # noqa: Y015
+    _WhichOneofArgType_oneof_Pcm: _TypeAlias = _typing.Literal["oneof_Pcm", b"oneof_Pcm"]  # noqa: Y015
+    _WhichOneofReturnType_oneof_length_scale: _TypeAlias = _typing.Literal["length_scale"]  # noqa: Y015
+    _WhichOneofArgType_oneof_length_scale: _TypeAlias = _typing.Literal["oneof_length_scale", b"oneof_length_scale"]  # noqa: Y015
+    _WhichOneofReturnType_oneof_noise_scale: _TypeAlias = _typing.Literal["noise_scale"]  # noqa: Y015
+    _WhichOneofArgType_oneof_noise_scale: _TypeAlias = _typing.Literal["oneof_noise_scale", b"oneof_noise_scale"]  # noqa: Y015
+    _WhichOneofReturnType_oneof_sample_rate: _TypeAlias = _typing.Literal["sample_rate"]  # noqa: Y015
+    _WhichOneofArgType_oneof_sample_rate: _TypeAlias = _typing.Literal["oneof_sample_rate", b"oneof_sample_rate"]  # noqa: Y015
+    _WhichOneofReturnType_oneof_t2s_normalization: _TypeAlias = _typing.Literal["t2s_normalization"]  # noqa: Y015
+    _WhichOneofArgType_oneof_t2s_normalization: _TypeAlias = _typing.Literal["oneof_t2s_normalization", b"oneof_t2s_normalization"]  # noqa: Y015
+    _WhichOneofReturnType_oneof_use_cache: _TypeAlias = _typing.Literal["use_cache"]  # noqa: Y015
+    _WhichOneofArgType_oneof_use_cache: _TypeAlias = _typing.Literal["oneof_use_cache", b"oneof_use_cache"]  # noqa: Y015
+    @_typing.overload
+    def WhichOneof(self, oneof_group: _WhichOneofArgType__instruction) -> _WhichOneofReturnType__instruction | None: ...
+    @_typing.overload
+    def WhichOneof(self, oneof_group: _WhichOneofArgType__t2s_cloud_provider_config) -> _WhichOneofReturnType__t2s_cloud_provider_config | None: ...
+    @_typing.overload
+    def WhichOneof(self, oneof_group: _WhichOneofArgType__t2s_service_config) -> _WhichOneofReturnType__t2s_service_config | None: ...
+    @_typing.overload
+    def WhichOneof(self, oneof_group: _WhichOneofArgType__word_to_phoneme_mapping) -> _WhichOneofReturnType__word_to_phoneme_mapping | None: ...
+    @_typing.overload
+    def WhichOneof(self, oneof_group: _WhichOneofArgType_oneof_AudioFormat) -> _WhichOneofReturnType_oneof_AudioFormat | None: ...
+    @_typing.overload
+    def WhichOneof(self, oneof_group: _WhichOneofArgType_oneof_Pcm) -> _WhichOneofReturnType_oneof_Pcm | None: ...
+    @_typing.overload
+    def WhichOneof(self, oneof_group: _WhichOneofArgType_oneof_length_scale) -> _WhichOneofReturnType_oneof_length_scale | None: ...
+    @_typing.overload
+    def WhichOneof(self, oneof_group: _WhichOneofArgType_oneof_noise_scale) -> _WhichOneofReturnType_oneof_noise_scale | None: ...
+    @_typing.overload
+    def WhichOneof(self, oneof_group: _WhichOneofArgType_oneof_sample_rate) -> _WhichOneofReturnType_oneof_sample_rate | None: ...
+    @_typing.overload
+    def WhichOneof(self, oneof_group: _WhichOneofArgType_oneof_t2s_normalization) -> _WhichOneofReturnType_oneof_t2s_normalization | None: ...
+    @_typing.overload
+    def WhichOneof(self, oneof_group: _WhichOneofArgType_oneof_use_cache) -> _WhichOneofReturnType_oneof_use_cache | None: ...
 
-global___RequestConfig = RequestConfig
+Global___RequestConfig: _TypeAlias = RequestConfig  # noqa: Y015
 
-@typing.final
-class T2sCloudProviderConfig(google.protobuf.message.Message):
+@_typing.final
+class T2sCloudProviderConfig(_message.Message):
     """<p>Configuration for cloud provider settings for Text-to-Speech (T2S).</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    T2S_CLOUD_PROVIDER_CONFIG_ELEVENLABS_FIELD_NUMBER: builtins.int
-    T2S_CLOUD_PROVIDER_CONFIG_GOOGLE_FIELD_NUMBER: builtins.int
-    T2S_CLOUD_PROVIDER_CONFIG_MICROSOFT_FIELD_NUMBER: builtins.int
-    @property
-    def t2s_cloud_provider_config_elevenlabs(self) -> global___T2sCloudProviderConfigElevenLabs:
+    T2S_CLOUD_PROVIDER_CONFIG_ELEVENLABS_FIELD_NUMBER: _builtins.int
+    T2S_CLOUD_PROVIDER_CONFIG_GOOGLE_FIELD_NUMBER: _builtins.int
+    T2S_CLOUD_PROVIDER_CONFIG_MICROSOFT_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def t2s_cloud_provider_config_elevenlabs(self) -> Global___T2sCloudProviderConfigElevenLabs:
         """Configuration for Eleven Labs text-to-speech provider."""
 
-    @property
-    def t2s_cloud_provider_config_google(self) -> global___T2sCloudProviderConfigGoogle:
+    @_builtins.property
+    def t2s_cloud_provider_config_google(self) -> Global___T2sCloudProviderConfigGoogle:
         """Configuration for Google text-to-speech provider."""
 
-    @property
-    def t2s_cloud_provider_config_microsoft(self) -> global___T2sCloudProviderConfigMicrosoft:
+    @_builtins.property
+    def t2s_cloud_provider_config_microsoft(self) -> Global___T2sCloudProviderConfigMicrosoft:
         """Configuration for Microsoft text-to-speech provider."""
 
     def __init__(
         self,
         *,
-        t2s_cloud_provider_config_elevenlabs: global___T2sCloudProviderConfigElevenLabs | None = ...,
-        t2s_cloud_provider_config_google: global___T2sCloudProviderConfigGoogle | None = ...,
-        t2s_cloud_provider_config_microsoft: global___T2sCloudProviderConfigMicrosoft | None = ...,
+        t2s_cloud_provider_config_elevenlabs: Global___T2sCloudProviderConfigElevenLabs | None = ...,
+        t2s_cloud_provider_config_google: Global___T2sCloudProviderConfigGoogle | None = ...,
+        t2s_cloud_provider_config_microsoft: Global___T2sCloudProviderConfigMicrosoft | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["t2s_cloud_provider_config_elevenlabs", b"t2s_cloud_provider_config_elevenlabs", "t2s_cloud_provider_config_google", b"t2s_cloud_provider_config_google", "t2s_cloud_provider_config_microsoft", b"t2s_cloud_provider_config_microsoft"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["t2s_cloud_provider_config_elevenlabs", b"t2s_cloud_provider_config_elevenlabs", "t2s_cloud_provider_config_google", b"t2s_cloud_provider_config_google", "t2s_cloud_provider_config_microsoft", b"t2s_cloud_provider_config_microsoft"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["t2s_cloud_provider_config_elevenlabs", b"t2s_cloud_provider_config_elevenlabs", "t2s_cloud_provider_config_google", b"t2s_cloud_provider_config_google", "t2s_cloud_provider_config_microsoft", b"t2s_cloud_provider_config_microsoft"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["t2s_cloud_provider_config_elevenlabs", b"t2s_cloud_provider_config_elevenlabs", "t2s_cloud_provider_config_google", b"t2s_cloud_provider_config_google", "t2s_cloud_provider_config_microsoft", b"t2s_cloud_provider_config_microsoft"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___T2sCloudProviderConfig = T2sCloudProviderConfig
+Global___T2sCloudProviderConfig: _TypeAlias = T2sCloudProviderConfig  # noqa: Y015
 
-@typing.final
-class T2sCloudProviderConfigElevenLabs(google.protobuf.message.Message):
+@_typing.final
+class T2sCloudProviderConfigElevenLabs(_message.Message):
     """<p>Configuration details specific to the Eleven Labs text-to-speech provider.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    STABILITY_FIELD_NUMBER: builtins.int
-    SIMILARITY_BOOST_FIELD_NUMBER: builtins.int
-    STYLE_FIELD_NUMBER: builtins.int
-    USE_SPEAKER_BOOST_FIELD_NUMBER: builtins.int
-    APPLY_TEXT_NORMALIZATION_FIELD_NUMBER: builtins.int
-    stability: builtins.float
+    STABILITY_FIELD_NUMBER: _builtins.int
+    SIMILARITY_BOOST_FIELD_NUMBER: _builtins.int
+    STYLE_FIELD_NUMBER: _builtins.int
+    USE_SPEAKER_BOOST_FIELD_NUMBER: _builtins.int
+    APPLY_TEXT_NORMALIZATION_FIELD_NUMBER: _builtins.int
+    stability: _builtins.float
     """Stability level for inference, influencing consistency of generated speech. It is in the range [0.0, 1.0]."""
-    similarity_boost: builtins.float
+    similarity_boost: _builtins.float
     """Boost value for similarity to enhance the similarity of the generated voice to a target voice.
     It is in the range [0.0, 1.0].
     """
-    style: builtins.float
+    style: _builtins.float
     """Style parameter to control the expression or emotion in speech. It is in the range [0.0, 1.0]."""
-    use_speaker_boost: builtins.bool
+    use_speaker_boost: _builtins.bool
     """Enables or disables speaker boost for emphasis on clarity and loudness."""
-    apply_text_normalization: builtins.str
+    apply_text_normalization: _builtins.str
     """Specifies type of text normalization to apply during processing. Available options are 'auto', 'on', and 'off'."""
     def __init__(
         self,
         *,
-        stability: builtins.float = ...,
-        similarity_boost: builtins.float = ...,
-        style: builtins.float = ...,
-        use_speaker_boost: builtins.bool = ...,
-        apply_text_normalization: builtins.str = ...,
+        stability: _builtins.float = ...,
+        similarity_boost: _builtins.float = ...,
+        style: _builtins.float = ...,
+        use_speaker_boost: _builtins.bool = ...,
+        apply_text_normalization: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["apply_text_normalization", b"apply_text_normalization", "similarity_boost", b"similarity_boost", "stability", b"stability", "style", b"style", "use_speaker_boost", b"use_speaker_boost"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["apply_text_normalization", b"apply_text_normalization", "similarity_boost", b"similarity_boost", "stability", b"stability", "style", b"style", "use_speaker_boost", b"use_speaker_boost"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___T2sCloudProviderConfigElevenLabs = T2sCloudProviderConfigElevenLabs
+Global___T2sCloudProviderConfigElevenLabs: _TypeAlias = T2sCloudProviderConfigElevenLabs  # noqa: Y015
 
-@typing.final
-class T2sCloudProviderConfigMicrosoft(google.protobuf.message.Message):
+@_typing.final
+class T2sCloudProviderConfigMicrosoft(_message.Message):
     """<p>Configuration details specific to the Microsoft text-to-speech provider.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    USE_DEFAULT_SPEAKER_FIELD_NUMBER: builtins.int
-    use_default_speaker: builtins.bool
+    USE_DEFAULT_SPEAKER_FIELD_NUMBER: _builtins.int
+    use_default_speaker: _builtins.bool
     """Determines whether to use the default speaker voice."""
     def __init__(
         self,
         *,
-        use_default_speaker: builtins.bool = ...,
+        use_default_speaker: _builtins.bool = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["use_default_speaker", b"use_default_speaker"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["use_default_speaker", b"use_default_speaker"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___T2sCloudProviderConfigMicrosoft = T2sCloudProviderConfigMicrosoft
+Global___T2sCloudProviderConfigMicrosoft: _TypeAlias = T2sCloudProviderConfigMicrosoft  # noqa: Y015
 
-@typing.final
-class T2sCloudProviderConfigGoogle(google.protobuf.message.Message):
+@_typing.final
+class T2sCloudProviderConfigGoogle(_message.Message):
     """<p>Configuration details specific to the Google text-to-speech provider.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    SPEAKING_RATE_FIELD_NUMBER: builtins.int
-    VOLUME_GAIN_DB_FIELD_NUMBER: builtins.int
-    PITCH_FIELD_NUMBER: builtins.int
-    speaking_rate: builtins.float
+    SPEAKING_RATE_FIELD_NUMBER: _builtins.int
+    VOLUME_GAIN_DB_FIELD_NUMBER: _builtins.int
+    PITCH_FIELD_NUMBER: _builtins.int
+    speaking_rate: _builtins.float
     """Speaking rate for inference, controlling the speed of generated speech. It is in the range [0.25, 4.0]."""
-    volume_gain_db: builtins.float
+    volume_gain_db: _builtins.float
     """Volume gain in dB applied to the generated speech. It is in the range [-96.0, 16.0]."""
-    pitch: builtins.float
+    pitch: _builtins.float
     """Pitch adjustment for inference, allowing control over voice pitch. It is in the range in the range [-20.0, 20.0]."""
     def __init__(
         self,
         *,
-        speaking_rate: builtins.float = ...,
-        volume_gain_db: builtins.float = ...,
-        pitch: builtins.float = ...,
+        speaking_rate: _builtins.float = ...,
+        volume_gain_db: _builtins.float = ...,
+        pitch: _builtins.float = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["pitch", b"pitch", "speaking_rate", b"speaking_rate", "volume_gain_db", b"volume_gain_db"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["pitch", b"pitch", "speaking_rate", b"speaking_rate", "volume_gain_db", b"volume_gain_db"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___T2sCloudProviderConfigGoogle = T2sCloudProviderConfigGoogle
+Global___T2sCloudProviderConfigGoogle: _TypeAlias = T2sCloudProviderConfigGoogle  # noqa: Y015
 
-@typing.final
-class SynthesizeResponse(google.protobuf.message.Message):
+@_typing.final
+class SynthesizeResponse(_message.Message):
     """<p>Represents a Synthesize Response.</p>
     <p>A Synthesize Response contains the generated audio, requested text and all other properties of this generated audio.</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    AUDIO_UUID_FIELD_NUMBER: builtins.int
-    AUDIO_FIELD_NUMBER: builtins.int
-    GENERATION_TIME_FIELD_NUMBER: builtins.int
-    AUDIO_LENGTH_FIELD_NUMBER: builtins.int
-    TEXT_FIELD_NUMBER: builtins.int
-    CONFIG_FIELD_NUMBER: builtins.int
-    NORMALIZED_TEXT_FIELD_NUMBER: builtins.int
-    SAMPLE_RATE_FIELD_NUMBER: builtins.int
-    audio_uuid: builtins.str
+    AUDIO_UUID_FIELD_NUMBER: _builtins.int
+    AUDIO_FIELD_NUMBER: _builtins.int
+    GENERATION_TIME_FIELD_NUMBER: _builtins.int
+    AUDIO_LENGTH_FIELD_NUMBER: _builtins.int
+    TEXT_FIELD_NUMBER: _builtins.int
+    CONFIG_FIELD_NUMBER: _builtins.int
+    NORMALIZED_TEXT_FIELD_NUMBER: _builtins.int
+    SAMPLE_RATE_FIELD_NUMBER: _builtins.int
+    audio_uuid: _builtins.str
     """Required. The unique identifier (UUID) assigned to the generated audio."""
-    audio: builtins.bytes
+    audio: _builtins.bytes
     """Required. Generated file with the parameters described in request."""
-    generation_time: builtins.float
+    generation_time: _builtins.float
     """Required. Time taken to generate the audio, in seconds."""
-    audio_length: builtins.float
+    audio_length: _builtins.float
     """Required. Length (duration) of the generated audio, in seconds."""
-    text: builtins.str
+    text: _builtins.str
     """Required. Text from which audio was generated."""
-    normalized_text: builtins.str
+    normalized_text: _builtins.str
     """Optional. Normalized text."""
-    sample_rate: builtins.float
+    sample_rate: _builtins.float
     """Optional. Sampling rate of the generated audio, in Hertz (Hz)."""
-    @property
-    def config(self) -> global___RequestConfig:
+    @_builtins.property
+    def config(self) -> Global___RequestConfig:
         """Required. Configuration from which audio was generated."""
 
     def __init__(
         self,
         *,
-        audio_uuid: builtins.str = ...,
-        audio: builtins.bytes = ...,
-        generation_time: builtins.float = ...,
-        audio_length: builtins.float = ...,
-        text: builtins.str = ...,
-        config: global___RequestConfig | None = ...,
-        normalized_text: builtins.str = ...,
-        sample_rate: builtins.float = ...,
+        audio_uuid: _builtins.str = ...,
+        audio: _builtins.bytes = ...,
+        generation_time: _builtins.float = ...,
+        audio_length: _builtins.float = ...,
+        text: _builtins.str = ...,
+        config: Global___RequestConfig | None = ...,
+        normalized_text: _builtins.str = ...,
+        sample_rate: _builtins.float = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["config", b"config"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["audio", b"audio", "audio_length", b"audio_length", "audio_uuid", b"audio_uuid", "config", b"config", "generation_time", b"generation_time", "normalized_text", b"normalized_text", "sample_rate", b"sample_rate", "text", b"text"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["config", b"config"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["audio", b"audio", "audio_length", b"audio_length", "audio_uuid", b"audio_uuid", "config", b"config", "generation_time", b"generation_time", "normalized_text", b"normalized_text", "sample_rate", b"sample_rate", "text", b"text"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___SynthesizeResponse = SynthesizeResponse
+Global___SynthesizeResponse: _TypeAlias = SynthesizeResponse  # noqa: Y015
 
-@typing.final
-class StreamingSynthesizeResponse(google.protobuf.message.Message):
+@_typing.final
+class StreamingSynthesizeResponse(_message.Message):
     """<p>Represents a Streaming Synthesize Response.</p>
     <p>A Streaming Synthesize Response contains the generated audio, requested text and and
     all other properties of this generated audio.</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    AUDIO_UUID_FIELD_NUMBER: builtins.int
-    AUDIO_FIELD_NUMBER: builtins.int
-    GENERATION_TIME_FIELD_NUMBER: builtins.int
-    AUDIO_LENGTH_FIELD_NUMBER: builtins.int
-    TEXT_FIELD_NUMBER: builtins.int
-    CONFIG_FIELD_NUMBER: builtins.int
-    NORMALIZED_TEXT_FIELD_NUMBER: builtins.int
-    SAMPLE_RATE_FIELD_NUMBER: builtins.int
-    audio_uuid: builtins.str
+    AUDIO_UUID_FIELD_NUMBER: _builtins.int
+    AUDIO_FIELD_NUMBER: _builtins.int
+    GENERATION_TIME_FIELD_NUMBER: _builtins.int
+    AUDIO_LENGTH_FIELD_NUMBER: _builtins.int
+    TEXT_FIELD_NUMBER: _builtins.int
+    CONFIG_FIELD_NUMBER: _builtins.int
+    NORMALIZED_TEXT_FIELD_NUMBER: _builtins.int
+    SAMPLE_RATE_FIELD_NUMBER: _builtins.int
+    audio_uuid: _builtins.str
     """Required. The unique identifier (UUID) assigned to the generated audio."""
-    audio: builtins.bytes
+    audio: _builtins.bytes
     """Required. Generated file with the parameters described in request."""
-    generation_time: builtins.float
+    generation_time: _builtins.float
     """Required. Time taken to generate the audio, in seconds."""
-    audio_length: builtins.float
+    audio_length: _builtins.float
     """Required. Length (duration) of the generated audio, in seconds."""
-    text: builtins.str
+    text: _builtins.str
     """Required. Text from which audio was generated."""
-    normalized_text: builtins.str
+    normalized_text: _builtins.str
     """Optional. Normalized text."""
-    sample_rate: builtins.float
+    sample_rate: _builtins.float
     """Optional. Sampling rate of the generated audio, in Hertz (Hz)."""
-    @property
-    def config(self) -> global___RequestConfig:
+    @_builtins.property
+    def config(self) -> Global___RequestConfig:
         """Required. Configuration from which audio was generated."""
 
     def __init__(
         self,
         *,
-        audio_uuid: builtins.str = ...,
-        audio: builtins.bytes = ...,
-        generation_time: builtins.float = ...,
-        audio_length: builtins.float = ...,
-        text: builtins.str = ...,
-        config: global___RequestConfig | None = ...,
-        normalized_text: builtins.str = ...,
-        sample_rate: builtins.float = ...,
+        audio_uuid: _builtins.str = ...,
+        audio: _builtins.bytes = ...,
+        generation_time: _builtins.float = ...,
+        audio_length: _builtins.float = ...,
+        text: _builtins.str = ...,
+        config: Global___RequestConfig | None = ...,
+        normalized_text: _builtins.str = ...,
+        sample_rate: _builtins.float = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["config", b"config"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["audio", b"audio", "audio_length", b"audio_length", "audio_uuid", b"audio_uuid", "config", b"config", "generation_time", b"generation_time", "normalized_text", b"normalized_text", "sample_rate", b"sample_rate", "text", b"text"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["config", b"config"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["audio", b"audio", "audio_length", b"audio_length", "audio_uuid", b"audio_uuid", "config", b"config", "generation_time", b"generation_time", "normalized_text", b"normalized_text", "sample_rate", b"sample_rate", "text", b"text"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___StreamingSynthesizeResponse = StreamingSynthesizeResponse
+Global___StreamingSynthesizeResponse: _TypeAlias = StreamingSynthesizeResponse  # noqa: Y015
 
-@typing.final
-class NormalizeTextRequest(google.protobuf.message.Message):
+@_typing.final
+class NormalizeTextRequest(_message.Message):
     """/////////////
     NORMALIZE //
     /////////////
@@ -716,44 +854,52 @@ class NormalizeTextRequest(google.protobuf.message.Message):
     <p>NormalizeTextRequest message is used to request text normalization.</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    T2S_PIPELINE_ID_FIELD_NUMBER: builtins.int
-    TEXT_FIELD_NUMBER: builtins.int
-    t2s_pipeline_id: builtins.str
+    T2S_PIPELINE_ID_FIELD_NUMBER: _builtins.int
+    TEXT_FIELD_NUMBER: _builtins.int
+    t2s_pipeline_id: _builtins.str
     """The ID of the text-to-speech pipeline."""
-    text: builtins.str
+    text: _builtins.str
     """The text to be normalized."""
     def __init__(
         self,
         *,
-        t2s_pipeline_id: builtins.str = ...,
-        text: builtins.str = ...,
+        t2s_pipeline_id: _builtins.str = ...,
+        text: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["t2s_pipeline_id", b"t2s_pipeline_id", "text", b"text"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["t2s_pipeline_id", b"t2s_pipeline_id", "text", b"text"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___NormalizeTextRequest = NormalizeTextRequest
+Global___NormalizeTextRequest: _TypeAlias = NormalizeTextRequest  # noqa: Y015
 
-@typing.final
-class NormalizeTextResponse(google.protobuf.message.Message):
+@_typing.final
+class NormalizeTextResponse(_message.Message):
     """<p>NormalizeTextResponse message is used to store the normalized text response.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    NORMALIZED_TEXT_FIELD_NUMBER: builtins.int
-    normalized_text: builtins.str
+    NORMALIZED_TEXT_FIELD_NUMBER: _builtins.int
+    normalized_text: _builtins.str
     """The normalized text."""
     def __init__(
         self,
         *,
-        normalized_text: builtins.str = ...,
+        normalized_text: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["normalized_text", b"normalized_text"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["normalized_text", b"normalized_text"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___NormalizeTextResponse = NormalizeTextResponse
+Global___NormalizeTextResponse: _TypeAlias = NormalizeTextResponse  # noqa: Y015
 
-@typing.final
-class T2SGetServiceInfoResponse(google.protobuf.message.Message):
+@_typing.final
+class T2SGetServiceInfoResponse(_message.Message):
     """////////////////////
     GET SERVICE INFO //
     ////////////////////
@@ -761,22 +907,26 @@ class T2SGetServiceInfoResponse(google.protobuf.message.Message):
     <p>Version information of the service</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    VERSION_FIELD_NUMBER: builtins.int
-    version: builtins.str
+    VERSION_FIELD_NUMBER: _builtins.int
+    version: _builtins.str
     """version number"""
     def __init__(
         self,
         *,
-        version: builtins.str = ...,
+        version: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["version", b"version"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["version", b"version"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___T2SGetServiceInfoResponse = T2SGetServiceInfoResponse
+Global___T2SGetServiceInfoResponse: _TypeAlias = T2SGetServiceInfoResponse  # noqa: Y015
 
-@typing.final
-class ListT2sPipelinesRequest(google.protobuf.message.Message):
+@_typing.final
+class ListT2sPipelinesRequest(_message.Message):
     """//////////////////////
     LIST T2S PIPELINES //
     //////////////////////
@@ -786,57 +936,61 @@ class ListT2sPipelinesRequest(google.protobuf.message.Message):
     <p>Filter pipelines by attributed in request.</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    LANGUAGES_FIELD_NUMBER: builtins.int
-    SPEAKER_SEXES_FIELD_NUMBER: builtins.int
-    PIPELINE_OWNERS_FIELD_NUMBER: builtins.int
-    SPEAKER_NAMES_FIELD_NUMBER: builtins.int
-    DOMAINS_FIELD_NUMBER: builtins.int
-    @property
-    def languages(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    LANGUAGES_FIELD_NUMBER: _builtins.int
+    SPEAKER_SEXES_FIELD_NUMBER: _builtins.int
+    PIPELINE_OWNERS_FIELD_NUMBER: _builtins.int
+    SPEAKER_NAMES_FIELD_NUMBER: _builtins.int
+    DOMAINS_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def languages(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Optional. Define the language/ languages."""
 
-    @property
-    def speaker_sexes(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def speaker_sexes(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Optional. Define the speaker sex."""
 
-    @property
-    def pipeline_owners(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def pipeline_owners(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Optional. Define the pipeline owner/ owners."""
 
-    @property
-    def speaker_names(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def speaker_names(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Optional. Define the speaker name/ names."""
 
-    @property
-    def domains(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def domains(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Optional. Define the domain/ domains."""
 
     def __init__(
         self,
         *,
-        languages: collections.abc.Iterable[builtins.str] | None = ...,
-        speaker_sexes: collections.abc.Iterable[builtins.str] | None = ...,
-        pipeline_owners: collections.abc.Iterable[builtins.str] | None = ...,
-        speaker_names: collections.abc.Iterable[builtins.str] | None = ...,
-        domains: collections.abc.Iterable[builtins.str] | None = ...,
+        languages: _abc.Iterable[_builtins.str] | None = ...,
+        speaker_sexes: _abc.Iterable[_builtins.str] | None = ...,
+        pipeline_owners: _abc.Iterable[_builtins.str] | None = ...,
+        speaker_names: _abc.Iterable[_builtins.str] | None = ...,
+        domains: _abc.Iterable[_builtins.str] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["domains", b"domains", "languages", b"languages", "pipeline_owners", b"pipeline_owners", "speaker_names", b"speaker_names", "speaker_sexes", b"speaker_sexes"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["domains", b"domains", "languages", b"languages", "pipeline_owners", b"pipeline_owners", "speaker_names", b"speaker_names", "speaker_sexes", b"speaker_sexes"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___ListT2sPipelinesRequest = ListT2sPipelinesRequest
+Global___ListT2sPipelinesRequest: _TypeAlias = ListT2sPipelinesRequest  # noqa: Y015
 
-@typing.final
-class ListT2sPipelinesResponse(google.protobuf.message.Message):
+@_typing.final
+class ListT2sPipelinesResponse(_message.Message):
     """<p>Pipeline Response representation.</p>
     <p>The response message for ListT2sPipelines.</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    PIPELINES_FIELD_NUMBER: builtins.int
-    @property
-    def pipelines(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Text2SpeechConfig]:
+    PIPELINES_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def pipelines(self) -> _containers.RepeatedCompositeFieldContainer[Global___Text2SpeechConfig]:
         """Required. Representation of a list of pipelines configurations.
         Retrieved by ListT2sPipelines, containing the configurations of
         pipelines with the specifications received in the ListT2sPipelinesRequest.
@@ -845,14 +999,18 @@ class ListT2sPipelinesResponse(google.protobuf.message.Message):
     def __init__(
         self,
         *,
-        pipelines: collections.abc.Iterable[global___Text2SpeechConfig] | None = ...,
+        pipelines: _abc.Iterable[Global___Text2SpeechConfig] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["pipelines", b"pipelines"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["pipelines", b"pipelines"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___ListT2sPipelinesResponse = ListT2sPipelinesResponse
+Global___ListT2sPipelinesResponse: _TypeAlias = ListT2sPipelinesResponse  # noqa: Y015
 
-@typing.final
-class ListT2sLanguagesRequest(google.protobuf.message.Message):
+@_typing.final
+class ListT2sLanguagesRequest(_message.Message):
     """//////////////////////
     LIST T2S LANGUAGES //
     //////////////////////
@@ -862,51 +1020,55 @@ class ListT2sLanguagesRequest(google.protobuf.message.Message):
     <p>Filter languages of pipelines by attributed in request.</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    SPEAKER_SEXES_FIELD_NUMBER: builtins.int
-    PIPELINE_OWNERS_FIELD_NUMBER: builtins.int
-    SPEAKER_NAMES_FIELD_NUMBER: builtins.int
-    DOMAINS_FIELD_NUMBER: builtins.int
-    @property
-    def speaker_sexes(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    SPEAKER_SEXES_FIELD_NUMBER: _builtins.int
+    PIPELINE_OWNERS_FIELD_NUMBER: _builtins.int
+    SPEAKER_NAMES_FIELD_NUMBER: _builtins.int
+    DOMAINS_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def speaker_sexes(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Optional. Define the speaker sex."""
 
-    @property
-    def pipeline_owners(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def pipeline_owners(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Optional. Define the pipeline owner/ owners."""
 
-    @property
-    def speaker_names(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def speaker_names(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Optional. Define the speaker name/ names."""
 
-    @property
-    def domains(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def domains(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Optional. Define the domain/ domains."""
 
     def __init__(
         self,
         *,
-        speaker_sexes: collections.abc.Iterable[builtins.str] | None = ...,
-        pipeline_owners: collections.abc.Iterable[builtins.str] | None = ...,
-        speaker_names: collections.abc.Iterable[builtins.str] | None = ...,
-        domains: collections.abc.Iterable[builtins.str] | None = ...,
+        speaker_sexes: _abc.Iterable[_builtins.str] | None = ...,
+        pipeline_owners: _abc.Iterable[_builtins.str] | None = ...,
+        speaker_names: _abc.Iterable[_builtins.str] | None = ...,
+        domains: _abc.Iterable[_builtins.str] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["domains", b"domains", "pipeline_owners", b"pipeline_owners", "speaker_names", b"speaker_names", "speaker_sexes", b"speaker_sexes"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["domains", b"domains", "pipeline_owners", b"pipeline_owners", "speaker_names", b"speaker_names", "speaker_sexes", b"speaker_sexes"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___ListT2sLanguagesRequest = ListT2sLanguagesRequest
+Global___ListT2sLanguagesRequest: _TypeAlias = ListT2sLanguagesRequest  # noqa: Y015
 
-@typing.final
-class ListT2sLanguagesResponse(google.protobuf.message.Message):
+@_typing.final
+class ListT2sLanguagesResponse(_message.Message):
     """<p>Language Response representation.</p>
     <p>The response message for ListT2sLanguages.</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    LANGUAGES_FIELD_NUMBER: builtins.int
-    @property
-    def languages(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    LANGUAGES_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def languages(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Required. Define the language/ languages that satisfy/ies
         the specifications in the ListT2sLanguagesRequest.
         """
@@ -914,14 +1076,18 @@ class ListT2sLanguagesResponse(google.protobuf.message.Message):
     def __init__(
         self,
         *,
-        languages: collections.abc.Iterable[builtins.str] | None = ...,
+        languages: _abc.Iterable[_builtins.str] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["languages", b"languages"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["languages", b"languages"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___ListT2sLanguagesResponse = ListT2sLanguagesResponse
+Global___ListT2sLanguagesResponse: _TypeAlias = ListT2sLanguagesResponse  # noqa: Y015
 
-@typing.final
-class ListT2sDomainsRequest(google.protobuf.message.Message):
+@_typing.final
+class ListT2sDomainsRequest(_message.Message):
     """////////////////////
     LIST T2S DOMAINS //
     ////////////////////
@@ -931,51 +1097,55 @@ class ListT2sDomainsRequest(google.protobuf.message.Message):
     <p>Filter domains of pipelines by attributed in request.</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    SPEAKER_SEXES_FIELD_NUMBER: builtins.int
-    PIPELINE_OWNERS_FIELD_NUMBER: builtins.int
-    SPEAKER_NAMES_FIELD_NUMBER: builtins.int
-    LANGUAGES_FIELD_NUMBER: builtins.int
-    @property
-    def speaker_sexes(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    SPEAKER_SEXES_FIELD_NUMBER: _builtins.int
+    PIPELINE_OWNERS_FIELD_NUMBER: _builtins.int
+    SPEAKER_NAMES_FIELD_NUMBER: _builtins.int
+    LANGUAGES_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def speaker_sexes(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Optional. Define the speaker sex."""
 
-    @property
-    def pipeline_owners(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def pipeline_owners(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Optional. Define the pipeline owner/ owners."""
 
-    @property
-    def speaker_names(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def speaker_names(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Optional. Define the speaker name/ names."""
 
-    @property
-    def languages(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def languages(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Optional. Define the language/ languages."""
 
     def __init__(
         self,
         *,
-        speaker_sexes: collections.abc.Iterable[builtins.str] | None = ...,
-        pipeline_owners: collections.abc.Iterable[builtins.str] | None = ...,
-        speaker_names: collections.abc.Iterable[builtins.str] | None = ...,
-        languages: collections.abc.Iterable[builtins.str] | None = ...,
+        speaker_sexes: _abc.Iterable[_builtins.str] | None = ...,
+        pipeline_owners: _abc.Iterable[_builtins.str] | None = ...,
+        speaker_names: _abc.Iterable[_builtins.str] | None = ...,
+        languages: _abc.Iterable[_builtins.str] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["languages", b"languages", "pipeline_owners", b"pipeline_owners", "speaker_names", b"speaker_names", "speaker_sexes", b"speaker_sexes"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["languages", b"languages", "pipeline_owners", b"pipeline_owners", "speaker_names", b"speaker_names", "speaker_sexes", b"speaker_sexes"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___ListT2sDomainsRequest = ListT2sDomainsRequest
+Global___ListT2sDomainsRequest: _TypeAlias = ListT2sDomainsRequest  # noqa: Y015
 
-@typing.final
-class ListT2sDomainsResponse(google.protobuf.message.Message):
+@_typing.final
+class ListT2sDomainsResponse(_message.Message):
     """<p>Domains Response representation.</p>
     <p>The response message for ListT2sDomains.</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    DOMAINS_FIELD_NUMBER: builtins.int
-    @property
-    def domains(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    DOMAINS_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def domains(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Required. Define the domain/ domains that satisfy/ies
         the specifications in the ListT2sDomainsRequest.
         """
@@ -983,14 +1153,18 @@ class ListT2sDomainsResponse(google.protobuf.message.Message):
     def __init__(
         self,
         *,
-        domains: collections.abc.Iterable[builtins.str] | None = ...,
+        domains: _abc.Iterable[_builtins.str] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["domains", b"domains"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["domains", b"domains"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___ListT2sDomainsResponse = ListT2sDomainsResponse
+Global___ListT2sDomainsResponse: _TypeAlias = ListT2sDomainsResponse  # noqa: Y015
 
-@typing.final
-class ListT2sNormalizationPipelinesRequest(google.protobuf.message.Message):
+@_typing.final
+class ListT2sNormalizationPipelinesRequest(_message.Message):
     """//////////////////////
     LIST T2S NORMALIZATION PIPELINES //
     //////////////////////
@@ -999,31 +1173,35 @@ class ListT2sNormalizationPipelinesRequest(google.protobuf.message.Message):
     <p>Filter pipelines by attributed in request.</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    LANGUAGE_FIELD_NUMBER: builtins.int
-    language: builtins.str
+    LANGUAGE_FIELD_NUMBER: _builtins.int
+    language: _builtins.str
     """Optional. Define the language."""
     def __init__(
         self,
         *,
-        language: builtins.str = ...,
+        language: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["language", b"language"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["language", b"language"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___ListT2sNormalizationPipelinesRequest = ListT2sNormalizationPipelinesRequest
+Global___ListT2sNormalizationPipelinesRequest: _TypeAlias = ListT2sNormalizationPipelinesRequest  # noqa: Y015
 
-@typing.final
-class ListT2sNormalizationPipelinesResponse(google.protobuf.message.Message):
+@_typing.final
+class ListT2sNormalizationPipelinesResponse(_message.Message):
     """<p>Pipeline Response representation.</p>
     <p>The response message for ListT2sNormalizationPipelines.</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    T2S_NORMALIZATION_PIPELINES_FIELD_NUMBER: builtins.int
-    @property
-    def t2s_normalization_pipelines(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    T2S_NORMALIZATION_PIPELINES_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def t2s_normalization_pipelines(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Required. Representation of a list of normalization pipelines configurations.
         Retrieved by ListT2sNormalizationPipelines, containing the configurations of
         normalization pipelines with the specifications received in the ListT2sNormalizationPipelinesRequest.
@@ -1032,14 +1210,18 @@ class ListT2sNormalizationPipelinesResponse(google.protobuf.message.Message):
     def __init__(
         self,
         *,
-        t2s_normalization_pipelines: collections.abc.Iterable[builtins.str] | None = ...,
+        t2s_normalization_pipelines: _abc.Iterable[_builtins.str] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["t2s_normalization_pipelines", b"t2s_normalization_pipelines"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["t2s_normalization_pipelines", b"t2s_normalization_pipelines"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___ListT2sNormalizationPipelinesResponse = ListT2sNormalizationPipelinesResponse
+Global___ListT2sNormalizationPipelinesResponse: _TypeAlias = ListT2sNormalizationPipelinesResponse  # noqa: Y015
 
-@typing.final
-class T2sPipelineId(google.protobuf.message.Message):
+@_typing.final
+class T2sPipelineId(_message.Message):
     """///////////////////////
     UPDATE T2S PIPELINE //
     ///////////////////////
@@ -1048,22 +1230,26 @@ class T2sPipelineId(google.protobuf.message.Message):
     <p>Used in the creation, deletion and getter of pipelines.</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    ID_FIELD_NUMBER: builtins.int
-    id: builtins.str
+    ID_FIELD_NUMBER: _builtins.int
+    id: _builtins.str
     """Required. Defines the id of the pipeline."""
     def __init__(
         self,
         *,
-        id: builtins.str = ...,
+        id: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["id", b"id"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["id", b"id"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___T2sPipelineId = T2sPipelineId
+Global___T2sPipelineId: _TypeAlias = T2sPipelineId  # noqa: Y015
 
-@typing.final
-class Text2SpeechConfig(google.protobuf.message.Message):
+@_typing.final
+class Text2SpeechConfig(_message.Message):
     """/////////////////////////
     Text-to-Speech Config //
     /////////////////////////
@@ -1071,1205 +1257,1331 @@ class Text2SpeechConfig(google.protobuf.message.Message):
     <p>Configuration of text-to-speech models representation.</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    ID_FIELD_NUMBER: builtins.int
-    DESCRIPTION_FIELD_NUMBER: builtins.int
-    ACTIVE_FIELD_NUMBER: builtins.int
-    INFERENCE_FIELD_NUMBER: builtins.int
-    NORMALIZATION_FIELD_NUMBER: builtins.int
-    POSTPROCESSING_FIELD_NUMBER: builtins.int
-    id: builtins.str
+    ID_FIELD_NUMBER: _builtins.int
+    DESCRIPTION_FIELD_NUMBER: _builtins.int
+    ACTIVE_FIELD_NUMBER: _builtins.int
+    INFERENCE_FIELD_NUMBER: _builtins.int
+    NORMALIZATION_FIELD_NUMBER: _builtins.int
+    POSTPROCESSING_FIELD_NUMBER: _builtins.int
+    id: _builtins.str
     """Required. Defines the id of the pipeline."""
-    active: builtins.bool
+    active: _builtins.bool
     """Required. Defines if the pipeline is active or inactive."""
-    @property
-    def description(self) -> global___T2SDescription:
+    @_builtins.property
+    def description(self) -> Global___T2SDescription:
         """Required. Defines the description of the pipeline representation."""
 
-    @property
-    def inference(self) -> global___T2SInference:
+    @_builtins.property
+    def inference(self) -> Global___T2SInference:
         """Required. Defines the inference of the pipeline representation."""
 
-    @property
-    def normalization(self) -> global___T2SNormalization:
+    @_builtins.property
+    def normalization(self) -> Global___T2SNormalization:
         """Required. Defines the normalization process of the pipeline representation."""
 
-    @property
-    def postprocessing(self) -> global___Postprocessing:
+    @_builtins.property
+    def postprocessing(self) -> Global___Postprocessing:
         """Required. Defines the postprocessing process of the pipeline representation."""
 
     def __init__(
         self,
         *,
-        id: builtins.str = ...,
-        description: global___T2SDescription | None = ...,
-        active: builtins.bool = ...,
-        inference: global___T2SInference | None = ...,
-        normalization: global___T2SNormalization | None = ...,
-        postprocessing: global___Postprocessing | None = ...,
+        id: _builtins.str = ...,
+        description: Global___T2SDescription | None = ...,
+        active: _builtins.bool = ...,
+        inference: Global___T2SInference | None = ...,
+        normalization: Global___T2SNormalization | None = ...,
+        postprocessing: Global___Postprocessing | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["description", b"description", "inference", b"inference", "normalization", b"normalization", "postprocessing", b"postprocessing"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["active", b"active", "description", b"description", "id", b"id", "inference", b"inference", "normalization", b"normalization", "postprocessing", b"postprocessing"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["description", b"description", "inference", b"inference", "normalization", b"normalization", "postprocessing", b"postprocessing"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["active", b"active", "description", b"description", "id", b"id", "inference", b"inference", "normalization", b"normalization", "postprocessing", b"postprocessing"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___Text2SpeechConfig = Text2SpeechConfig
+Global___Text2SpeechConfig: _TypeAlias = Text2SpeechConfig  # noqa: Y015
 
-@typing.final
-class T2SDescription(google.protobuf.message.Message):
+@_typing.final
+class T2SDescription(_message.Message):
     """<p>T2SDescription message is used to describe the text-to-speech service.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    LANGUAGE_FIELD_NUMBER: builtins.int
-    SPEAKER_SEX_FIELD_NUMBER: builtins.int
-    PIPELINE_OWNER_FIELD_NUMBER: builtins.int
-    COMMENTS_FIELD_NUMBER: builtins.int
-    SPEAKER_NAME_FIELD_NUMBER: builtins.int
-    DOMAIN_FIELD_NUMBER: builtins.int
-    language: builtins.str
+    LANGUAGE_FIELD_NUMBER: _builtins.int
+    SPEAKER_SEX_FIELD_NUMBER: _builtins.int
+    PIPELINE_OWNER_FIELD_NUMBER: _builtins.int
+    COMMENTS_FIELD_NUMBER: _builtins.int
+    SPEAKER_NAME_FIELD_NUMBER: _builtins.int
+    DOMAIN_FIELD_NUMBER: _builtins.int
+    language: _builtins.str
     """The language supported by the service."""
-    speaker_sex: builtins.str
+    speaker_sex: _builtins.str
     """The speaker's sex or gender."""
-    pipeline_owner: builtins.str
+    pipeline_owner: _builtins.str
     """The owner of the text-to-speech pipeline."""
-    comments: builtins.str
+    comments: _builtins.str
     """Additional comments or notes."""
-    speaker_name: builtins.str
+    speaker_name: _builtins.str
     """The name of the speaker."""
-    domain: builtins.str
+    domain: _builtins.str
     """The domain or context of the service."""
     def __init__(
         self,
         *,
-        language: builtins.str = ...,
-        speaker_sex: builtins.str = ...,
-        pipeline_owner: builtins.str = ...,
-        comments: builtins.str = ...,
-        speaker_name: builtins.str = ...,
-        domain: builtins.str = ...,
+        language: _builtins.str = ...,
+        speaker_sex: _builtins.str = ...,
+        pipeline_owner: _builtins.str = ...,
+        comments: _builtins.str = ...,
+        speaker_name: _builtins.str = ...,
+        domain: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["comments", b"comments", "domain", b"domain", "language", b"language", "pipeline_owner", b"pipeline_owner", "speaker_name", b"speaker_name", "speaker_sex", b"speaker_sex"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["comments", b"comments", "domain", b"domain", "language", b"language", "pipeline_owner", b"pipeline_owner", "speaker_name", b"speaker_name", "speaker_sex", b"speaker_sex"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___T2SDescription = T2SDescription
+Global___T2SDescription: _TypeAlias = T2SDescription  # noqa: Y015
 
-@typing.final
-class T2SInference(google.protobuf.message.Message):
+@_typing.final
+class T2SInference(_message.Message):
     """<p>T2SInference message is used to specify the text-to-speech inference settings.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    TYPE_FIELD_NUMBER: builtins.int
-    COMPOSITE_INFERENCE_FIELD_NUMBER: builtins.int
-    SINGLE_INFERENCE_FIELD_NUMBER: builtins.int
-    CACHING_FIELD_NUMBER: builtins.int
-    type: builtins.str
+    TYPE_FIELD_NUMBER: _builtins.int
+    COMPOSITE_INFERENCE_FIELD_NUMBER: _builtins.int
+    SINGLE_INFERENCE_FIELD_NUMBER: _builtins.int
+    CACHING_FIELD_NUMBER: _builtins.int
+    type: _builtins.str
     """The type of inference, selecting which of the settings below is applied:
     composite_inference (two-stage text-to-mel then mel-to-audio) or
     single_inference (single-stage text-to-audio).
     """
-    @property
-    def composite_inference(self) -> global___CompositeInference:
+    @_builtins.property
+    def composite_inference(self) -> Global___CompositeInference:
         """Composite (two-stage) inference settings, used when type selects composite inference."""
 
-    @property
-    def single_inference(self) -> global___SingleInference:
+    @_builtins.property
+    def single_inference(self) -> Global___SingleInference:
         """Single (one-stage) inference settings, used when type selects single inference."""
 
-    @property
-    def caching(self) -> global___Caching:
+    @_builtins.property
+    def caching(self) -> Global___Caching:
         """Caching settings."""
 
     def __init__(
         self,
         *,
-        type: builtins.str = ...,
-        composite_inference: global___CompositeInference | None = ...,
-        single_inference: global___SingleInference | None = ...,
-        caching: global___Caching | None = ...,
+        type: _builtins.str = ...,
+        composite_inference: Global___CompositeInference | None = ...,
+        single_inference: Global___SingleInference | None = ...,
+        caching: Global___Caching | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["caching", b"caching", "composite_inference", b"composite_inference", "single_inference", b"single_inference"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["caching", b"caching", "composite_inference", b"composite_inference", "single_inference", b"single_inference", "type", b"type"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["caching", b"caching", "composite_inference", b"composite_inference", "single_inference", b"single_inference"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["caching", b"caching", "composite_inference", b"composite_inference", "single_inference", b"single_inference", "type", b"type"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___T2SInference = T2SInference
+Global___T2SInference: _TypeAlias = T2SInference  # noqa: Y015
 
-@typing.final
-class CompositeInference(google.protobuf.message.Message):
+@_typing.final
+class CompositeInference(_message.Message):
     """<p>CompositeInference message combines text-to-mel and mel-to-audio inference settings.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    TEXT2MEL_FIELD_NUMBER: builtins.int
-    MEL2AUDIO_FIELD_NUMBER: builtins.int
-    @property
-    def text2mel(self) -> global___Text2Mel:
+    TEXT2MEL_FIELD_NUMBER: _builtins.int
+    MEL2AUDIO_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def text2mel(self) -> Global___Text2Mel:
         """Text-to-mel inference settings."""
 
-    @property
-    def mel2audio(self) -> global___Mel2Audio:
+    @_builtins.property
+    def mel2audio(self) -> Global___Mel2Audio:
         """Mel-to-audio inference settings."""
 
     def __init__(
         self,
         *,
-        text2mel: global___Text2Mel | None = ...,
-        mel2audio: global___Mel2Audio | None = ...,
+        text2mel: Global___Text2Mel | None = ...,
+        mel2audio: Global___Mel2Audio | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["mel2audio", b"mel2audio", "text2mel", b"text2mel"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["mel2audio", b"mel2audio", "text2mel", b"text2mel"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["mel2audio", b"mel2audio", "text2mel", b"text2mel"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["mel2audio", b"mel2audio", "text2mel", b"text2mel"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___CompositeInference = CompositeInference
+Global___CompositeInference: _TypeAlias = CompositeInference  # noqa: Y015
 
-@typing.final
-class SingleInference(google.protobuf.message.Message):
+@_typing.final
+class SingleInference(_message.Message):
     """<p>SingleInference message inference settings of text2audio models.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    TEXT2AUDIO_FIELD_NUMBER: builtins.int
-    @property
-    def text2audio(self) -> global___Text2Audio:
+    TEXT2AUDIO_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def text2audio(self) -> Global___Text2Audio:
         """Text-to-audio inference settings."""
 
     def __init__(
         self,
         *,
-        text2audio: global___Text2Audio | None = ...,
+        text2audio: Global___Text2Audio | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["text2audio", b"text2audio"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["text2audio", b"text2audio"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["text2audio", b"text2audio"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["text2audio", b"text2audio"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___SingleInference = SingleInference
+Global___SingleInference: _TypeAlias = SingleInference  # noqa: Y015
 
-@typing.final
-class Text2Mel(google.protobuf.message.Message):
+@_typing.final
+class Text2Mel(_message.Message):
     """<p>Text2Mel message contains settings for text-to-mel inference.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    TYPE_FIELD_NUMBER: builtins.int
-    GLOW_TTS_FIELD_NUMBER: builtins.int
-    GLOW_TTS_TRITON_FIELD_NUMBER: builtins.int
-    type: builtins.str
+    TYPE_FIELD_NUMBER: _builtins.int
+    GLOW_TTS_FIELD_NUMBER: _builtins.int
+    GLOW_TTS_TRITON_FIELD_NUMBER: _builtins.int
+    type: _builtins.str
     """The type of text-to-mel inference, selecting which of the settings below is applied
     (glow_tts or glow_tts_triton).
     """
-    @property
-    def glow_tts(self) -> global___GlowTTS:
+    @_builtins.property
+    def glow_tts(self) -> Global___GlowTTS:
         """GlowTTS inference settings."""
 
-    @property
-    def glow_tts_triton(self) -> global___GlowTTSTriton:
+    @_builtins.property
+    def glow_tts_triton(self) -> Global___GlowTTSTriton:
         """GlowTTS Triton inference settings."""
 
     def __init__(
         self,
         *,
-        type: builtins.str = ...,
-        glow_tts: global___GlowTTS | None = ...,
-        glow_tts_triton: global___GlowTTSTriton | None = ...,
+        type: _builtins.str = ...,
+        glow_tts: Global___GlowTTS | None = ...,
+        glow_tts_triton: Global___GlowTTSTriton | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["glow_tts", b"glow_tts", "glow_tts_triton", b"glow_tts_triton"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["glow_tts", b"glow_tts", "glow_tts_triton", b"glow_tts_triton", "type", b"type"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["glow_tts", b"glow_tts", "glow_tts_triton", b"glow_tts_triton"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["glow_tts", b"glow_tts", "glow_tts_triton", b"glow_tts_triton", "type", b"type"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___Text2Mel = Text2Mel
+Global___Text2Mel: _TypeAlias = Text2Mel  # noqa: Y015
 
-@typing.final
-class Text2Audio(google.protobuf.message.Message):
+@_typing.final
+class Text2Audio(_message.Message):
     """<p>Text2Audio message contains settings for text-to-audio inference.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    TYPE_FIELD_NUMBER: builtins.int
-    VITS_FIELD_NUMBER: builtins.int
-    VITS_TRITON_FIELD_NUMBER: builtins.int
-    T2S_CLOUD_SERVICE_ELEVENLABS_FIELD_NUMBER: builtins.int
-    T2S_CLOUD_SERVICE_AMAZON_FIELD_NUMBER: builtins.int
-    T2S_CLOUD_SERVICE_GOOGLE_FIELD_NUMBER: builtins.int
-    T2S_CLOUD_SERVICE_MICROSOFT_FIELD_NUMBER: builtins.int
-    QWEN3_TTS_CUSTOM_VOICE_FIELD_NUMBER: builtins.int
-    QWEN3_TTS_BASE_FIELD_NUMBER: builtins.int
-    type: builtins.str
+    TYPE_FIELD_NUMBER: _builtins.int
+    VITS_FIELD_NUMBER: _builtins.int
+    VITS_TRITON_FIELD_NUMBER: _builtins.int
+    T2S_CLOUD_SERVICE_ELEVENLABS_FIELD_NUMBER: _builtins.int
+    T2S_CLOUD_SERVICE_AMAZON_FIELD_NUMBER: _builtins.int
+    T2S_CLOUD_SERVICE_GOOGLE_FIELD_NUMBER: _builtins.int
+    T2S_CLOUD_SERVICE_MICROSOFT_FIELD_NUMBER: _builtins.int
+    QWEN3_TTS_CUSTOM_VOICE_FIELD_NUMBER: _builtins.int
+    QWEN3_TTS_BASE_FIELD_NUMBER: _builtins.int
+    type: _builtins.str
     """The type of text-to-audio inference, selecting which of the settings below is applied:
     a local model (vits, vits_triton) or a cloud / neural service (t2s_cloud_service_elevenlabs,
     t2s_cloud_service_amazon, t2s_cloud_service_google, t2s_cloud_service_microsoft,
     qwen3_tts_custom_voice, qwen3_tts_base).
     """
-    @property
-    def vits(self) -> global___Vits:
+    @_builtins.property
+    def vits(self) -> Global___Vits:
         """Vits inference settings."""
 
-    @property
-    def vits_triton(self) -> global___VitsTriton:
+    @_builtins.property
+    def vits_triton(self) -> Global___VitsTriton:
         """Vits Triton inference settings."""
 
-    @property
-    def t2s_cloud_service_elevenlabs(self) -> global___T2sCloudServiceElevenLabs:
+    @_builtins.property
+    def t2s_cloud_service_elevenlabs(self) -> Global___T2sCloudServiceElevenLabs:
         """ElevenLabs cloud service inference settings."""
 
-    @property
-    def t2s_cloud_service_amazon(self) -> global___T2sCloudServiceAmazon:
+    @_builtins.property
+    def t2s_cloud_service_amazon(self) -> Global___T2sCloudServiceAmazon:
         """Amazon cloud service inference settings."""
 
-    @property
-    def t2s_cloud_service_google(self) -> global___T2sCloudServiceGoogle:
+    @_builtins.property
+    def t2s_cloud_service_google(self) -> Global___T2sCloudServiceGoogle:
         """Google cloud service inference settings."""
 
-    @property
-    def t2s_cloud_service_microsoft(self) -> global___T2sCloudServiceMicrosoft:
+    @_builtins.property
+    def t2s_cloud_service_microsoft(self) -> Global___T2sCloudServiceMicrosoft:
         """Microsoft cloud service inference settings."""
 
-    @property
-    def qwen3_tts_custom_voice(self) -> global___Qwen3TtsCustomVoice:
+    @_builtins.property
+    def qwen3_tts_custom_voice(self) -> Global___Qwen3TtsCustomVoice:
         """Qwen3-TTS-custom-voice inference settings."""
 
-    @property
-    def qwen3_tts_base(self) -> global___Qwen3TtsBase:
+    @_builtins.property
+    def qwen3_tts_base(self) -> Global___Qwen3TtsBase:
         """Qwen3-TTS-base inference settings for voice cloning."""
 
     def __init__(
         self,
         *,
-        type: builtins.str = ...,
-        vits: global___Vits | None = ...,
-        vits_triton: global___VitsTriton | None = ...,
-        t2s_cloud_service_elevenlabs: global___T2sCloudServiceElevenLabs | None = ...,
-        t2s_cloud_service_amazon: global___T2sCloudServiceAmazon | None = ...,
-        t2s_cloud_service_google: global___T2sCloudServiceGoogle | None = ...,
-        t2s_cloud_service_microsoft: global___T2sCloudServiceMicrosoft | None = ...,
-        qwen3_tts_custom_voice: global___Qwen3TtsCustomVoice | None = ...,
-        qwen3_tts_base: global___Qwen3TtsBase | None = ...,
+        type: _builtins.str = ...,
+        vits: Global___Vits | None = ...,
+        vits_triton: Global___VitsTriton | None = ...,
+        t2s_cloud_service_elevenlabs: Global___T2sCloudServiceElevenLabs | None = ...,
+        t2s_cloud_service_amazon: Global___T2sCloudServiceAmazon | None = ...,
+        t2s_cloud_service_google: Global___T2sCloudServiceGoogle | None = ...,
+        t2s_cloud_service_microsoft: Global___T2sCloudServiceMicrosoft | None = ...,
+        qwen3_tts_custom_voice: Global___Qwen3TtsCustomVoice | None = ...,
+        qwen3_tts_base: Global___Qwen3TtsBase | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["qwen3_tts_base", b"qwen3_tts_base", "qwen3_tts_custom_voice", b"qwen3_tts_custom_voice", "t2s_cloud_service_amazon", b"t2s_cloud_service_amazon", "t2s_cloud_service_elevenlabs", b"t2s_cloud_service_elevenlabs", "t2s_cloud_service_google", b"t2s_cloud_service_google", "t2s_cloud_service_microsoft", b"t2s_cloud_service_microsoft", "vits", b"vits", "vits_triton", b"vits_triton"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["qwen3_tts_base", b"qwen3_tts_base", "qwen3_tts_custom_voice", b"qwen3_tts_custom_voice", "t2s_cloud_service_amazon", b"t2s_cloud_service_amazon", "t2s_cloud_service_elevenlabs", b"t2s_cloud_service_elevenlabs", "t2s_cloud_service_google", b"t2s_cloud_service_google", "t2s_cloud_service_microsoft", b"t2s_cloud_service_microsoft", "type", b"type", "vits", b"vits", "vits_triton", b"vits_triton"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["qwen3_tts_base", b"qwen3_tts_base", "qwen3_tts_custom_voice", b"qwen3_tts_custom_voice", "t2s_cloud_service_amazon", b"t2s_cloud_service_amazon", "t2s_cloud_service_elevenlabs", b"t2s_cloud_service_elevenlabs", "t2s_cloud_service_google", b"t2s_cloud_service_google", "t2s_cloud_service_microsoft", b"t2s_cloud_service_microsoft", "vits", b"vits", "vits_triton", b"vits_triton"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["qwen3_tts_base", b"qwen3_tts_base", "qwen3_tts_custom_voice", b"qwen3_tts_custom_voice", "t2s_cloud_service_amazon", b"t2s_cloud_service_amazon", "t2s_cloud_service_elevenlabs", b"t2s_cloud_service_elevenlabs", "t2s_cloud_service_google", b"t2s_cloud_service_google", "t2s_cloud_service_microsoft", b"t2s_cloud_service_microsoft", "type", b"type", "vits", b"vits", "vits_triton", b"vits_triton"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___Text2Audio = Text2Audio
+Global___Text2Audio: _TypeAlias = Text2Audio  # noqa: Y015
 
-@typing.final
-class GlowTTS(google.protobuf.message.Message):
+@_typing.final
+class GlowTTS(_message.Message):
     """<p>GlowTTS message contains settings for the GlowTTS inference.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    BATCH_SIZE_FIELD_NUMBER: builtins.int
-    USE_GPU_FIELD_NUMBER: builtins.int
-    LENGTH_SCALE_FIELD_NUMBER: builtins.int
-    NOISE_SCALE_FIELD_NUMBER: builtins.int
-    PATH_FIELD_NUMBER: builtins.int
-    CLEANERS_FIELD_NUMBER: builtins.int
-    PARAM_CONFIG_PATH_FIELD_NUMBER: builtins.int
-    batch_size: builtins.int
+    BATCH_SIZE_FIELD_NUMBER: _builtins.int
+    USE_GPU_FIELD_NUMBER: _builtins.int
+    LENGTH_SCALE_FIELD_NUMBER: _builtins.int
+    NOISE_SCALE_FIELD_NUMBER: _builtins.int
+    PATH_FIELD_NUMBER: _builtins.int
+    CLEANERS_FIELD_NUMBER: _builtins.int
+    PARAM_CONFIG_PATH_FIELD_NUMBER: _builtins.int
+    batch_size: _builtins.int
     """The batch size for inference."""
-    use_gpu: builtins.bool
+    use_gpu: _builtins.bool
     """Flag indicating whether to use GPU for inference."""
-    length_scale: builtins.float
+    length_scale: _builtins.float
     """The length scale for inference."""
-    noise_scale: builtins.float
+    noise_scale: _builtins.float
     """The noise scale for inference."""
-    path: builtins.str
+    path: _builtins.str
     """The path to the GlowTTS model."""
-    param_config_path: builtins.str
+    param_config_path: _builtins.str
     """The path to the parameter configuration."""
-    @property
-    def cleaners(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def cleaners(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Repeated field containing the cleaners for text normalization."""
 
     def __init__(
         self,
         *,
-        batch_size: builtins.int = ...,
-        use_gpu: builtins.bool = ...,
-        length_scale: builtins.float = ...,
-        noise_scale: builtins.float = ...,
-        path: builtins.str = ...,
-        cleaners: collections.abc.Iterable[builtins.str] | None = ...,
-        param_config_path: builtins.str = ...,
+        batch_size: _builtins.int = ...,
+        use_gpu: _builtins.bool = ...,
+        length_scale: _builtins.float = ...,
+        noise_scale: _builtins.float = ...,
+        path: _builtins.str = ...,
+        cleaners: _abc.Iterable[_builtins.str] | None = ...,
+        param_config_path: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["batch_size", b"batch_size", "cleaners", b"cleaners", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "param_config_path", b"param_config_path", "path", b"path", "use_gpu", b"use_gpu"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["batch_size", b"batch_size", "cleaners", b"cleaners", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "param_config_path", b"param_config_path", "path", b"path", "use_gpu", b"use_gpu"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___GlowTTS = GlowTTS
+Global___GlowTTS: _TypeAlias = GlowTTS  # noqa: Y015
 
-@typing.final
-class GlowTTSTriton(google.protobuf.message.Message):
+@_typing.final
+class GlowTTSTriton(_message.Message):
     """<p>GlowTTSTriton message contains settings for the GlowTTS Triton inference.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    BATCH_SIZE_FIELD_NUMBER: builtins.int
-    LENGTH_SCALE_FIELD_NUMBER: builtins.int
-    NOISE_SCALE_FIELD_NUMBER: builtins.int
-    CLEANERS_FIELD_NUMBER: builtins.int
-    MAX_TEXT_LENGTH_FIELD_NUMBER: builtins.int
-    PARAM_CONFIG_PATH_FIELD_NUMBER: builtins.int
-    TRITON_MODEL_NAME_FIELD_NUMBER: builtins.int
-    TRITON_SERVER_HOST_FIELD_NUMBER: builtins.int
-    TRITON_SERVER_PORT_FIELD_NUMBER: builtins.int
-    batch_size: builtins.int
+    BATCH_SIZE_FIELD_NUMBER: _builtins.int
+    LENGTH_SCALE_FIELD_NUMBER: _builtins.int
+    NOISE_SCALE_FIELD_NUMBER: _builtins.int
+    CLEANERS_FIELD_NUMBER: _builtins.int
+    MAX_TEXT_LENGTH_FIELD_NUMBER: _builtins.int
+    PARAM_CONFIG_PATH_FIELD_NUMBER: _builtins.int
+    TRITON_MODEL_NAME_FIELD_NUMBER: _builtins.int
+    TRITON_SERVER_HOST_FIELD_NUMBER: _builtins.int
+    TRITON_SERVER_PORT_FIELD_NUMBER: _builtins.int
+    batch_size: _builtins.int
     """The batch size for inference."""
-    length_scale: builtins.float
+    length_scale: _builtins.float
     """The length scale for inference."""
-    noise_scale: builtins.float
+    noise_scale: _builtins.float
     """The noise scale for inference."""
-    max_text_length: builtins.int
+    max_text_length: _builtins.int
     """The maximum text length allowed."""
-    param_config_path: builtins.str
+    param_config_path: _builtins.str
     """The path to the parameter configuration."""
-    triton_model_name: builtins.str
+    triton_model_name: _builtins.str
     """The name of the Triton model."""
-    triton_server_host: builtins.str
+    triton_server_host: _builtins.str
     """The host of the Triton inference server which serves the model."""
-    triton_server_port: builtins.int
+    triton_server_port: _builtins.int
     """The port of the Triton inference server which serves the model."""
-    @property
-    def cleaners(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def cleaners(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Repeated field containing the cleaners for text normalization."""
 
     def __init__(
         self,
         *,
-        batch_size: builtins.int = ...,
-        length_scale: builtins.float = ...,
-        noise_scale: builtins.float = ...,
-        cleaners: collections.abc.Iterable[builtins.str] | None = ...,
-        max_text_length: builtins.int = ...,
-        param_config_path: builtins.str = ...,
-        triton_model_name: builtins.str = ...,
-        triton_server_host: builtins.str = ...,
-        triton_server_port: builtins.int = ...,
+        batch_size: _builtins.int = ...,
+        length_scale: _builtins.float = ...,
+        noise_scale: _builtins.float = ...,
+        cleaners: _abc.Iterable[_builtins.str] | None = ...,
+        max_text_length: _builtins.int = ...,
+        param_config_path: _builtins.str = ...,
+        triton_model_name: _builtins.str = ...,
+        triton_server_host: _builtins.str = ...,
+        triton_server_port: _builtins.int = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["batch_size", b"batch_size", "cleaners", b"cleaners", "length_scale", b"length_scale", "max_text_length", b"max_text_length", "noise_scale", b"noise_scale", "param_config_path", b"param_config_path", "triton_model_name", b"triton_model_name", "triton_server_host", b"triton_server_host", "triton_server_port", b"triton_server_port"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["batch_size", b"batch_size", "cleaners", b"cleaners", "length_scale", b"length_scale", "max_text_length", b"max_text_length", "noise_scale", b"noise_scale", "param_config_path", b"param_config_path", "triton_model_name", b"triton_model_name", "triton_server_host", b"triton_server_host", "triton_server_port", b"triton_server_port"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___GlowTTSTriton = GlowTTSTriton
+Global___GlowTTSTriton: _TypeAlias = GlowTTSTriton  # noqa: Y015
 
-@typing.final
-class Vits(google.protobuf.message.Message):
+@_typing.final
+class Vits(_message.Message):
     """<p>Vits message contains settings for the Vits inference.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    BATCH_SIZE_FIELD_NUMBER: builtins.int
-    USE_GPU_FIELD_NUMBER: builtins.int
-    LENGTH_SCALE_FIELD_NUMBER: builtins.int
-    NOISE_SCALE_FIELD_NUMBER: builtins.int
-    PATH_FIELD_NUMBER: builtins.int
-    CLEANERS_FIELD_NUMBER: builtins.int
-    PARAM_CONFIG_PATH_FIELD_NUMBER: builtins.int
-    batch_size: builtins.int
+    BATCH_SIZE_FIELD_NUMBER: _builtins.int
+    USE_GPU_FIELD_NUMBER: _builtins.int
+    LENGTH_SCALE_FIELD_NUMBER: _builtins.int
+    NOISE_SCALE_FIELD_NUMBER: _builtins.int
+    PATH_FIELD_NUMBER: _builtins.int
+    CLEANERS_FIELD_NUMBER: _builtins.int
+    PARAM_CONFIG_PATH_FIELD_NUMBER: _builtins.int
+    batch_size: _builtins.int
     """The batch size for inference."""
-    use_gpu: builtins.bool
+    use_gpu: _builtins.bool
     """Flag indicating whether to use GPU for inference."""
-    length_scale: builtins.float
+    length_scale: _builtins.float
     """The length scale for inference."""
-    noise_scale: builtins.float
+    noise_scale: _builtins.float
     """The noise scale for inference."""
-    path: builtins.str
+    path: _builtins.str
     """The path to the Vits model."""
-    param_config_path: builtins.str
+    param_config_path: _builtins.str
     """The path to the parameter configuration."""
-    @property
-    def cleaners(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def cleaners(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Repeated field containing the cleaners for text normalization."""
 
     def __init__(
         self,
         *,
-        batch_size: builtins.int = ...,
-        use_gpu: builtins.bool = ...,
-        length_scale: builtins.float = ...,
-        noise_scale: builtins.float = ...,
-        path: builtins.str = ...,
-        cleaners: collections.abc.Iterable[builtins.str] | None = ...,
-        param_config_path: builtins.str = ...,
+        batch_size: _builtins.int = ...,
+        use_gpu: _builtins.bool = ...,
+        length_scale: _builtins.float = ...,
+        noise_scale: _builtins.float = ...,
+        path: _builtins.str = ...,
+        cleaners: _abc.Iterable[_builtins.str] | None = ...,
+        param_config_path: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["batch_size", b"batch_size", "cleaners", b"cleaners", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "param_config_path", b"param_config_path", "path", b"path", "use_gpu", b"use_gpu"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["batch_size", b"batch_size", "cleaners", b"cleaners", "length_scale", b"length_scale", "noise_scale", b"noise_scale", "param_config_path", b"param_config_path", "path", b"path", "use_gpu", b"use_gpu"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___Vits = Vits
+Global___Vits: _TypeAlias = Vits  # noqa: Y015
 
-@typing.final
-class VitsTriton(google.protobuf.message.Message):
+@_typing.final
+class VitsTriton(_message.Message):
     """<p>VitsTriton message contains settings for the Vits Triton inference.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    BATCH_SIZE_FIELD_NUMBER: builtins.int
-    LENGTH_SCALE_FIELD_NUMBER: builtins.int
-    NOISE_SCALE_FIELD_NUMBER: builtins.int
-    CLEANERS_FIELD_NUMBER: builtins.int
-    MAX_TEXT_LENGTH_FIELD_NUMBER: builtins.int
-    PARAM_CONFIG_PATH_FIELD_NUMBER: builtins.int
-    TRITON_MODEL_NAME_FIELD_NUMBER: builtins.int
-    TRITON_SERVER_HOST_FIELD_NUMBER: builtins.int
-    TRITON_SERVER_PORT_FIELD_NUMBER: builtins.int
-    batch_size: builtins.int
+    BATCH_SIZE_FIELD_NUMBER: _builtins.int
+    LENGTH_SCALE_FIELD_NUMBER: _builtins.int
+    NOISE_SCALE_FIELD_NUMBER: _builtins.int
+    CLEANERS_FIELD_NUMBER: _builtins.int
+    MAX_TEXT_LENGTH_FIELD_NUMBER: _builtins.int
+    PARAM_CONFIG_PATH_FIELD_NUMBER: _builtins.int
+    TRITON_MODEL_NAME_FIELD_NUMBER: _builtins.int
+    TRITON_SERVER_HOST_FIELD_NUMBER: _builtins.int
+    TRITON_SERVER_PORT_FIELD_NUMBER: _builtins.int
+    batch_size: _builtins.int
     """The batch size for inference."""
-    length_scale: builtins.float
+    length_scale: _builtins.float
     """The length scale for inference."""
-    noise_scale: builtins.float
+    noise_scale: _builtins.float
     """The noise scale for inference."""
-    max_text_length: builtins.int
+    max_text_length: _builtins.int
     """The maximum text length allowed."""
-    param_config_path: builtins.str
+    param_config_path: _builtins.str
     """The path to the parameter configuration."""
-    triton_model_name: builtins.str
+    triton_model_name: _builtins.str
     """The name of the Triton model."""
-    triton_server_host: builtins.str
+    triton_server_host: _builtins.str
     """The host of the Triton inference server which serves the model."""
-    triton_server_port: builtins.int
+    triton_server_port: _builtins.int
     """The port of the Triton inference server which serves the model."""
-    @property
-    def cleaners(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def cleaners(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Repeated field containing the cleaners for text normalization."""
 
     def __init__(
         self,
         *,
-        batch_size: builtins.int = ...,
-        length_scale: builtins.float = ...,
-        noise_scale: builtins.float = ...,
-        cleaners: collections.abc.Iterable[builtins.str] | None = ...,
-        max_text_length: builtins.int = ...,
-        param_config_path: builtins.str = ...,
-        triton_model_name: builtins.str = ...,
-        triton_server_host: builtins.str = ...,
-        triton_server_port: builtins.int = ...,
+        batch_size: _builtins.int = ...,
+        length_scale: _builtins.float = ...,
+        noise_scale: _builtins.float = ...,
+        cleaners: _abc.Iterable[_builtins.str] | None = ...,
+        max_text_length: _builtins.int = ...,
+        param_config_path: _builtins.str = ...,
+        triton_model_name: _builtins.str = ...,
+        triton_server_host: _builtins.str = ...,
+        triton_server_port: _builtins.int = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["batch_size", b"batch_size", "cleaners", b"cleaners", "length_scale", b"length_scale", "max_text_length", b"max_text_length", "noise_scale", b"noise_scale", "param_config_path", b"param_config_path", "triton_model_name", b"triton_model_name", "triton_server_host", b"triton_server_host", "triton_server_port", b"triton_server_port"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["batch_size", b"batch_size", "cleaners", b"cleaners", "length_scale", b"length_scale", "max_text_length", b"max_text_length", "noise_scale", b"noise_scale", "param_config_path", b"param_config_path", "triton_model_name", b"triton_model_name", "triton_server_host", b"triton_server_host", "triton_server_port", b"triton_server_port"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___VitsTriton = VitsTriton
+Global___VitsTriton: _TypeAlias = VitsTriton  # noqa: Y015
 
-@typing.final
-class T2sCloudServiceElevenLabs(google.protobuf.message.Message):
+@_typing.final
+class T2sCloudServiceElevenLabs(_message.Message):
     """<p>T2sCloudServiceElevenLabs message contains settings for the ElevenLabs Cloud service inference.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    LANGUAGE_CODE_FIELD_NUMBER: builtins.int
-    MODEL_ID_FIELD_NUMBER: builtins.int
-    VOICE_ID_FIELD_NUMBER: builtins.int
-    VOICE_SETTINGS_FIELD_NUMBER: builtins.int
-    APPLY_TEXT_NORMALIZATION_FIELD_NUMBER: builtins.int
-    language_code: builtins.str
+    LANGUAGE_CODE_FIELD_NUMBER: _builtins.int
+    MODEL_ID_FIELD_NUMBER: _builtins.int
+    VOICE_ID_FIELD_NUMBER: _builtins.int
+    VOICE_SETTINGS_FIELD_NUMBER: _builtins.int
+    APPLY_TEXT_NORMALIZATION_FIELD_NUMBER: _builtins.int
+    language_code: _builtins.str
     """Language of the generated audio. It should be 4-Letter language code."""
-    model_id: builtins.str
+    model_id: _builtins.str
     """Model ID indicating the name of the model"""
-    voice_id: builtins.str
+    voice_id: _builtins.str
     """Voice ID indicating the speaker"""
-    apply_text_normalization: builtins.str
+    apply_text_normalization: _builtins.str
     """Flag to indicate applying text normalization"""
-    @property
-    def voice_settings(self) -> global___VoiceSettings:
+    @_builtins.property
+    def voice_settings(self) -> Global___VoiceSettings:
         """Voice setting of the inference"""
 
     def __init__(
         self,
         *,
-        language_code: builtins.str = ...,
-        model_id: builtins.str = ...,
-        voice_id: builtins.str = ...,
-        voice_settings: global___VoiceSettings | None = ...,
-        apply_text_normalization: builtins.str = ...,
+        language_code: _builtins.str = ...,
+        model_id: _builtins.str = ...,
+        voice_id: _builtins.str = ...,
+        voice_settings: Global___VoiceSettings | None = ...,
+        apply_text_normalization: _builtins.str = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["voice_settings", b"voice_settings"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["apply_text_normalization", b"apply_text_normalization", "language_code", b"language_code", "model_id", b"model_id", "voice_id", b"voice_id", "voice_settings", b"voice_settings"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["voice_settings", b"voice_settings"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["apply_text_normalization", b"apply_text_normalization", "language_code", b"language_code", "model_id", b"model_id", "voice_id", b"voice_id", "voice_settings", b"voice_settings"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___T2sCloudServiceElevenLabs = T2sCloudServiceElevenLabs
+Global___T2sCloudServiceElevenLabs: _TypeAlias = T2sCloudServiceElevenLabs  # noqa: Y015
 
-@typing.final
-class VoiceSettings(google.protobuf.message.Message):
+@_typing.final
+class VoiceSettings(_message.Message):
     """<p>VoiceSettings message contains settings for ElevenLabs inference.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    STABILITY_FIELD_NUMBER: builtins.int
-    SIMILARITY_BOOST_FIELD_NUMBER: builtins.int
-    STYLE_FIELD_NUMBER: builtins.int
-    USE_SPEAKER_BOOST_FIELD_NUMBER: builtins.int
-    stability: builtins.float
+    STABILITY_FIELD_NUMBER: _builtins.int
+    SIMILARITY_BOOST_FIELD_NUMBER: _builtins.int
+    STYLE_FIELD_NUMBER: _builtins.int
+    USE_SPEAKER_BOOST_FIELD_NUMBER: _builtins.int
+    stability: _builtins.float
     """stability value for elevenlabs inference"""
-    similarity_boost: builtins.float
+    similarity_boost: _builtins.float
     """similarity boost value for ElevenLabs inference."""
-    style: builtins.float
+    style: _builtins.float
     """style boost value for ElevenLabs inference."""
-    use_speaker_boost: builtins.bool
+    use_speaker_boost: _builtins.bool
     """Flag to indicate speaker boost"""
     def __init__(
         self,
         *,
-        stability: builtins.float = ...,
-        similarity_boost: builtins.float = ...,
-        style: builtins.float = ...,
-        use_speaker_boost: builtins.bool = ...,
+        stability: _builtins.float = ...,
+        similarity_boost: _builtins.float = ...,
+        style: _builtins.float = ...,
+        use_speaker_boost: _builtins.bool = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["similarity_boost", b"similarity_boost", "stability", b"stability", "style", b"style", "use_speaker_boost", b"use_speaker_boost"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["similarity_boost", b"similarity_boost", "stability", b"stability", "style", b"style", "use_speaker_boost", b"use_speaker_boost"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___VoiceSettings = VoiceSettings
+Global___VoiceSettings: _TypeAlias = VoiceSettings  # noqa: Y015
 
-@typing.final
-class T2sCloudServiceAmazon(google.protobuf.message.Message):
+@_typing.final
+class T2sCloudServiceAmazon(_message.Message):
     """<p>T2sCloudServiceAmazon message contains settings for the Amazon Cloud service inference.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    VOICE_ID_FIELD_NUMBER: builtins.int
-    MODEL_ID_FIELD_NUMBER: builtins.int
-    voice_id: builtins.str
+    VOICE_ID_FIELD_NUMBER: _builtins.int
+    MODEL_ID_FIELD_NUMBER: _builtins.int
+    voice_id: _builtins.str
     """Voice ID indicating the speaker"""
-    model_id: builtins.str
+    model_id: _builtins.str
     """Model id for the inference server."""
     def __init__(
         self,
         *,
-        voice_id: builtins.str = ...,
-        model_id: builtins.str = ...,
+        voice_id: _builtins.str = ...,
+        model_id: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["model_id", b"model_id", "voice_id", b"voice_id"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["model_id", b"model_id", "voice_id", b"voice_id"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___T2sCloudServiceAmazon = T2sCloudServiceAmazon
+Global___T2sCloudServiceAmazon: _TypeAlias = T2sCloudServiceAmazon  # noqa: Y015
 
-@typing.final
-class T2sCloudServiceGoogle(google.protobuf.message.Message):
+@_typing.final
+class T2sCloudServiceGoogle(_message.Message):
     """<p>T2sCloudServiceGoogle message contains settings for the Google Cloud service inference.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    VOICE_ID_FIELD_NUMBER: builtins.int
-    SPEAKING_RATE_FIELD_NUMBER: builtins.int
-    VOLUME_GAIN_DB_FIELD_NUMBER: builtins.int
-    PITCH_FIELD_NUMBER: builtins.int
-    SPEAKER_LANGUAGE_FIELD_NUMBER: builtins.int
-    voice_id: builtins.str
+    VOICE_ID_FIELD_NUMBER: _builtins.int
+    SPEAKING_RATE_FIELD_NUMBER: _builtins.int
+    VOLUME_GAIN_DB_FIELD_NUMBER: _builtins.int
+    PITCH_FIELD_NUMBER: _builtins.int
+    SPEAKER_LANGUAGE_FIELD_NUMBER: _builtins.int
+    voice_id: _builtins.str
     """Voice ID indicating the speaker"""
-    speaking_rate: builtins.float
+    speaking_rate: _builtins.float
     """Speaking rate to control the speed of audio."""
-    volume_gain_db: builtins.float
+    volume_gain_db: _builtins.float
     """Volume gain in db to control volume of the audio."""
-    pitch: builtins.float
+    pitch: _builtins.float
     """pitch value of the audio"""
-    speaker_language: builtins.str
+    speaker_language: _builtins.str
     """speaker_language indicating the speaker language code"""
     def __init__(
         self,
         *,
-        voice_id: builtins.str = ...,
-        speaking_rate: builtins.float = ...,
-        volume_gain_db: builtins.float = ...,
-        pitch: builtins.float = ...,
-        speaker_language: builtins.str = ...,
+        voice_id: _builtins.str = ...,
+        speaking_rate: _builtins.float = ...,
+        volume_gain_db: _builtins.float = ...,
+        pitch: _builtins.float = ...,
+        speaker_language: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["pitch", b"pitch", "speaker_language", b"speaker_language", "speaking_rate", b"speaking_rate", "voice_id", b"voice_id", "volume_gain_db", b"volume_gain_db"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["pitch", b"pitch", "speaker_language", b"speaker_language", "speaking_rate", b"speaking_rate", "voice_id", b"voice_id", "volume_gain_db", b"volume_gain_db"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___T2sCloudServiceGoogle = T2sCloudServiceGoogle
+Global___T2sCloudServiceGoogle: _TypeAlias = T2sCloudServiceGoogle  # noqa: Y015
 
-@typing.final
-class T2sCloudServiceMicrosoft(google.protobuf.message.Message):
+@_typing.final
+class T2sCloudServiceMicrosoft(_message.Message):
     """<p>T2sCloudServiceMicrosoft message contains settings for the Microsoft Cloud service inference.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    VOICE_ID_FIELD_NUMBER: builtins.int
-    USE_DEFAULT_SPEAKER_FIELD_NUMBER: builtins.int
-    voice_id: builtins.str
+    VOICE_ID_FIELD_NUMBER: _builtins.int
+    USE_DEFAULT_SPEAKER_FIELD_NUMBER: _builtins.int
+    voice_id: _builtins.str
     """Voice ID indicating the speaker."""
-    use_default_speaker: builtins.bool
+    use_default_speaker: _builtins.bool
     """Flag to indicate using the default speaker."""
     def __init__(
         self,
         *,
-        voice_id: builtins.str = ...,
-        use_default_speaker: builtins.bool = ...,
+        voice_id: _builtins.str = ...,
+        use_default_speaker: _builtins.bool = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["use_default_speaker", b"use_default_speaker", "voice_id", b"voice_id"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["use_default_speaker", b"use_default_speaker", "voice_id", b"voice_id"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___T2sCloudServiceMicrosoft = T2sCloudServiceMicrosoft
+Global___T2sCloudServiceMicrosoft: _TypeAlias = T2sCloudServiceMicrosoft  # noqa: Y015
 
-@typing.final
-class Qwen3TtsCustomVoice(google.protobuf.message.Message):
+@_typing.final
+class Qwen3TtsCustomVoice(_message.Message):
     """<p>Qwen3TtsCustomVoice message contains settings for inference of qwen3-TTS-CustomVoice model.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    VOICE_ID_FIELD_NUMBER: builtins.int
-    MODEL_NAME_FIELD_NUMBER: builtins.int
-    LANGUAGE_FIELD_NUMBER: builtins.int
-    QWEN3_TTS_SERVER_HOST_FIELD_NUMBER: builtins.int
-    QWEN3_TTS_SERVER_PORT_FIELD_NUMBER: builtins.int
-    QWEN3_TTS_SERVER_HEADER_FIELD_NUMBER: builtins.int
-    voice_id: builtins.str
+    VOICE_ID_FIELD_NUMBER: _builtins.int
+    MODEL_NAME_FIELD_NUMBER: _builtins.int
+    LANGUAGE_FIELD_NUMBER: _builtins.int
+    QWEN3_TTS_SERVER_HOST_FIELD_NUMBER: _builtins.int
+    QWEN3_TTS_SERVER_PORT_FIELD_NUMBER: _builtins.int
+    QWEN3_TTS_SERVER_HEADER_FIELD_NUMBER: _builtins.int
+    voice_id: _builtins.str
     """Voice id indicating the speaker name"""
-    model_name: builtins.str
+    model_name: _builtins.str
     """Model name for the inference server."""
-    language: builtins.str
+    language: _builtins.str
     """Language for inference server"""
-    qwen3_tts_server_host: builtins.str
+    qwen3_tts_server_host: _builtins.str
     """Host name for the inference server"""
-    qwen3_tts_server_port: builtins.int
+    qwen3_tts_server_port: _builtins.int
     """Port of the inference server"""
-    @property
-    def qwen3_tts_server_header(self) -> google.protobuf.struct_pb2.Struct:
+    @_builtins.property
+    def qwen3_tts_server_header(self) -> _struct_pb2.Struct:
         """Authorization headers for the inference server"""
 
     def __init__(
         self,
         *,
-        voice_id: builtins.str = ...,
-        model_name: builtins.str = ...,
-        language: builtins.str = ...,
-        qwen3_tts_server_host: builtins.str = ...,
-        qwen3_tts_server_port: builtins.int = ...,
-        qwen3_tts_server_header: google.protobuf.struct_pb2.Struct | None = ...,
+        voice_id: _builtins.str = ...,
+        model_name: _builtins.str = ...,
+        language: _builtins.str = ...,
+        qwen3_tts_server_host: _builtins.str = ...,
+        qwen3_tts_server_port: _builtins.int = ...,
+        qwen3_tts_server_header: _struct_pb2.Struct | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["_qwen3_tts_server_header", b"_qwen3_tts_server_header", "qwen3_tts_server_header", b"qwen3_tts_server_header"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["_qwen3_tts_server_header", b"_qwen3_tts_server_header", "language", b"language", "model_name", b"model_name", "qwen3_tts_server_header", b"qwen3_tts_server_header", "qwen3_tts_server_host", b"qwen3_tts_server_host", "qwen3_tts_server_port", b"qwen3_tts_server_port", "voice_id", b"voice_id"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing.Literal["_qwen3_tts_server_header", b"_qwen3_tts_server_header"]) -> typing.Literal["qwen3_tts_server_header"] | None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["_qwen3_tts_server_header", b"_qwen3_tts_server_header", "qwen3_tts_server_header", b"qwen3_tts_server_header"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["_qwen3_tts_server_header", b"_qwen3_tts_server_header", "language", b"language", "model_name", b"model_name", "qwen3_tts_server_header", b"qwen3_tts_server_header", "qwen3_tts_server_host", b"qwen3_tts_server_host", "qwen3_tts_server_port", b"qwen3_tts_server_port", "voice_id", b"voice_id"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    _WhichOneofReturnType__qwen3_tts_server_header: _TypeAlias = _typing.Literal["qwen3_tts_server_header"]  # noqa: Y015
+    _WhichOneofArgType__qwen3_tts_server_header: _TypeAlias = _typing.Literal["_qwen3_tts_server_header", b"_qwen3_tts_server_header"]  # noqa: Y015
+    def WhichOneof(self, oneof_group: _WhichOneofArgType__qwen3_tts_server_header) -> _WhichOneofReturnType__qwen3_tts_server_header | None: ...
 
-global___Qwen3TtsCustomVoice = Qwen3TtsCustomVoice
+Global___Qwen3TtsCustomVoice: _TypeAlias = Qwen3TtsCustomVoice  # noqa: Y015
 
-@typing.final
-class Qwen3TtsBase(google.protobuf.message.Message):
+@_typing.final
+class Qwen3TtsBase(_message.Message):
     """<p>Qwen3TtsBase message contains settings for inference of qwen3-TTS-Base model.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    MODEL_NAME_FIELD_NUMBER: builtins.int
-    LANGUAGE_FIELD_NUMBER: builtins.int
-    EMBEDDING_PATH_FIELD_NUMBER: builtins.int
-    QWEN3_TTS_SERVER_HOST_FIELD_NUMBER: builtins.int
-    QWEN3_TTS_SERVER_PORT_FIELD_NUMBER: builtins.int
-    QWEN3_TTS_SERVER_HEADER_FIELD_NUMBER: builtins.int
-    model_name: builtins.str
+    MODEL_NAME_FIELD_NUMBER: _builtins.int
+    LANGUAGE_FIELD_NUMBER: _builtins.int
+    EMBEDDING_PATH_FIELD_NUMBER: _builtins.int
+    QWEN3_TTS_SERVER_HOST_FIELD_NUMBER: _builtins.int
+    QWEN3_TTS_SERVER_PORT_FIELD_NUMBER: _builtins.int
+    QWEN3_TTS_SERVER_HEADER_FIELD_NUMBER: _builtins.int
+    model_name: _builtins.str
     """Model name for the inference server."""
-    language: builtins.str
+    language: _builtins.str
     """Language for inference server"""
-    embedding_path: builtins.str
+    embedding_path: _builtins.str
     """Path of the embedding file"""
-    qwen3_tts_server_host: builtins.str
+    qwen3_tts_server_host: _builtins.str
     """Host name for the inference server"""
-    qwen3_tts_server_port: builtins.int
+    qwen3_tts_server_port: _builtins.int
     """Port of the inference server"""
-    @property
-    def qwen3_tts_server_header(self) -> google.protobuf.struct_pb2.Struct:
+    @_builtins.property
+    def qwen3_tts_server_header(self) -> _struct_pb2.Struct:
         """Authorization headers for the inference server"""
 
     def __init__(
         self,
         *,
-        model_name: builtins.str = ...,
-        language: builtins.str = ...,
-        embedding_path: builtins.str = ...,
-        qwen3_tts_server_host: builtins.str = ...,
-        qwen3_tts_server_port: builtins.int = ...,
-        qwen3_tts_server_header: google.protobuf.struct_pb2.Struct | None = ...,
+        model_name: _builtins.str = ...,
+        language: _builtins.str = ...,
+        embedding_path: _builtins.str = ...,
+        qwen3_tts_server_host: _builtins.str = ...,
+        qwen3_tts_server_port: _builtins.int = ...,
+        qwen3_tts_server_header: _struct_pb2.Struct | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["_qwen3_tts_server_header", b"_qwen3_tts_server_header", "qwen3_tts_server_header", b"qwen3_tts_server_header"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["_qwen3_tts_server_header", b"_qwen3_tts_server_header", "embedding_path", b"embedding_path", "language", b"language", "model_name", b"model_name", "qwen3_tts_server_header", b"qwen3_tts_server_header", "qwen3_tts_server_host", b"qwen3_tts_server_host", "qwen3_tts_server_port", b"qwen3_tts_server_port"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing.Literal["_qwen3_tts_server_header", b"_qwen3_tts_server_header"]) -> typing.Literal["qwen3_tts_server_header"] | None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["_qwen3_tts_server_header", b"_qwen3_tts_server_header", "qwen3_tts_server_header", b"qwen3_tts_server_header"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["_qwen3_tts_server_header", b"_qwen3_tts_server_header", "embedding_path", b"embedding_path", "language", b"language", "model_name", b"model_name", "qwen3_tts_server_header", b"qwen3_tts_server_header", "qwen3_tts_server_host", b"qwen3_tts_server_host", "qwen3_tts_server_port", b"qwen3_tts_server_port"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    _WhichOneofReturnType__qwen3_tts_server_header: _TypeAlias = _typing.Literal["qwen3_tts_server_header"]  # noqa: Y015
+    _WhichOneofArgType__qwen3_tts_server_header: _TypeAlias = _typing.Literal["_qwen3_tts_server_header", b"_qwen3_tts_server_header"]  # noqa: Y015
+    def WhichOneof(self, oneof_group: _WhichOneofArgType__qwen3_tts_server_header) -> _WhichOneofReturnType__qwen3_tts_server_header | None: ...
 
-global___Qwen3TtsBase = Qwen3TtsBase
+Global___Qwen3TtsBase: _TypeAlias = Qwen3TtsBase  # noqa: Y015
 
-@typing.final
-class Mel2Audio(google.protobuf.message.Message):
+@_typing.final
+class Mel2Audio(_message.Message):
     """<p>Mel2Audio message contains settings for mel-to-audio inference.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    TYPE_FIELD_NUMBER: builtins.int
-    MB_MELGAN_TRITON_FIELD_NUMBER: builtins.int
-    HIFI_GAN_FIELD_NUMBER: builtins.int
-    HIFI_GAN_TRITON_FIELD_NUMBER: builtins.int
-    type: builtins.str
+    TYPE_FIELD_NUMBER: _builtins.int
+    MB_MELGAN_TRITON_FIELD_NUMBER: _builtins.int
+    HIFI_GAN_FIELD_NUMBER: _builtins.int
+    HIFI_GAN_TRITON_FIELD_NUMBER: _builtins.int
+    type: _builtins.str
     """The type of mel-to-audio inference (vocoder), selecting which of the settings below is applied
     (mb_melgan_triton, hifi_gan or hifi_gan_triton).
     """
-    @property
-    def mb_melgan_triton(self) -> global___MbMelganTriton:
+    @_builtins.property
+    def mb_melgan_triton(self) -> Global___MbMelganTriton:
         """MbMelgan Triton inference settings."""
 
-    @property
-    def hifi_gan(self) -> global___HiFiGan:
+    @_builtins.property
+    def hifi_gan(self) -> Global___HiFiGan:
         """HiFiGan inference settings."""
 
-    @property
-    def hifi_gan_triton(self) -> global___HiFiGanTriton:
+    @_builtins.property
+    def hifi_gan_triton(self) -> Global___HiFiGanTriton:
         """HiFiGan Triton inference settings."""
 
     def __init__(
         self,
         *,
-        type: builtins.str = ...,
-        mb_melgan_triton: global___MbMelganTriton | None = ...,
-        hifi_gan: global___HiFiGan | None = ...,
-        hifi_gan_triton: global___HiFiGanTriton | None = ...,
+        type: _builtins.str = ...,
+        mb_melgan_triton: Global___MbMelganTriton | None = ...,
+        hifi_gan: Global___HiFiGan | None = ...,
+        hifi_gan_triton: Global___HiFiGanTriton | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["hifi_gan", b"hifi_gan", "hifi_gan_triton", b"hifi_gan_triton", "mb_melgan_triton", b"mb_melgan_triton"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["hifi_gan", b"hifi_gan", "hifi_gan_triton", b"hifi_gan_triton", "mb_melgan_triton", b"mb_melgan_triton", "type", b"type"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["hifi_gan", b"hifi_gan", "hifi_gan_triton", b"hifi_gan_triton", "mb_melgan_triton", b"mb_melgan_triton"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["hifi_gan", b"hifi_gan", "hifi_gan_triton", b"hifi_gan_triton", "mb_melgan_triton", b"mb_melgan_triton", "type", b"type"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___Mel2Audio = Mel2Audio
+Global___Mel2Audio: _TypeAlias = Mel2Audio  # noqa: Y015
 
-@typing.final
-class HiFiGan(google.protobuf.message.Message):
+@_typing.final
+class HiFiGan(_message.Message):
     """<p>HiFiGan message contains settings for the HiFiGan inference.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    USE_GPU_FIELD_NUMBER: builtins.int
-    BATCH_SIZE_FIELD_NUMBER: builtins.int
-    CONFIG_PATH_FIELD_NUMBER: builtins.int
-    MODEL_PATH_FIELD_NUMBER: builtins.int
-    use_gpu: builtins.bool
+    USE_GPU_FIELD_NUMBER: _builtins.int
+    BATCH_SIZE_FIELD_NUMBER: _builtins.int
+    CONFIG_PATH_FIELD_NUMBER: _builtins.int
+    MODEL_PATH_FIELD_NUMBER: _builtins.int
+    use_gpu: _builtins.bool
     """Flag indicating whether to use GPU for inference."""
-    batch_size: builtins.int
+    batch_size: _builtins.int
     """The batch size for inference."""
-    config_path: builtins.str
+    config_path: _builtins.str
     """The path to the HiFiGan configuration."""
-    model_path: builtins.str
+    model_path: _builtins.str
     """The path to the HiFiGan model."""
     def __init__(
         self,
         *,
-        use_gpu: builtins.bool = ...,
-        batch_size: builtins.int = ...,
-        config_path: builtins.str = ...,
-        model_path: builtins.str = ...,
+        use_gpu: _builtins.bool = ...,
+        batch_size: _builtins.int = ...,
+        config_path: _builtins.str = ...,
+        model_path: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["batch_size", b"batch_size", "config_path", b"config_path", "model_path", b"model_path", "use_gpu", b"use_gpu"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["batch_size", b"batch_size", "config_path", b"config_path", "model_path", b"model_path", "use_gpu", b"use_gpu"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___HiFiGan = HiFiGan
+Global___HiFiGan: _TypeAlias = HiFiGan  # noqa: Y015
 
-@typing.final
-class HiFiGanTriton(google.protobuf.message.Message):
+@_typing.final
+class HiFiGanTriton(_message.Message):
     """<p>HiFiGanTriton message contains settings for the HiFiGan Triton inference.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    CONFIG_PATH_FIELD_NUMBER: builtins.int
-    TRITON_MODEL_NAME_FIELD_NUMBER: builtins.int
-    TRITON_SERVER_HOST_FIELD_NUMBER: builtins.int
-    TRITON_SERVER_PORT_FIELD_NUMBER: builtins.int
-    config_path: builtins.str
+    CONFIG_PATH_FIELD_NUMBER: _builtins.int
+    TRITON_MODEL_NAME_FIELD_NUMBER: _builtins.int
+    TRITON_SERVER_HOST_FIELD_NUMBER: _builtins.int
+    TRITON_SERVER_PORT_FIELD_NUMBER: _builtins.int
+    config_path: _builtins.str
     """The path to the HiFiGan Triton configuration."""
-    triton_model_name: builtins.str
+    triton_model_name: _builtins.str
     """The name of the Triton model."""
-    triton_server_host: builtins.str
+    triton_server_host: _builtins.str
     """The host of the Triton inference server which serves the model."""
-    triton_server_port: builtins.int
+    triton_server_port: _builtins.int
     """The port of the Triton inference server which serves the model."""
     def __init__(
         self,
         *,
-        config_path: builtins.str = ...,
-        triton_model_name: builtins.str = ...,
-        triton_server_host: builtins.str = ...,
-        triton_server_port: builtins.int = ...,
+        config_path: _builtins.str = ...,
+        triton_model_name: _builtins.str = ...,
+        triton_server_host: _builtins.str = ...,
+        triton_server_port: _builtins.int = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["config_path", b"config_path", "triton_model_name", b"triton_model_name", "triton_server_host", b"triton_server_host", "triton_server_port", b"triton_server_port"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["config_path", b"config_path", "triton_model_name", b"triton_model_name", "triton_server_host", b"triton_server_host", "triton_server_port", b"triton_server_port"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___HiFiGanTriton = HiFiGanTriton
+Global___HiFiGanTriton: _TypeAlias = HiFiGanTriton  # noqa: Y015
 
-@typing.final
-class MbMelganTriton(google.protobuf.message.Message):
+@_typing.final
+class MbMelganTriton(_message.Message):
     """<p>MbMelganTriton message contains settings for the MbMelgan Triton inference.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    CONFIG_PATH_FIELD_NUMBER: builtins.int
-    STATS_PATH_FIELD_NUMBER: builtins.int
-    TRITON_MODEL_NAME_FIELD_NUMBER: builtins.int
-    TRITON_SERVER_HOST_FIELD_NUMBER: builtins.int
-    TRITON_SERVER_PORT_FIELD_NUMBER: builtins.int
-    config_path: builtins.str
+    CONFIG_PATH_FIELD_NUMBER: _builtins.int
+    STATS_PATH_FIELD_NUMBER: _builtins.int
+    TRITON_MODEL_NAME_FIELD_NUMBER: _builtins.int
+    TRITON_SERVER_HOST_FIELD_NUMBER: _builtins.int
+    TRITON_SERVER_PORT_FIELD_NUMBER: _builtins.int
+    config_path: _builtins.str
     """The path to the MbMelgan Triton configuration."""
-    stats_path: builtins.str
+    stats_path: _builtins.str
     """The path to the MbMelgan statistics."""
-    triton_model_name: builtins.str
+    triton_model_name: _builtins.str
     """The name of the Triton model."""
-    triton_server_host: builtins.str
+    triton_server_host: _builtins.str
     """The host of the Triton inference server which serves the model."""
-    triton_server_port: builtins.int
+    triton_server_port: _builtins.int
     """The port of the Triton inference server which serves the model."""
     def __init__(
         self,
         *,
-        config_path: builtins.str = ...,
-        stats_path: builtins.str = ...,
-        triton_model_name: builtins.str = ...,
-        triton_server_host: builtins.str = ...,
-        triton_server_port: builtins.int = ...,
+        config_path: _builtins.str = ...,
+        stats_path: _builtins.str = ...,
+        triton_model_name: _builtins.str = ...,
+        triton_server_host: _builtins.str = ...,
+        triton_server_port: _builtins.int = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["config_path", b"config_path", "stats_path", b"stats_path", "triton_model_name", b"triton_model_name", "triton_server_host", b"triton_server_host", "triton_server_port", b"triton_server_port"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["config_path", b"config_path", "stats_path", b"stats_path", "triton_model_name", b"triton_model_name", "triton_server_host", b"triton_server_host", "triton_server_port", b"triton_server_port"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___MbMelganTriton = MbMelganTriton
+Global___MbMelganTriton: _TypeAlias = MbMelganTriton  # noqa: Y015
 
-@typing.final
-class Caching(google.protobuf.message.Message):
+@_typing.final
+class Caching(_message.Message):
     """<p>Caching message contains settings for caching.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    ACTIVE_FIELD_NUMBER: builtins.int
-    MEMORY_CACHE_MAX_SIZE_FIELD_NUMBER: builtins.int
-    SAMPLING_RATE_FIELD_NUMBER: builtins.int
-    LOAD_CACHE_FIELD_NUMBER: builtins.int
-    SAVE_CACHE_FIELD_NUMBER: builtins.int
-    CACHE_SAVE_DIR_FIELD_NUMBER: builtins.int
-    active: builtins.bool
+    ACTIVE_FIELD_NUMBER: _builtins.int
+    MEMORY_CACHE_MAX_SIZE_FIELD_NUMBER: _builtins.int
+    SAMPLING_RATE_FIELD_NUMBER: _builtins.int
+    LOAD_CACHE_FIELD_NUMBER: _builtins.int
+    SAVE_CACHE_FIELD_NUMBER: _builtins.int
+    CACHE_SAVE_DIR_FIELD_NUMBER: _builtins.int
+    active: _builtins.bool
     """Flag indicating whether caching is active."""
-    memory_cache_max_size: builtins.int
+    memory_cache_max_size: _builtins.int
     """The maximum size of the memory cache."""
-    sampling_rate: builtins.int
+    sampling_rate: _builtins.int
     """The sampling rate for caching."""
-    load_cache: builtins.bool
+    load_cache: _builtins.bool
     """Flag indicating whether to load cache."""
-    save_cache: builtins.bool
+    save_cache: _builtins.bool
     """Flag indicating whether to save cache."""
-    cache_save_dir: builtins.str
+    cache_save_dir: _builtins.str
     """The directory path to save the cache."""
     def __init__(
         self,
         *,
-        active: builtins.bool = ...,
-        memory_cache_max_size: builtins.int = ...,
-        sampling_rate: builtins.int = ...,
-        load_cache: builtins.bool = ...,
-        save_cache: builtins.bool = ...,
-        cache_save_dir: builtins.str = ...,
+        active: _builtins.bool = ...,
+        memory_cache_max_size: _builtins.int = ...,
+        sampling_rate: _builtins.int = ...,
+        load_cache: _builtins.bool = ...,
+        save_cache: _builtins.bool = ...,
+        cache_save_dir: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["active", b"active", "cache_save_dir", b"cache_save_dir", "load_cache", b"load_cache", "memory_cache_max_size", b"memory_cache_max_size", "sampling_rate", b"sampling_rate", "save_cache", b"save_cache"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["active", b"active", "cache_save_dir", b"cache_save_dir", "load_cache", b"load_cache", "memory_cache_max_size", b"memory_cache_max_size", "sampling_rate", b"sampling_rate", "save_cache", b"save_cache"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___Caching = Caching
+Global___Caching: _TypeAlias = Caching  # noqa: Y015
 
-@typing.final
-class T2SNormalization(google.protobuf.message.Message):
+@_typing.final
+class T2SNormalization(_message.Message):
     """<p>Represents the configuration for text-to-speech normalization.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    LANGUAGE_FIELD_NUMBER: builtins.int
-    PIPELINE_FIELD_NUMBER: builtins.int
-    CUSTOM_PHONEMIZER_ID_FIELD_NUMBER: builtins.int
-    CUSTOM_LENGTH_SCALES_FIELD_NUMBER: builtins.int
-    ARPABET_MAPPING_FIELD_NUMBER: builtins.int
-    NUMERIC_MAPPING_FIELD_NUMBER: builtins.int
-    CALLSIGNS_MAPPING_FIELD_NUMBER: builtins.int
-    PHONEME_CORRECTION_MAPPING_FIELD_NUMBER: builtins.int
-    language: builtins.str
+    LANGUAGE_FIELD_NUMBER: _builtins.int
+    PIPELINE_FIELD_NUMBER: _builtins.int
+    CUSTOM_PHONEMIZER_ID_FIELD_NUMBER: _builtins.int
+    CUSTOM_LENGTH_SCALES_FIELD_NUMBER: _builtins.int
+    ARPABET_MAPPING_FIELD_NUMBER: _builtins.int
+    NUMERIC_MAPPING_FIELD_NUMBER: _builtins.int
+    CALLSIGNS_MAPPING_FIELD_NUMBER: _builtins.int
+    PHONEME_CORRECTION_MAPPING_FIELD_NUMBER: _builtins.int
+    language: _builtins.str
     """The language for which the normalization is applied."""
-    custom_phonemizer_id: builtins.str
+    custom_phonemizer_id: _builtins.str
     """The ID of the custom phonemizer, if used."""
-    arpabet_mapping: builtins.str
+    arpabet_mapping: _builtins.str
     """The mapping for Arpabet phonemes."""
-    numeric_mapping: builtins.str
+    numeric_mapping: _builtins.str
     """The mapping for numeric expressions."""
-    callsigns_mapping: builtins.str
+    callsigns_mapping: _builtins.str
     """The mapping for callsigns."""
-    phoneme_correction_mapping: builtins.str
+    phoneme_correction_mapping: _builtins.str
     """The mapping for phoneme correction."""
-    @property
-    def pipeline(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def pipeline(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """The pipeline(s) used for normalization."""
 
-    @property
-    def custom_length_scales(self) -> global___T2SCustomLengthScales:
+    @_builtins.property
+    def custom_length_scales(self) -> Global___T2SCustomLengthScales:
         """Custom length scales for different text types."""
 
     def __init__(
         self,
         *,
-        language: builtins.str = ...,
-        pipeline: collections.abc.Iterable[builtins.str] | None = ...,
-        custom_phonemizer_id: builtins.str = ...,
-        custom_length_scales: global___T2SCustomLengthScales | None = ...,
-        arpabet_mapping: builtins.str = ...,
-        numeric_mapping: builtins.str = ...,
-        callsigns_mapping: builtins.str = ...,
-        phoneme_correction_mapping: builtins.str = ...,
+        language: _builtins.str = ...,
+        pipeline: _abc.Iterable[_builtins.str] | None = ...,
+        custom_phonemizer_id: _builtins.str = ...,
+        custom_length_scales: Global___T2SCustomLengthScales | None = ...,
+        arpabet_mapping: _builtins.str = ...,
+        numeric_mapping: _builtins.str = ...,
+        callsigns_mapping: _builtins.str = ...,
+        phoneme_correction_mapping: _builtins.str = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["custom_length_scales", b"custom_length_scales"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["arpabet_mapping", b"arpabet_mapping", "callsigns_mapping", b"callsigns_mapping", "custom_length_scales", b"custom_length_scales", "custom_phonemizer_id", b"custom_phonemizer_id", "language", b"language", "numeric_mapping", b"numeric_mapping", "phoneme_correction_mapping", b"phoneme_correction_mapping", "pipeline", b"pipeline"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["custom_length_scales", b"custom_length_scales"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["arpabet_mapping", b"arpabet_mapping", "callsigns_mapping", b"callsigns_mapping", "custom_length_scales", b"custom_length_scales", "custom_phonemizer_id", b"custom_phonemizer_id", "language", b"language", "numeric_mapping", b"numeric_mapping", "phoneme_correction_mapping", b"phoneme_correction_mapping", "pipeline", b"pipeline"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___T2SNormalization = T2SNormalization
+Global___T2SNormalization: _TypeAlias = T2SNormalization  # noqa: Y015
 
-@typing.final
-class Postprocessing(google.protobuf.message.Message):
+@_typing.final
+class Postprocessing(_message.Message):
     """<p>Postprocessing message contains settings for postprocessing.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    SILENCE_SECS_FIELD_NUMBER: builtins.int
-    PIPELINE_FIELD_NUMBER: builtins.int
-    LOGMMSE_FIELD_NUMBER: builtins.int
-    WIENER_FIELD_NUMBER: builtins.int
-    APODIZATION_FIELD_NUMBER: builtins.int
-    silence_secs: builtins.float
+    SILENCE_SECS_FIELD_NUMBER: _builtins.int
+    PIPELINE_FIELD_NUMBER: _builtins.int
+    LOGMMSE_FIELD_NUMBER: _builtins.int
+    WIENER_FIELD_NUMBER: _builtins.int
+    APODIZATION_FIELD_NUMBER: _builtins.int
+    silence_secs: _builtins.float
     """The duration of silence in seconds."""
-    @property
-    def pipeline(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    @_builtins.property
+    def pipeline(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Repeated field containing pipeline names."""
 
-    @property
-    def logmmse(self) -> global___Logmnse:
+    @_builtins.property
+    def logmmse(self) -> Global___Logmnse:
         """Logmnse postprocessing settings."""
 
-    @property
-    def wiener(self) -> global___Wiener:
+    @_builtins.property
+    def wiener(self) -> Global___Wiener:
         """Wiener postprocessing settings."""
 
-    @property
-    def apodization(self) -> global___Apodization:
+    @_builtins.property
+    def apodization(self) -> Global___Apodization:
         """Apodization postprocessing settings."""
 
     def __init__(
         self,
         *,
-        silence_secs: builtins.float = ...,
-        pipeline: collections.abc.Iterable[builtins.str] | None = ...,
-        logmmse: global___Logmnse | None = ...,
-        wiener: global___Wiener | None = ...,
-        apodization: global___Apodization | None = ...,
+        silence_secs: _builtins.float = ...,
+        pipeline: _abc.Iterable[_builtins.str] | None = ...,
+        logmmse: Global___Logmnse | None = ...,
+        wiener: Global___Wiener | None = ...,
+        apodization: Global___Apodization | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["apodization", b"apodization", "logmmse", b"logmmse", "wiener", b"wiener"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["apodization", b"apodization", "logmmse", b"logmmse", "pipeline", b"pipeline", "silence_secs", b"silence_secs", "wiener", b"wiener"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["apodization", b"apodization", "logmmse", b"logmmse", "wiener", b"wiener"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["apodization", b"apodization", "logmmse", b"logmmse", "pipeline", b"pipeline", "silence_secs", b"silence_secs", "wiener", b"wiener"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___Postprocessing = Postprocessing
+Global___Postprocessing: _TypeAlias = Postprocessing  # noqa: Y015
 
-@typing.final
-class Logmnse(google.protobuf.message.Message):
+@_typing.final
+class Logmnse(_message.Message):
     """<p>Logmnse message contains settings for Logmnse postprocessing.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    INITIAL_NOISE_FIELD_NUMBER: builtins.int
-    WINDOW_SIZE_FIELD_NUMBER: builtins.int
-    NOISE_THRESHOLD_FIELD_NUMBER: builtins.int
-    initial_noise: builtins.int
+    INITIAL_NOISE_FIELD_NUMBER: _builtins.int
+    WINDOW_SIZE_FIELD_NUMBER: _builtins.int
+    NOISE_THRESHOLD_FIELD_NUMBER: _builtins.int
+    initial_noise: _builtins.int
     """The initial noise value."""
-    window_size: builtins.int
+    window_size: _builtins.int
     """The window size."""
-    noise_threshold: builtins.float
+    noise_threshold: _builtins.float
     """The noise threshold."""
     def __init__(
         self,
         *,
-        initial_noise: builtins.int = ...,
-        window_size: builtins.int = ...,
-        noise_threshold: builtins.float = ...,
+        initial_noise: _builtins.int = ...,
+        window_size: _builtins.int = ...,
+        noise_threshold: _builtins.float = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["initial_noise", b"initial_noise", "noise_threshold", b"noise_threshold", "window_size", b"window_size"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["initial_noise", b"initial_noise", "noise_threshold", b"noise_threshold", "window_size", b"window_size"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___Logmnse = Logmnse
+Global___Logmnse: _TypeAlias = Logmnse  # noqa: Y015
 
-@typing.final
-class Wiener(google.protobuf.message.Message):
+@_typing.final
+class Wiener(_message.Message):
     """<p>Wiener message contains settings for Wiener postprocessing.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    FRAME_LEN_FIELD_NUMBER: builtins.int
-    LPC_ORDER_FIELD_NUMBER: builtins.int
-    ITERATIONS_FIELD_NUMBER: builtins.int
-    ALPHA_FIELD_NUMBER: builtins.int
-    THRESH_FIELD_NUMBER: builtins.int
-    frame_len: builtins.int
+    FRAME_LEN_FIELD_NUMBER: _builtins.int
+    LPC_ORDER_FIELD_NUMBER: _builtins.int
+    ITERATIONS_FIELD_NUMBER: _builtins.int
+    ALPHA_FIELD_NUMBER: _builtins.int
+    THRESH_FIELD_NUMBER: _builtins.int
+    frame_len: _builtins.int
     """The frame length."""
-    lpc_order: builtins.int
+    lpc_order: _builtins.int
     """The LPC order."""
-    iterations: builtins.int
+    iterations: _builtins.int
     """The number of iterations."""
-    alpha: builtins.float
+    alpha: _builtins.float
     """The alpha value."""
-    thresh: builtins.float
+    thresh: _builtins.float
     """The threshold value."""
     def __init__(
         self,
         *,
-        frame_len: builtins.int = ...,
-        lpc_order: builtins.int = ...,
-        iterations: builtins.int = ...,
-        alpha: builtins.float = ...,
-        thresh: builtins.float = ...,
+        frame_len: _builtins.int = ...,
+        lpc_order: _builtins.int = ...,
+        iterations: _builtins.int = ...,
+        alpha: _builtins.float = ...,
+        thresh: _builtins.float = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["alpha", b"alpha", "frame_len", b"frame_len", "iterations", b"iterations", "lpc_order", b"lpc_order", "thresh", b"thresh"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["alpha", b"alpha", "frame_len", b"frame_len", "iterations", b"iterations", "lpc_order", b"lpc_order", "thresh", b"thresh"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___Wiener = Wiener
+Global___Wiener: _TypeAlias = Wiener  # noqa: Y015
 
-@typing.final
-class Apodization(google.protobuf.message.Message):
+@_typing.final
+class Apodization(_message.Message):
     """<p>Apodization message contains settings for apodization postprocessing.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    APODIZATION_SECS_FIELD_NUMBER: builtins.int
-    apodization_secs: builtins.float
+    APODIZATION_SECS_FIELD_NUMBER: _builtins.int
+    apodization_secs: _builtins.float
     """The duration of apodization in seconds."""
     def __init__(
         self,
         *,
-        apodization_secs: builtins.float = ...,
+        apodization_secs: _builtins.float = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["apodization_secs", b"apodization_secs"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["apodization_secs", b"apodization_secs"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___Apodization = Apodization
+Global___Apodization: _TypeAlias = Apodization  # noqa: Y015
 
-@typing.final
-class T2SCustomLengthScales(google.protobuf.message.Message):
+@_typing.final
+class T2SCustomLengthScales(_message.Message):
     """<p>T2SCustomLengthScales message contains custom length scales for text types.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    TEXT_FIELD_NUMBER: builtins.int
-    EMAIL_FIELD_NUMBER: builtins.int
-    URL_FIELD_NUMBER: builtins.int
-    PHONE_FIELD_NUMBER: builtins.int
-    SPELL_FIELD_NUMBER: builtins.int
-    SPELL_WITH_NAMES_FIELD_NUMBER: builtins.int
-    CALLSIGN_LONG_FIELD_NUMBER: builtins.int
-    CALLSIGN_SHORT_FIELD_NUMBER: builtins.int
-    text: builtins.float
+    TEXT_FIELD_NUMBER: _builtins.int
+    EMAIL_FIELD_NUMBER: _builtins.int
+    URL_FIELD_NUMBER: _builtins.int
+    PHONE_FIELD_NUMBER: _builtins.int
+    SPELL_FIELD_NUMBER: _builtins.int
+    SPELL_WITH_NAMES_FIELD_NUMBER: _builtins.int
+    CALLSIGN_LONG_FIELD_NUMBER: _builtins.int
+    CALLSIGN_SHORT_FIELD_NUMBER: _builtins.int
+    text: _builtins.float
     """The custom length scale for general text."""
-    email: builtins.float
+    email: _builtins.float
     """The custom length scale for email text."""
-    url: builtins.float
+    url: _builtins.float
     """The custom length scale for URL text."""
-    phone: builtins.float
+    phone: _builtins.float
     """The custom length scale for phone number text."""
-    spell: builtins.float
+    spell: _builtins.float
     """The custom length scale for spelled-out text."""
-    spell_with_names: builtins.float
+    spell_with_names: _builtins.float
     """The custom length scale for spelled-out text with names."""
-    callsign_long: builtins.float
+    callsign_long: _builtins.float
     """The custom length scale for long callsigns."""
-    callsign_short: builtins.float
+    callsign_short: _builtins.float
     """The custom length scale for short callsigns."""
     def __init__(
         self,
         *,
-        text: builtins.float = ...,
-        email: builtins.float = ...,
-        url: builtins.float = ...,
-        phone: builtins.float = ...,
-        spell: builtins.float = ...,
-        spell_with_names: builtins.float = ...,
-        callsign_long: builtins.float = ...,
-        callsign_short: builtins.float = ...,
+        text: _builtins.float = ...,
+        email: _builtins.float = ...,
+        url: _builtins.float = ...,
+        phone: _builtins.float = ...,
+        spell: _builtins.float = ...,
+        spell_with_names: _builtins.float = ...,
+        callsign_long: _builtins.float = ...,
+        callsign_short: _builtins.float = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["callsign_long", b"callsign_long", "callsign_short", b"callsign_short", "email", b"email", "phone", b"phone", "spell", b"spell", "spell_with_names", b"spell_with_names", "text", b"text", "url", b"url"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["callsign_long", b"callsign_long", "callsign_short", b"callsign_short", "email", b"email", "phone", b"phone", "spell", b"spell", "spell_with_names", b"spell_with_names", "text", b"text", "url", b"url"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___T2SCustomLengthScales = T2SCustomLengthScales
+Global___T2SCustomLengthScales: _TypeAlias = T2SCustomLengthScales  # noqa: Y015
 
-@typing.final
-class PhonemizerId(google.protobuf.message.Message):
+@_typing.final
+class PhonemizerId(_message.Message):
     """<p>PhonemizerId message represents the ID of a phonemizer.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    ID_FIELD_NUMBER: builtins.int
-    id: builtins.str
+    ID_FIELD_NUMBER: _builtins.int
+    id: _builtins.str
     """The ID of the phonemizer."""
     def __init__(
         self,
         *,
-        id: builtins.str = ...,
+        id: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["id", b"id"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["id", b"id"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___PhonemizerId = PhonemizerId
+Global___PhonemizerId: _TypeAlias = PhonemizerId  # noqa: Y015
 
-@typing.final
-class CustomPhonemizerProto(google.protobuf.message.Message):
+@_typing.final
+class CustomPhonemizerProto(_message.Message):
     """<p>CustomPhonemizerProto message represents a custom phonemizer.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    ID_FIELD_NUMBER: builtins.int
-    MAPS_FIELD_NUMBER: builtins.int
-    id: builtins.str
+    ID_FIELD_NUMBER: _builtins.int
+    MAPS_FIELD_NUMBER: _builtins.int
+    id: _builtins.str
     """The ID of the custom phonemizer."""
-    @property
-    def maps(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Map]:
+    @_builtins.property
+    def maps(self) -> _containers.RepeatedCompositeFieldContainer[Global___Map]:
         """Repeated field of Map messages representing word-to-phoneme mappings."""
 
     def __init__(
         self,
         *,
-        id: builtins.str = ...,
-        maps: collections.abc.Iterable[global___Map] | None = ...,
+        id: _builtins.str = ...,
+        maps: _abc.Iterable[Global___Map] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["id", b"id", "maps", b"maps"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["id", b"id", "maps", b"maps"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___CustomPhonemizerProto = CustomPhonemizerProto
+Global___CustomPhonemizerProto: _TypeAlias = CustomPhonemizerProto  # noqa: Y015
 
-@typing.final
-class Map(google.protobuf.message.Message):
+@_typing.final
+class Map(_message.Message):
     """<p>Map message represents a word-to-phoneme mapping in a custom phonemizer.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    WORD_FIELD_NUMBER: builtins.int
-    PHONEME_GROUPS_FIELD_NUMBER: builtins.int
-    word: builtins.str
+    WORD_FIELD_NUMBER: _builtins.int
+    PHONEME_GROUPS_FIELD_NUMBER: _builtins.int
+    word: _builtins.str
     """The word to be mapped."""
-    phoneme_groups: builtins.str
+    phoneme_groups: _builtins.str
     """The phoneme groups associated with the word."""
     def __init__(
         self,
         *,
-        word: builtins.str = ...,
-        phoneme_groups: builtins.str = ...,
+        word: _builtins.str = ...,
+        phoneme_groups: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["phoneme_groups", b"phoneme_groups", "word", b"word"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["phoneme_groups", b"phoneme_groups", "word", b"word"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___Map = Map
+Global___Map: _TypeAlias = Map  # noqa: Y015
 
-@typing.final
-class ListCustomPhonemizerResponse(google.protobuf.message.Message):
+@_typing.final
+class ListCustomPhonemizerResponse(_message.Message):
     """<p>ListCustomPhonemizerResponse message represents the response for listing custom phonemizers.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    PHONEMIZERS_FIELD_NUMBER: builtins.int
-    @property
-    def phonemizers(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___CustomPhonemizerProto]:
+    PHONEMIZERS_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def phonemizers(self) -> _containers.RepeatedCompositeFieldContainer[Global___CustomPhonemizerProto]:
         """Repeated field of CustomPhonemizerProto messages representing the custom phonemizers."""
 
     def __init__(
         self,
         *,
-        phonemizers: collections.abc.Iterable[global___CustomPhonemizerProto] | None = ...,
+        phonemizers: _abc.Iterable[Global___CustomPhonemizerProto] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["phonemizers", b"phonemizers"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["phonemizers", b"phonemizers"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___ListCustomPhonemizerResponse = ListCustomPhonemizerResponse
+Global___ListCustomPhonemizerResponse: _TypeAlias = ListCustomPhonemizerResponse  # noqa: Y015
 
-@typing.final
-class ListCustomPhonemizerRequest(google.protobuf.message.Message):
+@_typing.final
+class ListCustomPhonemizerRequest(_message.Message):
     """<p>ListCustomPhonemizerRequest message represents the request for listing custom phonemizers.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    PIPELINE_IDS_FIELD_NUMBER: builtins.int
-    @property
-    def pipeline_ids(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+    PIPELINE_IDS_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def pipeline_ids(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """Repeated field of pipeline IDs to filter the list of custom phonemizers."""
 
     def __init__(
         self,
         *,
-        pipeline_ids: collections.abc.Iterable[builtins.str] | None = ...,
+        pipeline_ids: _abc.Iterable[_builtins.str] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["pipeline_ids", b"pipeline_ids"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["pipeline_ids", b"pipeline_ids"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___ListCustomPhonemizerRequest = ListCustomPhonemizerRequest
+Global___ListCustomPhonemizerRequest: _TypeAlias = ListCustomPhonemizerRequest  # noqa: Y015
 
-@typing.final
-class UpdateCustomPhonemizerRequest(google.protobuf.message.Message):
+@_typing.final
+class UpdateCustomPhonemizerRequest(_message.Message):
     """<p>UpdateCustomPhonemizerRequest message represents the request for updating a custom phonemizer.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
     class _UpdateMethod:
-        ValueType = typing.NewType("ValueType", builtins.int)
-        V: typing_extensions.TypeAlias = ValueType
+        ValueType = _typing.NewType("ValueType", _builtins.int)
+        V: _TypeAlias = ValueType  # noqa: Y015
 
-    class _UpdateMethodEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[UpdateCustomPhonemizerRequest._UpdateMethod.ValueType], builtins.type):
-        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    class _UpdateMethodEnumTypeWrapper(_enum_type_wrapper._EnumTypeWrapper[UpdateCustomPhonemizerRequest._UpdateMethod.ValueType], _builtins.type):
+        DESCRIPTOR: _descriptor.EnumDescriptor
         extend_hard: UpdateCustomPhonemizerRequest._UpdateMethod.ValueType  # 0
         """Add new words, replacing existing ones."""
         extend_soft: UpdateCustomPhonemizerRequest._UpdateMethod.ValueType  # 1
@@ -2289,54 +2601,62 @@ class UpdateCustomPhonemizerRequest(google.protobuf.message.Message):
     replace: UpdateCustomPhonemizerRequest.UpdateMethod.ValueType  # 2
     """Replace all words in the phonemizer with new ones."""
 
-    ID_FIELD_NUMBER: builtins.int
-    UPDATE_METHOD_FIELD_NUMBER: builtins.int
-    MAPS_FIELD_NUMBER: builtins.int
-    id: builtins.str
+    ID_FIELD_NUMBER: _builtins.int
+    UPDATE_METHOD_FIELD_NUMBER: _builtins.int
+    MAPS_FIELD_NUMBER: _builtins.int
+    id: _builtins.str
     """The ID of the custom phonemizer to be updated."""
-    update_method: global___UpdateCustomPhonemizerRequest.UpdateMethod.ValueType
+    update_method: Global___UpdateCustomPhonemizerRequest.UpdateMethod.ValueType
     """The update method."""
-    @property
-    def maps(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Map]:
+    @_builtins.property
+    def maps(self) -> _containers.RepeatedCompositeFieldContainer[Global___Map]:
         """Repeated field of Map messages representing word-to-phoneme mappings."""
 
     def __init__(
         self,
         *,
-        id: builtins.str = ...,
-        update_method: global___UpdateCustomPhonemizerRequest.UpdateMethod.ValueType = ...,
-        maps: collections.abc.Iterable[global___Map] | None = ...,
+        id: _builtins.str = ...,
+        update_method: Global___UpdateCustomPhonemizerRequest.UpdateMethod.ValueType = ...,
+        maps: _abc.Iterable[Global___Map] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["id", b"id", "maps", b"maps", "update_method", b"update_method"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["id", b"id", "maps", b"maps", "update_method", b"update_method"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___UpdateCustomPhonemizerRequest = UpdateCustomPhonemizerRequest
+Global___UpdateCustomPhonemizerRequest: _TypeAlias = UpdateCustomPhonemizerRequest  # noqa: Y015
 
-@typing.final
-class CreateCustomPhonemizerRequest(google.protobuf.message.Message):
+@_typing.final
+class CreateCustomPhonemizerRequest(_message.Message):
     """<p>CreateCustomPhonemizerRequest message represents the request for creating a custom phonemizer.</p>"""
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    PREFIX_FIELD_NUMBER: builtins.int
-    MAPS_FIELD_NUMBER: builtins.int
-    prefix: builtins.str
+    PREFIX_FIELD_NUMBER: _builtins.int
+    MAPS_FIELD_NUMBER: _builtins.int
+    prefix: _builtins.str
     """The prefix for the custom phonemizer ID."""
-    @property
-    def maps(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Map]:
+    @_builtins.property
+    def maps(self) -> _containers.RepeatedCompositeFieldContainer[Global___Map]:
         """Repeated field of Map messages representing word-to-phoneme mappings."""
 
     def __init__(
         self,
         *,
-        prefix: builtins.str = ...,
-        maps: collections.abc.Iterable[global___Map] | None = ...,
+        prefix: _builtins.str = ...,
+        maps: _abc.Iterable[Global___Map] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["maps", b"maps", "prefix", b"prefix"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["maps", b"maps", "prefix", b"prefix"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___CreateCustomPhonemizerRequest = CreateCustomPhonemizerRequest
+Global___CreateCustomPhonemizerRequest: _TypeAlias = CreateCustomPhonemizerRequest  # noqa: Y015
 
-@typing.final
-class VoiceCloningRequest(google.protobuf.message.Message):
+@_typing.final
+class VoiceCloningRequest(_message.Message):
     """/////////////////
     VOICE CLONING //
     /////////////////
@@ -2346,32 +2666,36 @@ class VoiceCloningRequest(google.protobuf.message.Message):
     its transcription and the information about the speaker and the model to use for cloning.</p>
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: _descriptor.Descriptor
 
-    SAMPLE_AUDIO_FIELD_NUMBER: builtins.int
-    TRANSCRIPTION_FIELD_NUMBER: builtins.int
-    SPEAKER_NAME_FIELD_NUMBER: builtins.int
-    SPEAKER_LANGUAGE_FIELD_NUMBER: builtins.int
-    MODEL_NAME_FIELD_NUMBER: builtins.int
-    sample_audio: builtins.bytes
+    SAMPLE_AUDIO_FIELD_NUMBER: _builtins.int
+    TRANSCRIPTION_FIELD_NUMBER: _builtins.int
+    SPEAKER_NAME_FIELD_NUMBER: _builtins.int
+    SPEAKER_LANGUAGE_FIELD_NUMBER: _builtins.int
+    MODEL_NAME_FIELD_NUMBER: _builtins.int
+    sample_audio: _builtins.bytes
     """Required. The sample audio of the speaker whose voice should be cloned."""
-    transcription: builtins.str
+    transcription: _builtins.str
     """Required. The transcription of the sample audio."""
-    speaker_name: builtins.str
+    speaker_name: _builtins.str
     """Required. The name of the speaker to associate with the cloned voice."""
-    speaker_language: builtins.str
+    speaker_language: _builtins.str
     """Required. The language of the speaker in the sample audio."""
-    model_name: builtins.str
+    model_name: _builtins.str
     """Required. The name of the model used for voice cloning."""
     def __init__(
         self,
         *,
-        sample_audio: builtins.bytes = ...,
-        transcription: builtins.str = ...,
-        speaker_name: builtins.str = ...,
-        speaker_language: builtins.str = ...,
-        model_name: builtins.str = ...,
+        sample_audio: _builtins.bytes = ...,
+        transcription: _builtins.str = ...,
+        speaker_name: _builtins.str = ...,
+        speaker_language: _builtins.str = ...,
+        model_name: _builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["model_name", b"model_name", "sample_audio", b"sample_audio", "speaker_language", b"speaker_language", "speaker_name", b"speaker_name", "transcription", b"transcription"]) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["model_name", b"model_name", "sample_audio", b"sample_audio", "speaker_language", b"speaker_language", "speaker_name", b"speaker_name", "transcription", b"transcription"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-global___VoiceCloningRequest = VoiceCloningRequest
+Global___VoiceCloningRequest: _TypeAlias = VoiceCloningRequest  # noqa: Y015
