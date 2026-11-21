@@ -60,6 +60,16 @@ class ClientConfig(BaseClientConfig):
             Whether to verify the Keycloak server's TLS certificate on the token-endpoint
             call. Defaults to ``True`` (secure). Set ``False`` only for a self-signed/local
             Envoy at ``https://localhost:12001/auth``.
+        refresh_token (str):
+            A Keycloak *offline* refresh token handed to this client instead of a password. When set,
+            the client skips the ROPC password grant entirely: it bootstraps with a
+            ``grant_type=refresh_token`` exchange and auto-refreshes exactly as on the password
+            path. At least one of ``password`` and ``refresh_token`` must be provided for
+            Keycloak auth; when BOTH are set the refresh token wins and no password grant is ever sent.
+            There is deliberately no fallback to the password if the offline token is rejected -- a
+            silent fallback would reintroduce, at the least predictable moment, exactly the login burst
+            this field exists to avoid (Keycloak's brute-force detection counts failed LOGINS, so N
+            processes booting at once with one technical user are a burst, N refresh grants are not).
     """
 
     user_name: str = ""
@@ -70,12 +80,21 @@ class ClientConfig(BaseClientConfig):
     username: Optional[str] = None
     token_expiration_in_s: Optional[int] = None
     keycloak_verify_ssl: bool = True
+    # APPENDED LAST, deliberately. The dataclass is frozen and `host`/`port` are positional, so an
+    # external caller may be passing fields positionally; inserting mid-list would silently rebind
+    # their arguments. No test in this repository could see that, because every construction site
+    # here uses keyword arguments.
+    refresh_token: str = ""
 
     #: Fields whose value must never be rendered. ``grpc_cert`` is PEM material, ``password`` is the
     #: ROPC login secret and ``grpc_client_key`` is the mutual-TLS private key; all are printed verbatim
     #: by the ``__repr__`` ``@dataclass`` generates. ``__repr__`` additionally redacts every field declared
     #: with ``repr=False``, so a secret ``BaseClientConfig`` adds and hides is not printed by this override.
-    SECRET_FIELD_NAMES: ClassVar[FrozenSet[str]] = frozenset({"password", "grpc_cert", "grpc_client_key"})
+    #: ``refresh_token`` is a long-lived offline bearer credential: it mints access tokens for the life of
+    #: the offline session, so it is redacted exactly like the password.
+    SECRET_FIELD_NAMES: ClassVar[FrozenSet[str]] = frozenset(
+        {"password", "grpc_cert", "grpc_client_key", "refresh_token"}
+    )
 
     def __repr__(self) -> str:
         """
@@ -117,7 +136,7 @@ class ClientConfig(BaseClientConfig):
         Raises:
             ValueError:
                 If a partial Keycloak configuration is supplied, or if a Keycloak flow is requested without a
-                resolvable user name / password.
+                resolvable user name and a password or refresh token.
         """
         super().__post_init__()
 
@@ -135,8 +154,11 @@ class ClientConfig(BaseClientConfig):
                     "The field `username` (or `user_name`) is mandatory for Keycloak auth in "
                     f"{self.__class__.__name__}."
                 )
-            if not self.password:
-                raise ValueError(f"The field `password` is mandatory for Keycloak auth in {self.__class__.__name__}.")
+            if not self.password and not self.refresh_token:
+                raise ValueError(
+                    "Either the field `password` or the field `refresh_token` is mandatory for Keycloak auth in "
+                    f"{self.__class__.__name__}."
+                )
 
     @property
     def use_keycloak(self) -> bool:
