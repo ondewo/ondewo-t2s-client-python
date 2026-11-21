@@ -1897,11 +1897,12 @@ wheels = [
 
 [[package]]
 name = "ondewo-t2s-client"
-version = "6.7.1"
+version = "6.7.2"
 source = { editable = "." }
 dependencies = [
     { name = "dataclasses-json" },
     { name = "grpcio" },
+    { name = "loguru" },
     { name = "ondewo-client-utils", version = "3.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "ondewo-client-utils", version = "4.1.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "protobuf" },
@@ -1912,7 +1913,6 @@ dependencies = [
 dev = [
     { name = "cryptography" },
     { name = "jupyter" },
-    { name = "loguru" },
     { name = "mypy" },
     { name = "mypy-protobuf" },
     { name = "pre-commit" },
@@ -1931,7 +1931,7 @@ requires-dist = [
     { name = "dataclasses-json" },
     { name = "grpcio", specifier = ">=1.85.1" },
     { name = "jupyter", marker = "extra == 'dev'" },
-    { name = "loguru", marker = "extra == 'dev'" },
+    { name = "loguru" },
     { name = "mypy", marker = "extra == 'dev'" },
     { name = "mypy-protobuf", marker = "extra == 'dev'", specifier = ">=3.6.0" },
     { name = "ondewo-client-utils", marker = "python_full_version < '3.12'", specifier = ">=3.2.0" },

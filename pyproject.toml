@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ondewo-t2s-client"
-version = "6.7.1"
+version = "6.7.2"
 description = "ONDEWO Text 2 Speech (T2S) Client library for Python"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -43,6 +43,9 @@ dependencies = [
     "ondewo-client-utils>=3.2.0; python_version < '3.12'",
     "protobuf>=7.35.1,<8",
     "requests",
+    # utils/keycloak.py logs through loguru at runtime; declared only in the dev extra, a wheel installed on its
+    # own raised ModuleNotFoundError on `import ondewo...client` (6.7.1, ondewo-t2s-release PR-221 #4).
+    "loguru",
 ]
 
 [project.optional-dependencies]
@@ -50,7 +53,6 @@ dev = [
     "ruff",
     "cryptography",
     "jupyter",
-    "loguru",
     "mypy",
     "mypy-protobuf>=3.6.0",
     "pre-commit",
