@@ -807,6 +807,9 @@ class StreamingSynthesizeResponse(_message.Message):
     CONFIG_FIELD_NUMBER: _builtins.int
     NORMALIZED_TEXT_FIELD_NUMBER: _builtins.int
     SAMPLE_RATE_FIELD_NUMBER: _builtins.int
+    TEXT_START_CHAR_FIELD_NUMBER: _builtins.int
+    TEXT_END_CHAR_FIELD_NUMBER: _builtins.int
+    WORD_TIMINGS_FIELD_NUMBER: _builtins.int
     audio_uuid: _builtins.str
     """Required. The unique identifier (UUID) assigned to the generated audio."""
     audio: _builtins.bytes
@@ -821,9 +824,24 @@ class StreamingSynthesizeResponse(_message.Message):
     """Optional. Normalized text."""
     sample_rate: _builtins.float
     """Optional. Sampling rate of the generated audio, in Hertz (Hz)."""
+    text_start_char: _builtins.int
+    """Optional. Unicode code point offset into StreamingSynthesizeRequest.text (the text exactly as received,
+    markup included) where the text this response's audio speaks starts. Unset when the server could not
+    align it. Code points, not UTF-16 code units: a JavaScript client must convert.
+    """
+    text_end_char: _builtins.int
+    """Optional. Exclusive end offset of the spoken text, same unit and same text as text_start_char.
+    Set if and only if text_start_char is set.
+    """
     @_builtins.property
     def config(self) -> Global___RequestConfig:
         """Required. Configuration from which audio was generated."""
+
+    @_builtins.property
+    def word_timings(self) -> _containers.RepeatedCompositeFieldContainer[Global___WordTiming]:
+        """Optional. Timing of every word spoken in this response's audio, in playback order. Empty when the voice
+        reports no durations (cloud voices, a model exported without durations, a cache hit).
+        """
 
     def __init__(
         self,
@@ -836,14 +854,73 @@ class StreamingSynthesizeResponse(_message.Message):
         config: Global___RequestConfig | None = ...,
         normalized_text: _builtins.str = ...,
         sample_rate: _builtins.float = ...,
+        text_start_char: _builtins.int | None = ...,
+        text_end_char: _builtins.int | None = ...,
+        word_timings: _abc.Iterable[Global___WordTiming] | None = ...,
     ) -> None: ...
-    _HasFieldArgType: _TypeAlias = _typing.Literal["config", b"config"]  # noqa: Y015
+    _HasFieldArgType: _TypeAlias = _typing.Literal["_text_end_char", b"_text_end_char", "_text_start_char", b"_text_start_char", "config", b"config", "text_end_char", b"text_end_char", "text_start_char", b"text_start_char"]  # noqa: Y015
     def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["audio", b"audio", "audio_length", b"audio_length", "audio_uuid", b"audio_uuid", "config", b"config", "generation_time", b"generation_time", "normalized_text", b"normalized_text", "sample_rate", b"sample_rate", "text", b"text"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["_text_end_char", b"_text_end_char", "_text_start_char", b"_text_start_char", "audio", b"audio", "audio_length", b"audio_length", "audio_uuid", b"audio_uuid", "config", b"config", "generation_time", b"generation_time", "normalized_text", b"normalized_text", "sample_rate", b"sample_rate", "text", b"text", "text_end_char", b"text_end_char", "text_start_char", b"text_start_char", "word_timings", b"word_timings"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
-    def WhichOneof(self, oneof_group: _Never) -> None: ...
+    _WhichOneofReturnType__text_end_char: _TypeAlias = _typing.Literal["text_end_char"]  # noqa: Y015
+    _WhichOneofArgType__text_end_char: _TypeAlias = _typing.Literal["_text_end_char", b"_text_end_char"]  # noqa: Y015
+    _WhichOneofReturnType__text_start_char: _TypeAlias = _typing.Literal["text_start_char"]  # noqa: Y015
+    _WhichOneofArgType__text_start_char: _TypeAlias = _typing.Literal["_text_start_char", b"_text_start_char"]  # noqa: Y015
+    @_typing.overload
+    def WhichOneof(self, oneof_group: _WhichOneofArgType__text_end_char) -> _WhichOneofReturnType__text_end_char | None: ...
+    @_typing.overload
+    def WhichOneof(self, oneof_group: _WhichOneofArgType__text_start_char) -> _WhichOneofReturnType__text_start_char | None: ...
 
 Global___StreamingSynthesizeResponse: _TypeAlias = StreamingSynthesizeResponse  # noqa: Y015
+
+@_typing.final
+class WordTiming(_message.Message):
+    """<p>WordTiming message is used to report when one word is spoken inside a StreamingSynthesizeResponse's
+    audio.</p>
+    """
+
+    DESCRIPTOR: _descriptor.Descriptor
+
+    WORD_FIELD_NUMBER: _builtins.int
+    START_TIME_IN_S_FIELD_NUMBER: _builtins.int
+    END_TIME_IN_S_FIELD_NUMBER: _builtins.int
+    TEXT_START_CHAR_FIELD_NUMBER: _builtins.int
+    TEXT_END_CHAR_FIELD_NUMBER: _builtins.int
+    word: _builtins.str
+    """The word as spoken (its normalized form)."""
+    start_time_in_s: _builtins.float
+    """Start of the word, in seconds from the start of THIS response's audio."""
+    end_time_in_s: _builtins.float
+    """End of the word, in seconds from the start of THIS response's audio."""
+    text_start_char: _builtins.int
+    """Optional. Unicode code point offset into StreamingSynthesizeRequest.text where the word starts. Unset when
+    the word could not be mapped 1:1 onto the request text.
+    """
+    text_end_char: _builtins.int
+    """Optional. Exclusive end offset of the word, same unit and text. Set if and only if text_start_char is set."""
+    def __init__(
+        self,
+        *,
+        word: _builtins.str = ...,
+        start_time_in_s: _builtins.float = ...,
+        end_time_in_s: _builtins.float = ...,
+        text_start_char: _builtins.int | None = ...,
+        text_end_char: _builtins.int | None = ...,
+    ) -> None: ...
+    _HasFieldArgType: _TypeAlias = _typing.Literal["_text_end_char", b"_text_end_char", "_text_start_char", b"_text_start_char", "text_end_char", b"text_end_char", "text_start_char", b"text_start_char"]  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["_text_end_char", b"_text_end_char", "_text_start_char", b"_text_start_char", "end_time_in_s", b"end_time_in_s", "start_time_in_s", b"start_time_in_s", "text_end_char", b"text_end_char", "text_start_char", b"text_start_char", "word", b"word"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    _WhichOneofReturnType__text_end_char: _TypeAlias = _typing.Literal["text_end_char"]  # noqa: Y015
+    _WhichOneofArgType__text_end_char: _TypeAlias = _typing.Literal["_text_end_char", b"_text_end_char"]  # noqa: Y015
+    _WhichOneofReturnType__text_start_char: _TypeAlias = _typing.Literal["text_start_char"]  # noqa: Y015
+    _WhichOneofArgType__text_start_char: _TypeAlias = _typing.Literal["_text_start_char", b"_text_start_char"]  # noqa: Y015
+    @_typing.overload
+    def WhichOneof(self, oneof_group: _WhichOneofArgType__text_end_char) -> _WhichOneofReturnType__text_end_char | None: ...
+    @_typing.overload
+    def WhichOneof(self, oneof_group: _WhichOneofArgType__text_start_char) -> _WhichOneofReturnType__text_start_char | None: ...
+
+Global___WordTiming: _TypeAlias = WordTiming  # noqa: Y015
 
 @_typing.final
 class NormalizeTextRequest(_message.Message):

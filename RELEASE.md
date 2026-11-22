@@ -2,6 +2,14 @@
 
 *****************
 
+## Release ONDEWO T2S Python Client 6.8.0
+
+### New Features
+
+* [[OND236-120]](https://ondewo.atlassian.net/browse/OND236-120) Tracks ondewo-t2s-api 6.8.0: `StreamingSynthesizeResponse.text_start_char` / `text_end_char` (9/10, with presence) and `word_timings` (11, `WordTiming`).
+
+*****************
+
 ## Release ONDEWO T2S Python Client 6.7.2
 
 ### Bug Fixes
